@@ -60,6 +60,22 @@ type TmdbTrendingResponse = {
   results: TmdbTrendingItem[]
 }
 
+type TmdbSearchResult = {
+  id: number
+  media_type: 'movie' | 'tv' | 'person'
+  title?: string
+  name?: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  release_date?: string
+  first_air_date?: string
+}
+
+type TmdbSearchResponse = {
+  results: TmdbSearchResult[]
+}
+
 export type MediaSummary = {
   id: number
   type: 'movie' | 'tv'
@@ -79,6 +95,40 @@ export async function getTrending(): Promise<MediaSummary[]> {
   return data.results
     .filter((item): item is TmdbTrendingItem & { media_type: 'movie' | 'tv' } => item.media_type === 'movie' || item.media_type === 'tv')
     .slice(0, 12)
+    .map((item) => {
+      const type = item.media_type
+      const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
+      const name = type === 'movie' ? item.title ?? '' : item.name ?? ''
+
+      return {
+        id: item.id,
+        type,
+        name,
+        overview: item.overview,
+        posterUrl: buildImage(item.poster_path, POSTER_SIZE),
+        backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
+        releaseYear: releaseDate ? new Date(releaseDate).getFullYear().toString() : undefined,
+        href: type === 'movie' ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+      }
+    })
+}
+
+export async function searchTitles(query: string): Promise<MediaSummary[]> {
+  if (!query.trim()) {
+    return []
+  }
+
+  const data = await tmdbFetch<TmdbSearchResponse>(
+    '/search/multi',
+    { language: 'en-US', query: query.trim(), include_adult: 'false' },
+    300
+  )
+
+  return data.results
+    .filter((item): item is TmdbSearchResult & { media_type: 'movie' | 'tv' } => {
+      return (item.media_type === 'movie' || item.media_type === 'tv') && (item.title || item.name)
+    })
+    .slice(0, 20)
     .map((item) => {
       const type = item.media_type
       const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
