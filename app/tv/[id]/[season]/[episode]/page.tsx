@@ -1,7 +1,17 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Player } from '@/components/player'
+import { EpisodeNavigator } from '@/components/episode-navigator'
 import { Badge } from '@/components/ui/badge'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatRuntime, getTvEpisodeDetails } from '@/lib/tmdb'
 
@@ -28,6 +38,28 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
 
   return (
     <article className='flex flex-col gap-8'>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href='/'>Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href={`/tv/${details.showId}/1/1`}>{details.showName}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>
+              Season {details.episode.season}, Episode {details.episode.number}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className='grid gap-8 lg:grid-cols-[minmax(0,320px)_1fr]'>
         <Card className='overflow-hidden border-border/60 shadow-sm'>
           <CardContent className='p-0'>
@@ -64,6 +96,17 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
               <p className='text-sm text-muted-foreground'>{details.genres.join(' • ')}</p>
             ) : null}
           </div>
+
+          {details.seasons.length ? (
+            <EpisodeNavigator
+              showId={details.showId}
+              seasons={details.seasons}
+              seasonEpisodes={details.seasonEpisodes}
+              currentSeason={details.episode.season}
+              currentEpisode={details.episode.number}
+              className='max-w-xl'
+            />
+          ) : null}
 
           <div className='space-y-3 rounded-lg border border-border/60 bg-muted/10 p-4'>
             <h2 className='text-lg font-medium'>{details.episode.name}</h2>

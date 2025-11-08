@@ -1,7 +1,16 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Player } from '@/components/player'
 import { Badge } from '@/components/ui/badge'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatRuntime, getMovieDetails } from '@/lib/tmdb'
 
@@ -24,6 +33,20 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
   return (
     <article className='flex flex-col gap-8'>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href='/'>Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{movie.title}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className='grid gap-8 lg:grid-cols-[minmax(0,320px)_1fr]'>
         <Card className='overflow-hidden border-border/60 shadow-sm'>
           <CardContent className='p-0'>

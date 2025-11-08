@@ -196,6 +196,12 @@ type TmdbTvResponse = {
   poster_path: string | null
   backdrop_path: string | null
   genres: { id: number; name: string }[]
+  seasons: {
+    id: number
+    name: string
+    season_number: number
+    episode_count: number | null
+  }[]
 }
 
 type TmdbEpisodeResponse = {
@@ -207,6 +213,14 @@ type TmdbEpisodeResponse = {
   runtime: number | null
 }
 
+type TmdbSeasonResponse = {
+  episodes: {
+    id: number
+    name: string
+    episode_number: number
+  }[]
+}
+
 export type TvEpisodeDetails = {
   showId: number
   showName: string
@@ -214,6 +228,15 @@ export type TvEpisodeDetails = {
   posterUrl: string | null
   backdropUrl: string | null
   genres: string[]
+  seasons: {
+    number: number
+    name: string
+    episodeCount: number
+  }[]
+  seasonEpisodes: {
+    number: number
+    name: string
+  }[]
   episode: {
     id: number
     name: string
@@ -227,8 +250,9 @@ export type TvEpisodeDetails = {
 }
 
 export async function getTvEpisodeDetails(id: string, season: string, episode: string): Promise<TvEpisodeDetails> {
-  const [show, episodeDetails] = await Promise.all([
+  const [show, seasonDetails, episodeDetails] = await Promise.all([
     tmdbFetch<TmdbTvResponse>(`/tv/${id}`, { language: 'en-US' }, 12 * 3600),
+    tmdbFetch<TmdbSeasonResponse>(`/tv/${id}/season/${season}`, { language: 'en-US' }, 6 * 3600),
     tmdbFetch<TmdbEpisodeResponse>(`/tv/${id}/season/${season}/episode/${episode}`, { language: 'en-US' }, 6 * 3600),
   ])
 
@@ -239,6 +263,17 @@ export async function getTvEpisodeDetails(id: string, season: string, episode: s
     posterUrl: buildImage(show.poster_path, POSTER_SIZE),
     backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
     genres: show.genres.map((genre) => genre.name),
+    seasons: (show.seasons ?? [])
+      .filter((seasonInfo) => seasonInfo.season_number > 0)
+      .map((seasonInfo) => ({
+        number: seasonInfo.season_number,
+        name: seasonInfo.name || `Season ${seasonInfo.season_number}`,
+        episodeCount: seasonInfo.episode_count ?? 0,
+      })),
+    seasonEpisodes: seasonDetails.episodes.map((episodeInfo) => ({
+      number: episodeInfo.episode_number,
+      name: episodeInfo.name || `Episode ${episodeInfo.episode_number}`,
+    })),
     episode: {
       id: episodeDetails.id,
       name: episodeDetails.name,
