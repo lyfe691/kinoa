@@ -89,7 +89,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
   const currentSeasonEpisodes = details.allEpisodes[details.episode.season] || []
 
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex flex-col gap-8'>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -118,10 +118,22 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         <MediaHeader
           badgeLabel='Series'
           title={details.showName}
-          metadata={[`S${details.episode.season}:E${details.episode.number}`, runtime]}
+          metadata={[`S${details.episode.season}:E${details.episode.number}`, runtime, airDate]}
           genres={details.genres}
           rating={details.rating}
           voteCount={details.voteCount}
+        />
+
+        <MediaOverview>
+          {details.episode.overview || details.overview}
+        </MediaOverview>
+
+        <Player
+          kind='tv'
+          tmdbId={details.showId}
+          season={details.episode.season}
+          episode={details.episode.number}
+          title={`${details.showName} - ${details.episode.name}`}
         />
 
         {details.seasons.length > 0 && (
@@ -133,18 +145,6 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             currentEpisode={details.episode.number}
           />
         )}
-
-        <MediaOverview subtitle={airDate ? `Aired ${airDate}` : undefined}>
-          {details.episode.overview || details.overview}
-        </MediaOverview>
-
-        <Player
-          kind='tv'
-          tmdbId={details.showId}
-          season={details.episode.season}
-          episode={details.episode.number}
-          title={`${details.showName} - ${details.episode.name}`}
-        />
       </MediaDetailLayout>
     </div>
   )
