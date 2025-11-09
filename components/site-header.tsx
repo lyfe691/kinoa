@@ -11,9 +11,11 @@ export function SiteHeader() {
         >
           kinoa
         </Link>
-        <div className='ml-auto hidden items-center gap-3 text-xs uppercase tracking-[0.24em] text-muted-foreground sm:flex'>
-          <span>Beta access</span>
-        </div>
+        <nav className='flex flex-1 items-center gap-6 text-sm text-muted-foreground'>
+          <Link href='/search' className='transition hover:text-foreground'>
+            Search
+          </Link>
+        </nav>
         <ModeToggle />
       </div>
     </header>

@@ -1,49 +1,78 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MediaSummary } from '@/lib/tmdb'
 import { cn } from '@/lib/utils'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+
+import type { MediaSummary } from '@/lib/tmdb'
 
 type MediaCardProps = {
   media: MediaSummary
   className?: string
+  priority?: boolean
 }
 
-export function MediaCard({ media, className }: MediaCardProps) {
+export function MediaCard({ media, className, priority = false }: MediaCardProps) {
+  const { href, name, posterUrl, type, releaseYear } = media
+
   return (
     <Link
-      href={media.href}
+      href={href}
+      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ''}`}
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm transition hover:border-border hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring/60 focus:ring-offset-2',
+        'group relative block overflow-hidden rounded-lg transition-all duration-500 ease-out',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 focus-visible:ring-offset-4',
+        'hover:scale-[1.02]',
         className
       )}
     >
-      <div className='relative aspect-[2/3] w-full'>
-        {media.posterUrl ? (
+      <AspectRatio ratio={2 / 3} className="bg-muted/30">
+        {posterUrl ? (
           <Image
-            src={media.posterUrl}
-            alt={media.name}
+            src={posterUrl}
+            alt=""
             fill
-            sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw'
-            className='object-cover transition duration-500 group-hover:scale-105'
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-75"
+            priority={priority}
           />
         ) : (
-          <div className='flex h-full items-center justify-center bg-muted text-sm text-muted-foreground'>
-            Artwork unavailable
+          <div className="flex h-full w-full items-center justify-center">
+            <svg
+              className="h-16 w-16 text-muted-foreground/20"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+              />
+            </svg>
           </div>
         )}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-90 transition group-hover:opacity-100' />
-        <div className='absolute inset-x-4 bottom-4 flex flex-col gap-2 text-left text-white'>
-          <div className='flex items-center gap-2 text-xs uppercase tracking-wide text-white/70'>
-            <span>{media.type === 'movie' ? 'Movie' : 'Series'}</span>
-            {media.releaseYear ? <span className='rounded-full bg-white/10 px-2 py-0.5 text-[11px]'>{media.releaseYear}</span> : null}
+      </AspectRatio>
+
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4 pt-20 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+        <div className="space-y-1.5">
+          <div className="flex items-baseline gap-2 text-white/60">
+            <span className="text-[10px] font-medium uppercase tracking-widest">
+              {type}
+            </span>
+            {releaseYear && (
+              <>
+                <span className="text-[8px]">•</span>
+                <span className="text-xs tabular-nums">{releaseYear}</span>
+              </>
+            )}
           </div>
-          <h3 className='text-lg font-semibold leading-tight line-clamp-2'>{media.name}</h3>
-          {media.overview ? (
-            <p className='line-clamp-3 text-xs text-white/70'>{media.overview}</p>
-          ) : null}
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-white">
+            {name}
+          </h3>
         </div>
       </div>
     </Link>
   )
 }
-
