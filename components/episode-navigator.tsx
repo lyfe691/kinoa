@@ -58,7 +58,7 @@ export function EpisodeNavigator({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Season selector */}
-      <div className='flex items-center gap-2'>
+      <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
         <span className='text-sm font-medium'>Season</span>
         <Select
           value={String(currentSeason)}
@@ -67,7 +67,7 @@ export function EpisodeNavigator({
             router.push(`/tv/${showId}/${value}/1`)
           }}
         >
-          <SelectTrigger className='h-9 w-[140px]' aria-label='Select season'>
+          <SelectTrigger className='h-9 min-w-[120px] sm:w-[140px]' aria-label='Select season'>
             <SelectValue placeholder='Season' />
           </SelectTrigger>
           <SelectContent>
@@ -95,15 +95,15 @@ export function EpisodeNavigator({
                 href={`/tv/${showId}/${currentSeason}/${episode.number}`}
                 scroll={false}
                 aria-current={isActive ? 'true' : undefined}
-                className='flex w-full items-center gap-2'
+                className='flex w-full items-start gap-2 sm:items-center'
               >
                 <Play
                   className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary-foreground' : 'opacity-70')}
                   aria-hidden='true'
                 />
                 <span className='shrink-0 text-xs font-semibold'>Eps {episode.number}:</span>
-                <span className='min-w-0 flex-1 truncate text-sm'>{episode.name}</span>
-                {isActive && <Check className='h-4 w-4 shrink-0' aria-hidden='true' />}
+                <span className='min-w-0 flex-1 text-sm leading-tight line-clamp-2'>{episode.name}</span>
+                {isActive && <Check className='h-4 w-4 shrink-0 self-start sm:self-center' aria-hidden='true' />}
               </Link>
             </Button>
           )
@@ -112,7 +112,7 @@ export function EpisodeNavigator({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className='flex items-center justify-between gap-2'>
+        <div className='flex flex-wrap items-center justify-between gap-2 sm:gap-3'>
           <Button
             variant='outline'
             size='sm'
