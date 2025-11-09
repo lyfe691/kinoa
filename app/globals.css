@@ -119,4 +119,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  ::selection {
+    @apply bg-accent text-accent-foreground;
+  }
 }
