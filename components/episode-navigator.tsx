@@ -58,7 +58,7 @@ export function EpisodeNavigator({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Season selector */}
-      <div className='flex items-center gap-2'>
+      <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
         <span className='text-sm font-medium'>Season</span>
         <Select
           value={String(currentSeason)}
@@ -67,7 +67,7 @@ export function EpisodeNavigator({
             router.push(`/tv/${showId}/${value}/1`)
           }}
         >
-          <SelectTrigger className='h-9 w-[140px]' aria-label='Select season'>
+          <SelectTrigger className='h-9 min-w-[120px] sm:w-[140px]' aria-label='Select season'>
             <SelectValue placeholder='Season' />
           </SelectTrigger>
           <SelectContent>
@@ -88,22 +88,22 @@ export function EpisodeNavigator({
             <Button
               key={episode.number}
               variant={isActive ? 'default' : 'outline'}
-              className='h-auto justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2'
+              className='h-auto w-full justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2'
               asChild
             >
               <Link
                 href={`/tv/${showId}/${currentSeason}/${episode.number}`}
                 scroll={false}
                 aria-current={isActive ? 'true' : undefined}
-                className='flex w-full items-center gap-2'
+                className='flex w-full min-w-0 items-start gap-2 sm:items-center'
               >
                 <Play
                   className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary-foreground' : 'opacity-70')}
                   aria-hidden='true'
                 />
-                <span className='shrink-0 text-xs font-semibold'>Eps {episode.number}:</span>
-                <span className='min-w-0 flex-1 truncate text-sm'>{episode.name}</span>
-                {isActive && <Check className='h-4 w-4 shrink-0' aria-hidden='true' />}
+                <span className='shrink-0 text-xs font-semibold whitespace-nowrap'>Eps {episode.number}:</span>
+                <span className='min-w-0 flex-1 truncate text-sm leading-tight'>{episode.name}</span>
+                {isActive && <Check className='h-4 w-4 shrink-0 self-start sm:self-center' aria-hidden='true' />}
               </Link>
             </Button>
           )
@@ -112,7 +112,7 @@ export function EpisodeNavigator({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className='flex items-center justify-between gap-2'>
+        <div className='flex flex-wrap items-center justify-between gap-2 sm:gap-3'>
           <Button
             variant='outline'
             size='sm'
@@ -122,7 +122,7 @@ export function EpisodeNavigator({
             <ChevronLeft className='h-4 w-4' />
             Previous
           </Button>
-          <span className='text-sm text-muted-foreground'>
+          <span className='flex-1 text-center text-sm text-muted-foreground sm:flex-none sm:text-left'>
             Episodes {startIdx + 1}-{Math.min(endIdx, seasonEpisodes.length)} of {seasonEpisodes.length}
           </span>
           <Button
