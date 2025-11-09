@@ -112,7 +112,7 @@ export async function getTrending(): Promise<MediaSummary[]> {
     CACHE_REVALIDATE.medium
   )
 
-  return data.results
+  const summaries = data.results
     .filter(
       (item): item is TmdbTrendingItem & { media_type: 'movie' | 'tv' } =>
         item.media_type === 'movie' || item.media_type === 'tv'
@@ -136,6 +136,8 @@ export async function getTrending(): Promise<MediaSummary[]> {
         voteCount: item.vote_count,
       }
     })
+
+  return enrichMediaSummaries(summaries)
 }
 
 // Lists
@@ -212,7 +214,7 @@ export async function getLatestMovies(): Promise<MediaSummary[]> {
     },
     CACHE_REVALIDATE.medium
   )
-  return mapMovieList(data.results)
+  return enrichMediaSummaries(mapMovieList(data.results))
 }
 
 export async function getLatestTvShows(): Promise<MediaSummary[]> {
@@ -223,7 +225,7 @@ export async function getLatestTvShows(): Promise<MediaSummary[]> {
     },
     CACHE_REVALIDATE.medium
   )
-  return mapTvList(data.results)
+  return enrichMediaSummaries(mapTvList(data.results))
 }
 
 export async function getTopRatedMovies(): Promise<MediaSummary[]> {
@@ -234,7 +236,7 @@ export async function getTopRatedMovies(): Promise<MediaSummary[]> {
     },
     CACHE_REVALIDATE.day
   )
-  return mapMovieList(data.results)
+  return enrichMediaSummaries(mapMovieList(data.results))
 }
 
 export async function searchTitles(query: string): Promise<MediaSummary[]> {
@@ -248,7 +250,7 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
     CACHE_REVALIDATE.short
   )
 
-  return data.results
+  const summaries = data.results
     .filter((item): item is TmdbSearchResult & { media_type: 'movie' | 'tv' } => {
       return (item.media_type === 'movie' || item.media_type === 'tv') && !!(item.title ?? item.name)
     })
@@ -271,6 +273,8 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
         voteCount: item.vote_count,
       }
     })
+
+  return enrichMediaSummaries(summaries)
 }
 
 type TmdbMovieResponse = {
@@ -428,6 +432,69 @@ export async function getTvEpisodeDetails(id: string, season: string, episode: s
       number: Number(episode),
     },
   }
+}
+
+async function enrichMediaSummaries(items: MediaSummary[]): Promise<MediaSummary[]> {
+  const enriched = await Promise.all(
+    items.map(async (item) => {
+      if (item.type === 'movie') {
+        if (item.runtime && item.runtime > 0) {
+          return item
+        }
+
+        try {
+          const details = await tmdbFetch<TmdbMovieResponse>(
+            `/movie/${item.id}`,
+            { language: 'en-US' },
+            CACHE_REVALIDATE.long
+          )
+
+          const runtime = details.runtime && details.runtime > 0 ? details.runtime : undefined
+
+          return {
+            ...item,
+            runtime: runtime ?? item.runtime,
+          }
+        } catch {
+          return item
+        }
+      }
+
+      const hasSeasonInfo = item.seasonCount && item.seasonCount > 0
+      const hasEpisodeInfo = item.episodeCount && item.episodeCount > 0
+
+      if (hasSeasonInfo && hasEpisodeInfo) {
+        return item
+      }
+
+      try {
+        const details = await tmdbFetch<TmdbTvResponse>(
+          `/tv/${item.id}`,
+          { language: 'en-US' },
+          CACHE_REVALIDATE.day
+        )
+
+        const seasonCount =
+          details.number_of_seasons && details.number_of_seasons > 0
+            ? details.number_of_seasons
+            : item.seasonCount
+        const episodeCount =
+          details.number_of_episodes && details.number_of_episodes > 0
+            ? details.number_of_episodes
+            : item.episodeCount
+
+        return {
+          ...item,
+          seasonCount,
+          episodeCount,
+        }
+      } catch {
+        return item
+      }
+    })
+  )
+
+  return enriched
 }
 
 export function formatRuntime(runtime?: number | null) {
