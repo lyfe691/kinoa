@@ -38,7 +38,7 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
       className={cn('group block space-y-3', className)}
       aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ''}`}
     >
-      <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-muted">
+      <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">
         {posterUrl ? (
           <>
             <Image
@@ -87,12 +87,12 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
       </div>
 
       <div className="space-y-1">
-        <h3 className="line-clamp-2 text-sm font-medium leading-tight">
+        <h3 className="line-clamp-1 text-sm font-medium leading-tight">
           {name}
         </h3>
         
         {metadata.length > 0 && (
-          <p className="text-xs text-muted-foreground">
+          <p className="truncate text-xs text-muted-foreground">
             {metadata.join(' · ')}
           </p>
         )}
