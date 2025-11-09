@@ -19,12 +19,11 @@ export const metadata: Metadata = {
 }
 
 type SearchPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
+  searchParams: Record<string, string | string[] | undefined>
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams
-  const q = params.q
+export default function SearchPage({ searchParams }: SearchPageProps) {
+  const q = searchParams.q
   const query = typeof q === 'string' ? q.trim() : ''
   // Results are streamed via a server component to avoid fetching in the page shell
 
