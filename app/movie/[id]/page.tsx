@@ -1,9 +1,7 @@
-import Image from 'next/image'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Star } from 'lucide-react'
 import { Player } from '@/components/player'
-import { Badge } from '@/components/ui/badge'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,11 +11,61 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { formatRuntime, getMovieDetails } from '@/lib/tmdb'
+import {
+  MediaDetailLayout,
+  MediaHeader,
+  MediaOverview,
+  MediaPoster,
+} from '@/components/media-detail'
+
+const truncate = (value: string, max = 160) =>
+  value.length > max ? `${value.slice(0, max - 1)}…` : value
 
 type MoviePageProps = {
   params: Promise<{
     id: string
   }>
+}
+
+export async function generateMetadata({ params }: MoviePageProps): Promise<Metadata> {
+  const { id } = await params
+  const movie = await getMovieDetails(id).catch(() => null)
+
+  if (!movie) {
+    return {
+      title: 'Movie unavailable • Kinoa',
+      description: 'We could not load this movie right now.',
+    }
+  }
+
+  const description = movie.overview ? truncate(movie.overview) : 'Stream this title on Kinoa.'
+
+  return {
+    title: `${movie.title} • Kinoa`,
+    description,
+    openGraph: {
+      title: `${movie.title} • Kinoa`,
+      description,
+      type: 'video.movie',
+      siteName: 'Kinoa',
+      images: movie.posterUrl
+        ? [
+            {
+              url: movie.posterUrl,
+              width: 500,
+              height: 750,
+              alt: movie.title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${movie.title} • Kinoa`,
+      description,
+      images: movie.posterUrl ? [movie.posterUrl] : undefined,
+    },
+  }
 }
 
 export default async function MoviePage({ params }: MoviePageProps) {
@@ -28,7 +76,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
     notFound()
   }
 
-  const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : undefined
+  const releaseYear = movie.releaseDate ? new Date(movie.releaseDate).getFullYear().toString() : undefined
   const runtime = formatRuntime(movie.runtime)
 
   return (
@@ -47,80 +95,22 @@ export default async function MoviePage({ params }: MoviePageProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* Content layout */}
-      <div className='grid gap-8 lg:grid-cols-[280px_1fr]'>
-        {/* Poster */}
-        <div className='flex justify-center lg:justify-start self-start'>
-          <div className='w-full max-w-[280px] overflow-hidden rounded-lg border border-border/40 bg-muted shadow-lg'>
-            <div className='relative aspect-[2/3]'>
-              {movie.posterUrl ? (
-                <Image
-                  src={movie.posterUrl}
-                  alt={movie.title}
-                  fill
-                  className='object-cover'
-                  sizes='280px'
-                />
-              ) : (
-                <div className='flex h-full items-center justify-center'>
-                  <svg className='h-20 w-20 text-muted-foreground/20' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z' />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      <MediaDetailLayout
+        poster={<MediaPoster src={movie.posterUrl} title={movie.title} priority />}
+      >
+        <MediaHeader
+          badgeLabel='Movie'
+          title={movie.title}
+          metadata={[releaseYear, runtime]}
+          genres={movie.genres}
+          rating={movie.rating}
+          voteCount={movie.voteCount}
+        />
 
-        {/* Info column */}
-        <div className='flex flex-col gap-6'>
-          {/* Title & metadata */}
-          <div className='space-y-3'>
-            <div className='flex flex-wrap items-center gap-2 text-sm'>
-              <Badge variant='secondary' className='uppercase text-xs font-semibold'>
-                Movie
-              </Badge>
-              {releaseYear && <span className='text-muted-foreground'>{releaseYear}</span>}
-              {runtime && <span className='text-muted-foreground'>{runtime}</span>}
-            </div>
-            <h1 className='text-4xl font-bold leading-tight'>{movie.title}</h1>
-            {movie.genres.length > 0 && (
-              <div className='flex flex-wrap gap-1.5'>
-                {movie.genres.map((genre) => (
-                  <span key={genre} className='rounded bg-muted px-2 py-1 text-xs text-muted-foreground'>
-                    {genre}
-                  </span>
-                ))}
-              </div>
-            )}
-            {movie.rating && (
-              <div className='flex items-center gap-2'>
-                <div className='flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5'>
-                  <Star className='h-4 w-4 fill-yellow-500 text-yellow-500' />
-                  <span className='font-semibold'>{movie.rating.toFixed(1)}</span>
-                  <span className='text-xs text-muted-foreground'>/10</span>
-                </div>
-                {movie.voteCount && (
-                  <span className='text-sm text-muted-foreground'>
-                    {movie.voteCount.toLocaleString()} votes
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
+        <MediaOverview>{movie.overview}</MediaOverview>
 
-          {/* Overview */}
-          {movie.overview && (
-            <div className='space-y-2'>
-              <h2 className='text-lg font-semibold'>Overview</h2>
-              <p className='leading-relaxed text-muted-foreground'>{movie.overview}</p>
-            </div>
-          )}
-
-          {/* Player */}
-          <Player kind='movie' imdbId={movie.imdbId} title={movie.title} />
-        </div>
-      </div>
+        <Player kind='movie' imdbId={movie.imdbId} title={movie.title} />
+      </MediaDetailLayout>
     </div>
   )
 }

@@ -1,5 +1,8 @@
 import { cn } from '@/lib/utils'
 
+const PLAYER_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups'
+const PLAYER_ALLOW = 'accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen'
+
 type MoviePlayerProps = {
   kind: 'movie'
   imdbId?: string | null
@@ -38,7 +41,9 @@ export function Player(props: PlayerProps) {
           className='absolute inset-0 h-full w-full rounded-lg border-0'
           frameBorder='0'
           allowFullScreen
-          allow='encrypted-media'
+          allow={PLAYER_ALLOW}
+          sandbox={PLAYER_SANDBOX}
+          referrerPolicy='no-referrer'
         />
       </div>
     )
@@ -54,7 +59,9 @@ export function Player(props: PlayerProps) {
         className='absolute inset-0 h-full w-full rounded-lg border-0'
         frameBorder='0'
         allowFullScreen
-        allow='encrypted-media'
+        allow={PLAYER_ALLOW}
+        sandbox={PLAYER_SANDBOX}
+        referrerPolicy='no-referrer'
       />
     </div>
   )

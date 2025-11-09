@@ -1,30 +1,24 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { ErrorState } from '@/components/error-state'
 
-type ErrorProps = {
+type EpisodeErrorProps = {
   error: Error & { digest?: string }
   reset: () => void
 }
 
-export default function EpisodeError({ error, reset }: ErrorProps) {
+export default function EpisodeError({ error, reset }: EpisodeErrorProps) {
   useEffect(() => {
     console.error(error)
   }, [error])
 
   return (
-    <div className='flex flex-col items-start gap-4 rounded-lg border border-border/60 bg-background/80 p-6'>
-      <div>
-        <h2 className='text-lg font-semibold'>We couldn&apos;t load this episode.</h2>
-        <p className='text-sm text-muted-foreground'>
-          Check your connection and try again.
-        </p>
-      </div>
-      <Button variant='outline' onClick={reset}>
-        Try again
-      </Button>
-    </div>
+    <ErrorState
+      title='Episode unavailable'
+      message='We ran into an issue loading this episode. Try again or return to the homepage.'
+      reset={reset}
+    />
   )
 }
 

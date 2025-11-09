@@ -61,9 +61,9 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
             {posterUrl ? (
               <Image
                 src={posterUrl}
-                alt=""
+                alt={name}
                 fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 180px"
                 className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]"
                 priority={priority}
               />
@@ -89,9 +89,13 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
 
           {/* Rating Badge */}
           {formattedRating && (
-            <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              {formattedRating}
+            <div
+              className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm"
+              aria-label={`Rated ${formattedRating} out of 10`}
+            >
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" aria-hidden="true" />
+              <span aria-hidden="true">{formattedRating}</span>
+              <span className="sr-only">{`Rated ${formattedRating} out of 10`}</span>
             </div>
           )}
         </div>

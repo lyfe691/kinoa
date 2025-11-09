@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Check, ChevronLeft, ChevronRight, Play } from 'lucide-react'
@@ -46,6 +46,10 @@ export function EpisodeNavigator({
     return Math.floor((currentEpisode - 1) / EPISODES_PER_PAGE)
   })
 
+  useEffect(() => {
+    setPage(Math.floor((currentEpisode - 1) / EPISODES_PER_PAGE))
+  }, [currentEpisode])
+
   const totalPages = Math.ceil(seasonEpisodes.length / EPISODES_PER_PAGE)
   const startIdx = page * EPISODES_PER_PAGE
   const endIdx = startIdx + EPISODES_PER_PAGE
@@ -63,7 +67,7 @@ export function EpisodeNavigator({
             router.push(`/tv/${showId}/${value}/1`)
           }}
         >
-          <SelectTrigger className='h-9 w-[140px]'>
+          <SelectTrigger className='h-9 w-[140px]' aria-label='Select season'>
             <SelectValue placeholder='Season' />
           </SelectTrigger>
           <SelectContent>
@@ -84,14 +88,22 @@ export function EpisodeNavigator({
             <Button
               key={episode.number}
               variant={isActive ? 'default' : 'outline'}
-              className='h-auto justify-start gap-2 px-3 py-2 text-left'
+              className='h-auto justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2'
               asChild
             >
-              <Link href={`/tv/${showId}/${currentSeason}/${episode.number}`} scroll={false}>
-                <Play className='h-4 w-4 shrink-0 opacity-70' />
+              <Link
+                href={`/tv/${showId}/${currentSeason}/${episode.number}`}
+                scroll={false}
+                aria-current={isActive ? 'true' : undefined}
+                className='flex w-full items-center gap-2'
+              >
+                <Play
+                  className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary-foreground' : 'opacity-70')}
+                  aria-hidden='true'
+                />
                 <span className='shrink-0 text-xs font-semibold'>Eps {episode.number}:</span>
                 <span className='min-w-0 flex-1 truncate text-sm'>{episode.name}</span>
-                {isActive && <Check className='h-4 w-4 shrink-0' />}
+                {isActive && <Check className='h-4 w-4 shrink-0' aria-hidden='true' />}
               </Link>
             </Button>
           )

@@ -1,10 +1,12 @@
+import Link from 'next/link'
 import { MediaCard } from '@/components/media-card'
+import { Button } from '@/components/ui/button'
 import { searchTitles } from '@/lib/tmdb'
 
 export default async function SearchResults({ query }: { query: string }) {
   if (!query) {
     return (
-      <div className='rounded-lg border border-dashed border-border/60 p-6 text-sm text-muted-foreground'>
+      <div className='rounded-lg border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground'>
         Start typing a title to explore what’s available.
       </div>
     )
@@ -14,8 +16,11 @@ export default async function SearchResults({ query }: { query: string }) {
 
   if (!results.length) {
     return (
-      <div className='rounded-lg border border-dashed border-border/60 p-6 text-sm text-muted-foreground'>
-        Nothing matched “{query}”. Try a different title or keyword.
+      <div className='rounded-lg border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground'>
+        <p className='mb-4'>No matches for “{query}”. Try a different title or keyword.</p>
+        <Button asChild variant='secondary'>
+          <Link href='/'>Browse spotlight picks</Link>
+        </Button>
       </div>
     )
   }
@@ -23,7 +28,8 @@ export default async function SearchResults({ query }: { query: string }) {
   return (
     <div className='space-y-4'>
       <p className='text-sm text-muted-foreground'>
-        Showing {results.length} result{results.length === 1 ? '' : 's'} for “{query}”.
+        Showing <span className='font-medium text-foreground'>{results.length}</span> result
+        {results.length === 1 ? '' : 's'} for “{query}”.
       </p>
       <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
         {results.map((item, index) => (
