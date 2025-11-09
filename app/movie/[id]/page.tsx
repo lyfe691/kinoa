@@ -11,7 +11,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Card, CardContent } from '@/components/ui/card'
 import { formatRuntime, getMovieDetails } from '@/lib/tmdb'
 
 type MoviePageProps = {
@@ -32,7 +31,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
   const runtime = formatRuntime(movie.runtime)
 
   return (
-    <article className='flex flex-col gap-8'>
+    <div className='flex flex-col gap-6'>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -47,47 +46,67 @@ export default async function MoviePage({ params }: MoviePageProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className='grid gap-8 lg:grid-cols-[minmax(0,320px)_1fr]'>
-        <Card className='overflow-hidden border-border/60 shadow-sm'>
-          <CardContent className='p-0'>
-            {movie.posterUrl ? (
-              <Image
-                src={movie.posterUrl}
-                alt={movie.title}
-                width={600}
-                height={900}
-                className='h-full w-full object-cover'
-                priority
-              />
-            ) : (
-              <div className='flex h-full min-h-[480px] items-center justify-center text-sm text-muted-foreground'>
-                Poster unavailable
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {/* Content layout */}
+      <div className='grid gap-8 lg:grid-cols-[280px_1fr]'>
+        {/* Poster */}
+        <div className='flex justify-center lg:justify-start lg:sticky lg:top-6 lg:self-start'>
+          <div className='w-full max-w-[280px] overflow-hidden rounded-lg border border-border/40 bg-muted shadow-lg'>
+            <div className='relative aspect-[2/3]'>
+              {movie.posterUrl ? (
+                <Image
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  fill
+                  className='object-cover'
+                  sizes='280px'
+                />
+              ) : (
+                <div className='flex h-full items-center justify-center'>
+                  <svg className='h-20 w-20 text-muted-foreground/20' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z' />
+                  </svg>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
+        {/* Info column */}
         <div className='flex flex-col gap-6'>
+          {/* Title & metadata */}
           <div className='space-y-3'>
-            <div className='flex items-center gap-3'>
-              <Badge variant='outline' className='uppercase tracking-wide'>
+            <div className='flex flex-wrap items-center gap-2 text-sm'>
+              <Badge variant='secondary' className='uppercase text-xs font-semibold'>
                 Movie
               </Badge>
-              {releaseYear ? <span className='text-sm text-muted-foreground'>{releaseYear}</span> : null}
-              {runtime ? <span className='text-sm text-muted-foreground'>{runtime}</span> : null}
+              {releaseYear && <span className='text-muted-foreground'>{releaseYear}</span>}
+              {runtime && <span className='text-muted-foreground'>{runtime}</span>}
             </div>
-            <h1 className='text-3xl font-semibold leading-tight tracking-tight'>{movie.title}</h1>
-            {movie.genres.length ? (
-              <p className='text-sm text-muted-foreground'>{movie.genres.join(' • ')}</p>
-            ) : null}
+            <h1 className='text-4xl font-bold leading-tight'>{movie.title}</h1>
+            {movie.genres.length > 0 && (
+              <div className='flex flex-wrap gap-1.5'>
+                {movie.genres.map((genre) => (
+                  <span key={genre} className='rounded bg-muted px-2 py-1 text-xs text-muted-foreground'>
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
-          <p className='text-base leading-relaxed text-muted-foreground'>{movie.overview}</p>
+          {/* Overview */}
+          {movie.overview && (
+            <div className='space-y-2'>
+              <h2 className='text-lg font-semibold'>Overview</h2>
+              <p className='leading-relaxed text-muted-foreground'>{movie.overview}</p>
+            </div>
+          )}
 
-          <Player kind='movie' imdbId={movie.imdbId} title={movie.title} className='mt-auto' />
+          {/* Player */}
+          <Player kind='movie' imdbId={movie.imdbId} title={movie.title} />
         </div>
       </div>
-    </article>
+    </div>
   )
 }
 
