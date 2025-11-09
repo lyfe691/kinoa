@@ -50,7 +50,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
       {/* Content layout */}
       <div className='grid gap-8 lg:grid-cols-[280px_1fr]'>
         {/* Poster */}
-        <div className='flex justify-center lg:justify-start lg:sticky lg:top-6 lg:self-start'>
+        <div className='flex justify-center lg:justify-start self-start'>
           <div className='w-full max-w-[280px] overflow-hidden rounded-lg border border-border/40 bg-muted shadow-lg'>
             <div className='relative aspect-[2/3]'>
               {movie.posterUrl ? (

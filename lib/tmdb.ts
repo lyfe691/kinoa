@@ -440,10 +440,7 @@ export type TvEpisodeDetails = {
     name: string
     episodeCount: number
   }[]
-  seasonEpisodes: {
-    number: number
-    name: string
-  }[]
+  allEpisodes: Record<number, { number: number; name: string }[]>
   episode: {
     id: number
     name: string
@@ -458,10 +455,25 @@ export type TvEpisodeDetails = {
 
 export async function getTvEpisodeDetails(id: string, season: string, episode: string): Promise<TvEpisodeDetails> {
   const [show, seasonDetails, episodeDetails] = await Promise.all([
-    tmdbFetch<TmdbTvResponse>(`/tv/${id}`, { language: 'en-US' }, 12 * 3600),
-    tmdbFetch<TmdbSeasonResponse>(`/tv/${id}/season/${season}`, { language: 'en-US' }, 6 * 3600),
-    tmdbFetch<TmdbEpisodeResponse>(`/tv/${id}/season/${season}/episode/${episode}`, { language: 'en-US' }, 6 * 3600),
+    tmdbFetch<TmdbTvResponse>(`/tv/${id}`, { language: 'en-US' }, 24 * 3600),
+    tmdbFetch<TmdbSeasonResponse>(`/tv/${id}/season/${season}`, { language: 'en-US' }, 24 * 3600),
+    tmdbFetch<TmdbEpisodeResponse>(`/tv/${id}/season/${season}/episode/${episode}`, { language: 'en-US' }, 12 * 3600),
   ])
+
+  const seasons = (show.seasons ?? [])
+    .filter((seasonInfo) => seasonInfo.season_number > 0)
+    .map((seasonInfo) => ({
+      number: seasonInfo.season_number,
+      name: seasonInfo.name || `Season ${seasonInfo.season_number}`,
+      episodeCount: seasonInfo.episode_count ?? 0,
+    }))
+
+  const allEpisodes: Record<number, { number: number; name: string }[]> = {
+    [Number(season)]: seasonDetails.episodes.map((ep) => ({
+      number: ep.episode_number,
+      name: ep.name || `Episode ${ep.episode_number}`,
+    })),
+  }
 
   return {
     showId: show.id,
@@ -472,17 +484,8 @@ export async function getTvEpisodeDetails(id: string, season: string, episode: s
     genres: show.genres.map((genre) => genre.name),
     rating: show.vote_average,
     voteCount: show.vote_count,
-    seasons: (show.seasons ?? [])
-      .filter((seasonInfo) => seasonInfo.season_number > 0)
-      .map((seasonInfo) => ({
-        number: seasonInfo.season_number,
-        name: seasonInfo.name || `Season ${seasonInfo.season_number}`,
-        episodeCount: seasonInfo.episode_count ?? 0,
-      })),
-    seasonEpisodes: seasonDetails.episodes.map((episodeInfo) => ({
-      number: episodeInfo.episode_number,
-      name: episodeInfo.name || `Episode ${episodeInfo.episode_number}`,
-    })),
+    seasons,
+    allEpisodes,
     episode: {
       id: episodeDetails.id,
       name: episodeDetails.name,

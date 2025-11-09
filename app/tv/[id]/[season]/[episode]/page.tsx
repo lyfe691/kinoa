@@ -36,6 +36,8 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
     ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date(details.episode.airDate))
     : undefined
 
+  const currentSeasonEpisodes = details.allEpisodes[details.episode.season] || []
+
   return (
     <div className='flex flex-col gap-6'>
       <Breadcrumb>
@@ -60,10 +62,9 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* Content layout */}
       <div className='grid gap-8 lg:grid-cols-[280px_1fr]'>
         {/* Poster */}
-        <div className='flex justify-center lg:justify-start lg:sticky lg:top-6 lg:self-start'>
+        <div className='flex justify-center lg:justify-start self-start'>
           <div className='w-full max-w-[280px] overflow-hidden rounded-lg border border-border/40 bg-muted shadow-lg'>
             <div className='relative aspect-[2/3]'>
               {details.posterUrl ? (
@@ -85,9 +86,8 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           </div>
         </div>
 
-        {/* Info column */}
+        {/* Info */}
         <div className='flex flex-col gap-6'>
-          {/* Title & metadata */}
           <div className='space-y-3'>
             <div className='flex flex-wrap items-center gap-2 text-sm'>
               <Badge variant='secondary' className='uppercase text-xs font-semibold'>
@@ -124,24 +124,23 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             )}
           </div>
 
-          {/* Episode selector */}
+          {/* Selector (only difference from movie) */}
           {details.seasons.length > 0 && (
-            <div>
-              <h2 className='mb-3 text-sm font-semibold'>Season</h2>
-              <EpisodeNavigator
-                showId={details.showId}
-                seasons={details.seasons}
-                seasonEpisodes={details.seasonEpisodes}
-                currentSeason={details.episode.season}
-                currentEpisode={details.episode.number}
-              />
-            </div>
+            <EpisodeNavigator
+              showId={details.showId}
+              seasons={details.seasons}
+              seasonEpisodes={currentSeasonEpisodes}
+              currentSeason={details.episode.season}
+              currentEpisode={details.episode.number}
+            />
           )}
 
-          {/* Episode info */}
+          {/* Overview (mirrors movie page) */}
           <div className='space-y-2'>
-            <h2 className='text-xl font-semibold'>{details.episode.name}</h2>
-            {airDate && <p className='text-sm text-muted-foreground'>Aired {airDate}</p>}
+            <h2 className='text-lg font-semibold'>Overview</h2>
+            {airDate && (
+              <p className='text-xs text-muted-foreground'>Aired {airDate}</p>
+            )}
             {(details.episode.overview || details.overview) && (
               <p className='leading-relaxed text-muted-foreground'>
                 {details.episode.overview || details.overview}
