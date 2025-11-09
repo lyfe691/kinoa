@@ -1,7 +1,11 @@
 import { cn } from '@/lib/utils'
 
-const PLAYER_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups'
 const PLAYER_ALLOW = 'accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen'
+
+/*
+  VidFast embeds require full iframe capabilities (including storage access). Adding a sandbox
+  breaks playback on their side, so we rely on their origin allowlist instead of sandboxing.
+*/
 
 type MoviePlayerProps = {
   kind: 'movie'
@@ -42,7 +46,6 @@ export function Player(props: PlayerProps) {
           frameBorder='0'
           allowFullScreen
           allow={PLAYER_ALLOW}
-          sandbox={PLAYER_SANDBOX}
           referrerPolicy='no-referrer'
         />
       </div>
@@ -60,7 +63,6 @@ export function Player(props: PlayerProps) {
         frameBorder='0'
         allowFullScreen
         allow={PLAYER_ALLOW}
-        sandbox={PLAYER_SANDBOX}
         referrerPolicy='no-referrer'
       />
     </div>
