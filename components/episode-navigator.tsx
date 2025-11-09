@@ -56,10 +56,10 @@ export function EpisodeNavigator({
   const visibleEpisodes = seasonEpisodes.slice(startIdx, endIdx)
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-5', className)}>
       {/* Season selector */}
-      <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
-        <span className='text-sm font-medium'>Season</span>
+      <div className='flex items-center gap-3'>
+        <span className='text-sm font-medium text-muted-foreground'>Season</span>
         <Select
           value={String(currentSeason)}
           onValueChange={(value) => {
@@ -67,13 +67,13 @@ export function EpisodeNavigator({
             router.push(`/tv/${showId}/${value}/1`)
           }}
         >
-          <SelectTrigger className='h-9 min-w-[120px] sm:w-[140px]' aria-label='Select season'>
+          <SelectTrigger className='h-9 w-[140px]' aria-label='Select season'>
             <SelectValue placeholder='Season' />
           </SelectTrigger>
           <SelectContent>
             {seasons.map((s) => (
               <SelectItem key={s.number} value={String(s.number)}>
-                {`S${s.number}`}{s.episodeCount ? ` • ${s.episodeCount}` : ''}
+                Season {s.number}{s.episodeCount ? ` · ${s.episodeCount} eps` : ''}
               </SelectItem>
             ))}
           </SelectContent>
@@ -88,22 +88,24 @@ export function EpisodeNavigator({
             <Button
               key={episode.number}
               variant={isActive ? 'default' : 'outline'}
-              className='h-auto w-full justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2'
+              className='h-auto w-full justify-start p-3'
               asChild
             >
               <Link
                 href={`/tv/${showId}/${currentSeason}/${episode.number}`}
                 scroll={false}
                 aria-current={isActive ? 'true' : undefined}
-                className='flex w-full min-w-0 items-start gap-2 sm:items-center'
+                className='flex w-full min-w-0 items-center gap-3'
               >
                 <Play
-                  className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary-foreground' : 'opacity-70')}
+                  className={cn('h-3.5 w-3.5 shrink-0', isActive && 'fill-primary-foreground')}
                   aria-hidden='true'
                 />
-                <span className='shrink-0 text-xs font-semibold whitespace-nowrap'>Eps {episode.number}:</span>
-                <span className='min-w-0 flex-1 truncate text-sm leading-tight'>{episode.name}</span>
-                {isActive && <Check className='h-4 w-4 shrink-0 self-start sm:self-center' aria-hidden='true' />}
+                <div className='min-w-0 flex-1 space-y-0.5 text-left'>
+                  <div className='text-xs font-medium opacity-70'>Episode {episode.number}</div>
+                  <div className='truncate text-sm leading-tight'>{episode.name}</div>
+                </div>
+                {isActive && <Check className='h-4 w-4 shrink-0' aria-hidden='true' />}
               </Link>
             </Button>
           )
@@ -112,7 +114,7 @@ export function EpisodeNavigator({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className='flex flex-wrap items-center justify-between gap-2 sm:gap-3'>
+        <div className='flex items-center justify-between gap-3 border-t pt-4'>
           <Button
             variant='outline'
             size='sm'
@@ -120,10 +122,10 @@ export function EpisodeNavigator({
             disabled={page === 0}
           >
             <ChevronLeft className='h-4 w-4' />
-            Previous
+            <span className='hidden sm:inline'>Previous</span>
           </Button>
-          <span className='flex-1 text-center text-sm text-muted-foreground sm:flex-none sm:text-left'>
-            Episodes {startIdx + 1}-{Math.min(endIdx, seasonEpisodes.length)} of {seasonEpisodes.length}
+          <span className='text-xs text-muted-foreground'>
+            {startIdx + 1}-{Math.min(endIdx, seasonEpisodes.length)} of {seasonEpisodes.length}
           </span>
           <Button
             variant='outline'
@@ -131,7 +133,7 @@ export function EpisodeNavigator({
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page === totalPages - 1}
           >
-            Next
+            <span className='hidden sm:inline'>Next</span>
             <ChevronRight className='h-4 w-4' />
           </Button>
         </div>
