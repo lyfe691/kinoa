@@ -1,58 +1,33 @@
-'use client'
-
-import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 type SearchBarProps = {
   placeholder?: string
   className?: string
+  query?: string
 }
 
-export function SearchBar({ placeholder = 'Enter keywords...', className }: SearchBarProps) {
-  const router = useRouter()
-  const params = useSearchParams()
-  const q = params.get('q') ?? ''
-  const [value, setValue] = React.useState(q)
-  const [isPending, startTransition] = React.useTransition()
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
-  React.useEffect(() => {
-    setValue(q)
-  }, [q])
-
-  React.useEffect(() => {
-    const handle = setTimeout(() => {
-      if (value.trim() === q.trim()) return
-      startTransition(() => {
-        const search = value.trim()
-        router.replace(search ? `/search?q=${encodeURIComponent(search)}` : '/search')
-      })
-    }, 300)
-    return () => clearTimeout(handle)
-  }, [value, q, router, startTransition])
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const search = value.trim()
-    router.push(search ? `/search?q=${encodeURIComponent(search)}` : '/search')
-  }
+export function SearchBar({
+  placeholder = 'Enter keywords...',
+  className,
+  query = '',
+}: SearchBarProps) {
+  const initialValue = query
 
   return (
-    <form onSubmit={onSubmit} className={className}>
+    <form action='/search' method='get' className={className}>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
         <Input
+          key={`search-${initialValue}`}
           name='q'
-          defaultValue={q}
-          onChange={(e) => setValue(e.target.value)}
+          type='search'
+          defaultValue={initialValue}
           placeholder={placeholder}
           aria-label='Search movies and series'
           autoComplete='off'
           spellCheck={false}
-          ref={inputRef}
         />
-        <Button type='submit' className='sm:w-auto' disabled={isPending}>
+        <Button type='submit' className='sm:w-auto'>
           Search
         </Button>
       </div>
