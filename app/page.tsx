@@ -1,12 +1,15 @@
 import { Suspense } from 'react'
 import { SearchBar } from '@/components/search-bar'
 import { SectionSkeleton } from './_components/section-skeleton'
-import { TrendingShelf } from './_components/trending-shelf'
+import { TrendingFilter } from './_components/trending-filter'
 import { LatestMoviesShelf } from './_components/latest-movies-shelf'
 import { LatestTvShelf } from './_components/latest-tv-shelf'
 import { TopRatedShelf } from './_components/top-rated-shelf'
+import { getTrending } from '@/lib/tmdb'
 
-export default function Home() {
+export default async function Home() {
+  const trending = await getTrending()
+
   return (
     <section className='flex flex-col gap-10'>
       <header className='space-y-6'>
@@ -19,9 +22,7 @@ export default function Home() {
         </Suspense>
       </header>
 
-      <Suspense fallback={<SectionSkeleton title='Trending' columns={5} />}>
-        <TrendingShelf />
-      </Suspense>
+      <TrendingFilter items={trending} />
 
       <Suspense fallback={<SectionSkeleton title='Latest Movies' description='Fresh in theaters and newly available.' />}>
         <LatestMoviesShelf />

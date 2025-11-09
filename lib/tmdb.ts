@@ -117,7 +117,7 @@ export async function getTrending(): Promise<MediaSummary[]> {
       (item): item is TmdbTrendingItem & { media_type: 'movie' | 'tv' } =>
         item.media_type === 'movie' || item.media_type === 'tv'
     )
-    .slice(0, 12)
+    .slice(0, 15) // trending usually shows less than 20 and above 15, 15 looks good.
     .map((item) => {
       const type = item.media_type
       const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
