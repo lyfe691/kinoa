@@ -16,6 +16,7 @@ export function SearchBar({ placeholder = 'Enter keywords...', className }: Sear
   const q = params.get('q') ?? ''
   const [value, setValue] = React.useState(q)
   const [isPending, startTransition] = React.useTransition()
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
     setValue(q)
@@ -43,12 +44,13 @@ export function SearchBar({ placeholder = 'Enter keywords...', className }: Sear
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
         <Input
           name='q'
-          value={value}
+          defaultValue={q}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           aria-label='Search movies and series'
           autoComplete='off'
           spellCheck={false}
+          ref={inputRef}
         />
         <Button type='submit' className='sm:w-auto' disabled={isPending}>
           Search
