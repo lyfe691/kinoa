@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatRuntime } from '@/lib/tmdb'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 
 import type { MediaSummary } from '@/lib/tmdb'
@@ -14,15 +15,6 @@ type MediaCardProps = {
   }
   className?: string
   priority?: boolean
-}
-
-function formatRuntime(minutes?: number | null) {
-  if (!minutes) return null
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  if (!hours) return `${mins}m`
-  if (!mins) return `${hours}h`
-  return `${hours}h ${mins}m`
 }
 
 export function MediaCard({ media, className, priority = false }: MediaCardProps) {
