@@ -1,42 +1,58 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 type SearchBarProps = {
   placeholder?: string
   className?: string
+  initialQuery?: string
 }
 
-export function SearchBar({ placeholder = 'Enter keywords...', className }: SearchBarProps) {
+export function SearchBar({
+  placeholder = 'Enter keywords...',
+  className,
+  initialQuery = '',
+}: SearchBarProps) {
   const router = useRouter()
-  const params = useSearchParams()
-  const q = params.get('q') ?? ''
-  const [value, setValue] = React.useState(q)
+  const pathname = usePathname()
+  const [value, setValue] = React.useState(initialQuery)
   const [isPending, startTransition] = React.useTransition()
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    setValue(q)
-  }, [q])
+    setValue(initialQuery)
+  }, [initialQuery])
+
+  const navigate = React.useCallback(
+    (search: string) => {
+      const normalized = search.trim()
+      const href = normalized ? `/search?q=${encodeURIComponent(normalized)}` : '/search'
+
+      if (pathname === '/search') {
+        router.replace(href)
+      } else {
+        router.push(href)
+      }
+    },
+    [pathname, router]
+  )
 
   React.useEffect(() => {
     const handle = setTimeout(() => {
-      if (value.trim() === q.trim()) return
+      if (value.trim() === initialQuery.trim()) return
       startTransition(() => {
-        const search = value.trim()
-        router.replace(search ? `/search?q=${encodeURIComponent(search)}` : '/search')
+        navigate(value)
       })
     }, 300)
     return () => clearTimeout(handle)
-  }, [value, q, router, startTransition])
+  }, [value, initialQuery, navigate, startTransition])
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const search = value.trim()
-    router.push(search ? `/search?q=${encodeURIComponent(search)}` : '/search')
+    navigate(value)
   }
 
   return (
@@ -44,7 +60,7 @@ export function SearchBar({ placeholder = 'Enter keywords...', className }: Sear
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
         <Input
           name='q'
-          defaultValue={q}
+          value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           aria-label='Search movies and series'
