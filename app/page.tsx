@@ -17,9 +17,7 @@ export default async function Home() {
           <h1 className='text-3xl font-semibold tracking-tight'>Find something great to watch</h1>
           <p className='max-w-2xl text-sm text-muted-foreground'>Search across movies and series.</p>
         </div>
-        <Suspense fallback={null}>
-          <SearchBar />
-        </Suspense>
+        <SearchBar />
       </header>
 
       <TrendingFilter items={trending} />

@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Suspense } from 'react'
+import { Suspense, use } from 'react'
 import { SearchBar } from '@/components/search-bar'
 import { MediaCardSkeleton } from '@/components/media-card-skeleton'
 import SearchResults from './results'
@@ -22,8 +22,8 @@ type SearchPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams
+export default function SearchPage({ searchParams }: SearchPageProps) {
+  const params = use(searchParams)
   const q = params.q
   const query = typeof q === 'string' ? q.trim() : ''
   // Results are streamed via a server component to avoid fetching in the page shell
