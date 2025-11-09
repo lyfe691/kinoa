@@ -14,7 +14,9 @@ export default function Home() {
           <h1 className='text-3xl font-semibold tracking-tight'>Find something great to watch</h1>
           <p className='max-w-2xl text-sm text-muted-foreground'>Search across movies and series.</p>
         </div>
-        <SearchBar />
+        <Suspense fallback={null}>
+          <SearchBar />
+        </Suspense>
       </header>
 
       <Suspense fallback={<SectionSkeleton title='Trending' columns={5} />}>
