@@ -44,7 +44,7 @@ export function SearchBar({ placeholder = 'Enter keywords...', className }: Sear
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
         <Input
           name='q'
-          defaultValue={q}
+          value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           aria-label='Search movies and series'
