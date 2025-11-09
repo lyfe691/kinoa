@@ -51,7 +51,9 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
             Find something to watch by title, genre, or keyword.
           </p>
         </div>
-        <SearchBar placeholder='Search movies and series' />
+        <Suspense fallback={null}>
+          <SearchBar placeholder='Search movies and series' />
+        </Suspense>
       </header>
 
       <Suspense
