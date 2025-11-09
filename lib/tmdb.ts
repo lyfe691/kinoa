@@ -85,6 +85,9 @@ export type MediaSummary = {
   backdropUrl: string | null
   releaseYear?: string
   href: string
+  runtime?: number | null
+  seasonCount?: number
+  episodeCount?: number
 }
 
 export async function getTrending(): Promise<MediaSummary[]> {
@@ -92,13 +95,40 @@ export async function getTrending(): Promise<MediaSummary[]> {
     language: 'en-US',
   })
 
-  return data.results
-    .filter((item): item is TmdbTrendingItem & { media_type: 'movie' | 'tv' } => item.media_type === 'movie' || item.media_type === 'tv')
+  const items = data.results
+    .filter((item): item is TmdbTrendingItem & { media_type: 'movie' | 'tv' } => 
+      item.media_type === 'movie' || item.media_type === 'tv'
+    )
     .slice(0, 12)
-    .map((item) => {
+
+  // Fetch details for each item to get runtime/season info
+  const detailedItems = await Promise.all(
+    items.map(async (item) => {
       const type = item.media_type
       const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
       const name = type === 'movie' ? item.title ?? '' : item.name ?? ''
+
+      let runtime: number | null = null
+      let seasonCount: number | undefined
+      let episodeCount: number | undefined
+
+      try {
+        if (type === 'movie') {
+          const details = await tmdbFetch<TmdbMovieResponse>(`/movie/${item.id}`, {
+            language: 'en-US',
+          })
+          runtime = details.runtime
+        } else {
+          const details = await tmdbFetch<TmdbTvResponse>(`/tv/${item.id}`, {
+            language: 'en-US',
+          })
+          seasonCount = details.number_of_seasons
+          episodeCount = details.number_of_episodes
+        }
+      } catch (error) {
+        // If details fetch fails, continue without runtime/season info
+        console.error(`Failed to fetch details for ${type} ${item.id}:`, error)
+      }
 
       return {
         id: item.id,
@@ -109,8 +139,127 @@ export async function getTrending(): Promise<MediaSummary[]> {
         backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
         releaseYear: releaseDate ? new Date(releaseDate).getFullYear().toString() : undefined,
         href: type === 'movie' ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        runtime,
+        seasonCount,
+        episodeCount,
       }
     })
+  )
+
+  return detailedItems
+}
+
+// Lists
+type TmdbMovieListItem = {
+  id: number
+  title: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  release_date?: string
+}
+
+type TmdbTvListItem = {
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  first_air_date?: string
+}
+
+type TmdbListResponse<T> = {
+  results: T[]
+}
+
+async function mapMovieList(items: TmdbMovieListItem[]): Promise<MediaSummary[]> {
+  const detailedMovies = await Promise.all(
+    items.slice(0, 20).map(async (item) => {
+      const releaseYear = item.release_date ? new Date(item.release_date).getFullYear().toString() : undefined
+      
+      let runtime: number | null = null
+      try {
+        const details = await tmdbFetch<TmdbMovieResponse>(`/movie/${item.id}`, {
+          language: 'en-US',
+        })
+        runtime = details.runtime
+      } catch (error) {
+        console.error(`Failed to fetch movie details for ${item.id}:`, error)
+      }
+
+      return {
+        id: item.id,
+        type: 'movie' as const,
+        name: item.title,
+        overview: item.overview,
+        posterUrl: buildImage(item.poster_path, POSTER_SIZE),
+        backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
+        releaseYear,
+        href: `/movie/${item.id}`,
+        runtime,
+      }
+    })
+  )
+
+  return detailedMovies
+}
+
+async function mapTvList(items: TmdbTvListItem[]): Promise<MediaSummary[]> {
+  const detailedShows = await Promise.all(
+    items.slice(0, 20).map(async (item) => {
+      const releaseYear = item.first_air_date ? new Date(item.first_air_date).getFullYear().toString() : undefined
+      
+      let seasonCount: number | undefined
+      let episodeCount: number | undefined
+      try {
+        const details = await tmdbFetch<TmdbTvResponse>(`/tv/${item.id}`, {
+          language: 'en-US',
+        })
+        seasonCount = details.number_of_seasons
+        episodeCount = details.number_of_episodes
+      } catch (error) {
+        console.error(`Failed to fetch TV details for ${item.id}:`, error)
+      }
+
+      return {
+        id: item.id,
+        type: 'tv' as const,
+        name: item.name,
+        overview: item.overview,
+        posterUrl: buildImage(item.poster_path, POSTER_SIZE),
+        backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
+        releaseYear,
+        href: `/tv/${item.id}/1/1`,
+        seasonCount,
+        episodeCount,
+      }
+    })
+  )
+
+  return detailedShows
+}
+
+export async function getLatestMovies(): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbMovieListItem>>('/movie/now_playing', {
+    language: 'en-US',
+    region: 'US',
+  }, 30 * 60)
+  return mapMovieList(data.results)
+}
+
+export async function getLatestTvShows(): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbTvListItem>>('/tv/on_the_air', {
+    language: 'en-US',
+  }, 30 * 60)
+  return mapTvList(data.results)
+}
+
+export async function getUpcomingMovies(): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbMovieListItem>>('/movie/upcoming', {
+    language: 'en-US',
+    region: 'US',
+  }, 2 * 3600)
+  return mapMovieList(data.results)
 }
 
 export async function searchTitles(query: string): Promise<MediaSummary[]> {
@@ -124,15 +273,38 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
     300
   )
 
-  return data.results
+  const items = data.results
     .filter((item): item is TmdbSearchResult & { media_type: 'movie' | 'tv' } => {
-      return (item.media_type === 'movie' || item.media_type === 'tv') && (item.title || item.name)
+      return (item.media_type === 'movie' || item.media_type === 'tv') && !!(item.title ?? item.name)
     })
     .slice(0, 20)
-    .map((item) => {
+
+  const detailedItems = await Promise.all(
+    items.map(async (item) => {
       const type = item.media_type
       const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
       const name = type === 'movie' ? item.title ?? '' : item.name ?? ''
+
+      let runtime: number | null = null
+      let seasonCount: number | undefined
+      let episodeCount: number | undefined
+
+      try {
+        if (type === 'movie') {
+          const details = await tmdbFetch<TmdbMovieResponse>(`/movie/${item.id}`, {
+            language: 'en-US',
+          })
+          runtime = details.runtime
+        } else {
+          const details = await tmdbFetch<TmdbTvResponse>(`/tv/${item.id}`, {
+            language: 'en-US',
+          })
+          seasonCount = details.number_of_seasons
+          episodeCount = details.number_of_episodes
+        }
+      } catch (error) {
+        console.error(`Failed to fetch details for ${type} ${item.id}:`, error)
+      }
 
       return {
         id: item.id,
@@ -143,8 +315,14 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
         backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
         releaseYear: releaseDate ? new Date(releaseDate).getFullYear().toString() : undefined,
         href: type === 'movie' ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        runtime,
+        seasonCount,
+        episodeCount,
       }
     })
+  )
+
+  return detailedItems
 }
 
 type TmdbMovieResponse = {
@@ -196,6 +374,8 @@ type TmdbTvResponse = {
   poster_path: string | null
   backdrop_path: string | null
   genres: { id: number; name: string }[]
+  number_of_seasons: number
+  number_of_episodes: number
   seasons: {
     id: number
     name: string
@@ -302,4 +482,3 @@ export function formatRuntime(runtime?: number | null) {
   }
   return `${hours}h ${minutes}m`
 }
-

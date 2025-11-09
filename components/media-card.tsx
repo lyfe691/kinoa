@@ -6,13 +6,44 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import type { MediaSummary } from '@/lib/tmdb'
 
 type MediaCardProps = {
-  media: MediaSummary
+  media: MediaSummary & {
+    runtime?: number | null
+    seasonCount?: number
+    episodeCount?: number
+  }
   className?: string
   priority?: boolean
 }
 
+function formatRuntime(minutes?: number | null) {
+  if (!minutes) return null
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  if (!hours) return `${mins}m`
+  if (!mins) return `${hours}h`
+  return `${hours}h ${mins}m`
+}
+
 export function MediaCard({ media, className, priority = false }: MediaCardProps) {
-  const { href, name, posterUrl, type, releaseYear } = media
+  const { href, name, posterUrl, type, releaseYear, runtime, seasonCount, episodeCount } = media
+
+  // Format metadata based on type
+  const metadata = []
+  
+  if (releaseYear) {
+    metadata.push(releaseYear)
+  }
+
+  if (type === 'movie' && runtime) {
+    metadata.push(formatRuntime(runtime))
+  } else if (type === 'tv') {
+    if (seasonCount) {
+      metadata.push(`SS ${seasonCount}`)
+    }
+    if (episodeCount) {
+      metadata.push(`EPS ${episodeCount}`)
+    }
+  }
 
   return (
     <article className={cn('group', className)}>
@@ -21,15 +52,16 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
         aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ''}`}
         className="block focus-visible:outline-none"
       >
-        <div className="relative overflow-hidden rounded-md transition-transform duration-200 ease-out group-hover:scale-[1.02] group-focus-visible:ring-2 group-focus-visible:ring-foreground/20 group-focus-visible:ring-offset-2">
-          <AspectRatio ratio={2 / 3} className="bg-muted">
+        {/* Poster */}
+        <div className="relative overflow-hidden rounded-md bg-muted ring-offset-background transition-shadow duration-200 group-hover:shadow-lg group-focus-visible:ring-2 group-focus-visible:ring-foreground/20">
+          <AspectRatio ratio={2 / 3}>
             {posterUrl ? (
               <Image
                 src={posterUrl}
                 alt=""
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]"
                 priority={priority}
               />
             ) : (
@@ -52,20 +84,27 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
             )}
           </AspectRatio>
         </div>
-        
-        <div className="mt-2 space-y-0.5">
-          <h3 className="line-clamp-1 text-sm font-medium leading-tight transition-colors group-hover:text-foreground/80">
+
+        {/* Content */}
+        <div className="mt-3 space-y-2 px-0.5">
+          <h3 className="line-clamp-1 text-sm font-medium leading-tight tracking-tight">
             {name}
           </h3>
-          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span className="capitalize">{type}</span>
-            {releaseYear && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{releaseYear}</span>
-              </>
-            )}
-          </p>
+          
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-1.5 text-xs text-muted-foreground">
+              {metadata.map((item, index) => (
+                <span key={index} className="flex items-center gap-1.5 whitespace-nowrap">
+                  {item}
+                  {index < metadata.length - 1 && <span className="text-[10px]">•</span>}
+                </span>
+              ))}
+            </div>
+            
+            <span className="inline-flex shrink-0 items-center rounded border border-border/60 bg-muted/50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              {type === 'movie' ? 'Movie' : 'TV'}
+            </span>
+          </div>
         </div>
       </Link>
     </article>
