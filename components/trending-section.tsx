@@ -25,5 +25,3 @@ export function TrendingSection({ items, filter = 'all' }: TrendingSectionProps)
     </div>
   )
 }
-
-

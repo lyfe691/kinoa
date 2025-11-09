@@ -60,4 +60,3 @@ export function SearchBar({ placeholder = 'Enter keywords...', className }: Sear
   )
 }
 
-

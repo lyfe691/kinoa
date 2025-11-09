@@ -70,5 +70,3 @@ export default async function SearchResults({ query }: { query: string }) {
     </div>
   )
 }
-
-

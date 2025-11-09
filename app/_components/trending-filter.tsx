@@ -36,4 +36,3 @@ export function TrendingFilter({ items }: TrendingFilterProps) {
     </div>
   )
 }
-
