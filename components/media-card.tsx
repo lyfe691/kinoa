@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 
@@ -25,7 +26,7 @@ function formatRuntime(minutes?: number | null) {
 }
 
 export function MediaCard({ media, className, priority = false }: MediaCardProps) {
-  const { href, name, posterUrl, type, releaseYear, runtime, seasonCount, episodeCount } = media
+  const { href, name, posterUrl, type, releaseYear, runtime, seasonCount, episodeCount, rating } = media
 
   // Format metadata based on type
   const metadata = []
@@ -44,6 +45,8 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
       metadata.push(`EPS ${episodeCount}`)
     }
   }
+
+  const formattedRating = rating ? rating.toFixed(1) : null
 
   return (
     <article className={cn('group', className)}>
@@ -83,6 +86,14 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
               </div>
             )}
           </AspectRatio>
+
+          {/* Rating Badge */}
+          {formattedRating && (
+            <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              {formattedRating}
+            </div>
+          )}
         </div>
 
         {/* Content */}

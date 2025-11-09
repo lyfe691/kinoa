@@ -1,14 +1,14 @@
 import { SearchBar } from '@/components/search-bar'
 import { MediaCard } from '@/components/media-card'
-import { getLatestMovies, getLatestTvShows, getTrending, getUpcomingMovies } from '@/lib/tmdb'
+import { getLatestMovies, getLatestTvShows, getTrending, getTopRatedMovies } from '@/lib/tmdb'
 import { TrendingSection } from '@/components/trending-section'
 
 export default async function Home() {
-  const [trending, latestMovies, latestTv, comingSoon] = await Promise.all([
+  const [trending, latestMovies, latestTv, topRated] = await Promise.all([
     getTrending(),
     getLatestMovies(),
     getLatestTvShows(),
-    getUpcomingMovies(),
+    getTopRatedMovies(),
   ])
 
   return (
@@ -49,12 +49,12 @@ export default async function Home() {
 
       <section className='space-y-4'>
         <div className='space-y-2'>
-          <h2 className='text-xl font-semibold tracking-tight'>Coming Soon</h2>
-          <p className='max-w-2xl text-sm text-muted-foreground'>Mark your calendar for upcoming releases.</p>
+          <h2 className='text-xl font-semibold tracking-tight'>Top Rated</h2>
+          <p className='max-w-2xl text-sm text-muted-foreground'>Timeless classics and critically acclaimed films.</p>
         </div>
         <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
-          {comingSoon.map((item, index) => (
-            <MediaCard key={`soon-${item.id}`} media={item} priority={index < 2} />
+          {topRated.map((item, index) => (
+            <MediaCard key={`top-${item.id}`} media={item} priority={index < 2} />
           ))}
         </div>
       </section>

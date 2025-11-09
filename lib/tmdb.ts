@@ -54,6 +54,8 @@ type TmdbTrendingItem = {
   backdrop_path: string | null
   release_date?: string
   first_air_date?: string
+  vote_average?: number
+  vote_count?: number
 }
 
 type TmdbTrendingResponse = {
@@ -70,6 +72,8 @@ type TmdbSearchResult = {
   backdrop_path: string | null
   release_date?: string
   first_air_date?: string
+  vote_average?: number
+  vote_count?: number
 }
 
 type TmdbSearchResponse = {
@@ -88,6 +92,8 @@ export type MediaSummary = {
   runtime?: number | null
   seasonCount?: number
   episodeCount?: number
+  rating?: number
+  voteCount?: number
 }
 
 export async function getTrending(): Promise<MediaSummary[]> {
@@ -142,6 +148,8 @@ export async function getTrending(): Promise<MediaSummary[]> {
         runtime,
         seasonCount,
         episodeCount,
+        rating: item.vote_average,
+        voteCount: item.vote_count,
       }
     })
   )
@@ -157,6 +165,8 @@ type TmdbMovieListItem = {
   poster_path: string | null
   backdrop_path: string | null
   release_date?: string
+  vote_average?: number
+  vote_count?: number
 }
 
 type TmdbTvListItem = {
@@ -166,6 +176,8 @@ type TmdbTvListItem = {
   poster_path: string | null
   backdrop_path: string | null
   first_air_date?: string
+  vote_average?: number
+  vote_count?: number
 }
 
 type TmdbListResponse<T> = {
@@ -197,6 +209,8 @@ async function mapMovieList(items: TmdbMovieListItem[]): Promise<MediaSummary[]>
         releaseYear,
         href: `/movie/${item.id}`,
         runtime,
+        rating: item.vote_average,
+        voteCount: item.vote_count,
       }
     })
   )
@@ -232,6 +246,8 @@ async function mapTvList(items: TmdbTvListItem[]): Promise<MediaSummary[]> {
         href: `/tv/${item.id}/1/1`,
         seasonCount,
         episodeCount,
+        rating: item.vote_average,
+        voteCount: item.vote_count,
       }
     })
   )
@@ -254,11 +270,10 @@ export async function getLatestTvShows(): Promise<MediaSummary[]> {
   return mapTvList(data.results)
 }
 
-export async function getUpcomingMovies(): Promise<MediaSummary[]> {
-  const data = await tmdbFetch<TmdbListResponse<TmdbMovieListItem>>('/movie/upcoming', {
+export async function getTopRatedMovies(): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbMovieListItem>>('/movie/top_rated', {
     language: 'en-US',
-    region: 'US',
-  }, 2 * 3600)
+  }, 24 * 3600)
   return mapMovieList(data.results)
 }
 
@@ -318,6 +333,8 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
         runtime,
         seasonCount,
         episodeCount,
+        rating: item.vote_average,
+        voteCount: item.vote_count,
       }
     })
   )
@@ -335,6 +352,8 @@ type TmdbMovieResponse = {
   runtime: number | null
   genres: { id: number; name: string }[]
   imdb_id: string | null
+  vote_average?: number
+  vote_count?: number
 }
 
 export type MovieDetails = {
@@ -347,6 +366,8 @@ export type MovieDetails = {
   runtime?: number | null
   genres: string[]
   imdbId: string | null
+  rating?: number
+  voteCount?: number
 }
 
 export async function getMovieDetails(id: string): Promise<MovieDetails> {
@@ -364,6 +385,8 @@ export async function getMovieDetails(id: string): Promise<MovieDetails> {
     runtime: movie.runtime,
     genres: movie.genres.map((genre) => genre.name),
     imdbId: movie.imdb_id,
+    rating: movie.vote_average,
+    voteCount: movie.vote_count,
   }
 }
 
@@ -376,6 +399,8 @@ type TmdbTvResponse = {
   genres: { id: number; name: string }[]
   number_of_seasons: number
   number_of_episodes: number
+  vote_average?: number
+  vote_count?: number
   seasons: {
     id: number
     name: string
@@ -408,6 +433,8 @@ export type TvEpisodeDetails = {
   posterUrl: string | null
   backdropUrl: string | null
   genres: string[]
+  rating?: number
+  voteCount?: number
   seasons: {
     number: number
     name: string
@@ -443,6 +470,8 @@ export async function getTvEpisodeDetails(id: string, season: string, episode: s
     posterUrl: buildImage(show.poster_path, POSTER_SIZE),
     backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
     genres: show.genres.map((genre) => genre.name),
+    rating: show.vote_average,
+    voteCount: show.vote_count,
     seasons: (show.seasons ?? [])
       .filter((seasonInfo) => seasonInfo.season_number > 0)
       .map((seasonInfo) => ({

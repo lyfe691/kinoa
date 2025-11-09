@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Star } from 'lucide-react'
 import { Player } from '@/components/player'
 import { EpisodeNavigator } from '@/components/episode-navigator'
 import { Badge } from '@/components/ui/badge'
@@ -105,6 +106,20 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
                     {genre}
                   </span>
                 ))}
+              </div>
+            )}
+            {details.rating && (
+              <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5'>
+                  <Star className='h-4 w-4 fill-yellow-500 text-yellow-500' />
+                  <span className='font-semibold'>{details.rating.toFixed(1)}</span>
+                  <span className='text-xs text-muted-foreground'>/10</span>
+                </div>
+                {details.voteCount && (
+                  <span className='text-sm text-muted-foreground'>
+                    {details.voteCount.toLocaleString()} votes
+                  </span>
+                )}
               </div>
             )}
           </div>
