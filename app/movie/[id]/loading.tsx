@@ -11,7 +11,7 @@ export default function MovieLoading() {
 
       <div className='grid gap-8 lg:grid-cols-[280px_1fr]'>
         <div className='flex justify-center lg:justify-start self-start'>
-          <Skeleton className='aspect-[2/3] w-full max-w-[280px] rounded-lg' />
+          <Skeleton className='aspect-2/3 w-full max-w-[280px] rounded-lg' />
         </div>
 
         <div className='flex flex-col gap-6'>

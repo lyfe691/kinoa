@@ -12,7 +12,7 @@ export function MediaPoster({ src, title, className, priority = false }: MediaPo
   return (
     <div className={cn('flex justify-center lg:justify-start self-start', className)}>
       <div className='w-full max-w-[280px] overflow-hidden rounded-lg border border-border/40 bg-muted shadow-lg'>
-        <div className='relative aspect-[2/3]'>
+        <div className='relative aspect-2/3'>
           {src ? (
             <Image
               src={src}
