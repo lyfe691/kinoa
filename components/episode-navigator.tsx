@@ -88,7 +88,7 @@ export function EpisodeNavigator({
             <Button
               key={episode.number}
               variant={isActive ? 'default' : 'outline'}
-              className='h-auto w-full justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2 whitespace-normal'
+              className='h-auto w-full justify-start gap-2 px-3 py-2 text-left transition-[transform,box-shadow] focus-visible:ring-2 focus-visible:ring-offset-2'
               asChild
             >
               <Link
@@ -101,8 +101,8 @@ export function EpisodeNavigator({
                   className={cn('h-4 w-4 shrink-0', isActive ? 'text-primary-foreground' : 'opacity-70')}
                   aria-hidden='true'
                 />
-                <span className='shrink-0 text-xs font-semibold'>Eps {episode.number}:</span>
-                <span className='min-w-0 flex-1 text-sm leading-tight line-clamp-2 break-words'>{episode.name}</span>
+                <span className='shrink-0 text-xs font-semibold whitespace-nowrap'>Eps {episode.number}:</span>
+                <span className='min-w-0 flex-1 truncate text-sm leading-tight'>{episode.name}</span>
                 {isActive && <Check className='h-4 w-4 shrink-0 self-start sm:self-center' aria-hidden='true' />}
               </Link>
             </Button>
