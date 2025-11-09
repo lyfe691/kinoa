@@ -1,5 +1,7 @@
 # AGENTS.md
 
+## NOTE, THIS FILE MIGHT NOT BE UP TO DATE, MEANING THAT THE OWNER ("we", "prompter", "developer", "owner") NO LONGER RELY ON SOME OF THE INFORMATION IN THIS FILE.
+
 ## Project Overview
 Kinoa is a frontend-only streaming platform built with **Next.js** and **shadcn/ui**.  
 It fetches metadata from **TMDB** and uses **VidFast** for seamless video embedding.  
