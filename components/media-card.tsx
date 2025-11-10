@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 import { formatRuntime } from "@/lib/tmdb";
 import { AspectRatio } from "@/components/ui/aspect-ratio"; // maybe use this later
 
-// I think we should also add a movie or tv icon to the card or under the name of the media, next to the year, show or episode etc.
-
 import type { MediaSummary } from "@/lib/tmdb";
 
 type MediaCardProps = {
@@ -68,13 +66,13 @@ export function MediaCard({
             <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 backdrop-blur-sm">
-                <Play className="ml-0.5 h-5 w-5 fill-black text-black" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background backdrop-blur-sm">
+                <Play className="ml-0.5 h-5 w-5 fill-foreground text-foreground" />
               </div>
             </div>
 
             {formattedRating && (
-              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/75 px-2 py-1 backdrop-blur-sm">
+              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/20 px-2 py-1 backdrop-blur-sm">
                 <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
                 <span className="text-xs font-medium tabular-nums text-white">
                   {formattedRating}
