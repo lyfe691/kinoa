@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Check, ChevronLeft, ChevronRight, Play } from 'lucide-react'
+ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -56,10 +56,10 @@ export function EpisodeNavigator({
   const visibleEpisodes = seasonEpisodes.slice(startIdx, endIdx)
 
   return (
-    <div className={cn('space-y-5', className)}>
+    <div className={cn('space-y-3', className)}>
       {/* Season selector */}
       <div className='flex items-center gap-3'>
-        <span className='text-sm font-medium text-muted-foreground'>Season</span>
+        <span className='text-[12px] font-medium tracking-wide text-muted-foreground'>Season</span>
         <Select
           value={String(currentSeason)}
           onValueChange={(value) => {
@@ -67,7 +67,7 @@ export function EpisodeNavigator({
             router.push(`/tv/${showId}/${value}/1`)
           }}
         >
-          <SelectTrigger className='h-9 w-[140px]' aria-label='Select season'>
+          <SelectTrigger className='h-9 w-[160px] rounded-lg' aria-label='Select season'>
             <SelectValue placeholder='Season' />
           </SelectTrigger>
           <SelectContent>
@@ -81,31 +81,31 @@ export function EpisodeNavigator({
       </div>
 
       {/* Episode grid */}
-      <div className='grid gap-2 sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid gap-2 sm:grid-cols-2 lg:grid-cols-4'>
         {visibleEpisodes.map((episode) => {
           const isActive = episode.number === currentEpisode
           return (
             <Button
               key={episode.number}
-              variant={isActive ? 'default' : 'outline'}
-              className='h-auto w-full justify-start p-3'
+              variant={isActive ? 'secondary' : 'ghost'}
+              className={cn(
+                'h-auto w-full justify-start rounded-md p-2 sm:p-2.5 transition-colors',
+                isActive ? 'hover:bg-accent' : 'hover:bg-accent/60'
+              )}
               asChild
             >
               <Link
                 href={`/tv/${showId}/${currentSeason}/${episode.number}`}
                 scroll={false}
                 aria-current={isActive ? 'true' : undefined}
-                className='flex w-full min-w-0 items-center gap-3'
+                className='flex w-full min-w-0 items-start gap-2'
               >
-                <Play
-                  className={cn('h-3.5 w-3.5 shrink-0', isActive && 'fill-primary-foreground')}
-                  aria-hidden='true'
-                />
                 <div className='min-w-0 flex-1 space-y-0.5 text-left'>
-                  <div className='text-xs font-medium opacity-70'>Episode {episode.number}</div>
-                  <div className='truncate text-sm leading-tight'>{episode.name}</div>
+                  <div className='text-[10px] font-medium uppercase tracking-wide text-muted-foreground'>
+                    Episode {episode.number}
+                  </div>
+                  <div className='truncate text-xs font-medium leading-tight'>{episode.name}</div>
                 </div>
-                {isActive && <Check className='h-4 w-4 shrink-0' aria-hidden='true' />}
               </Link>
             </Button>
           )
@@ -114,7 +114,7 @@ export function EpisodeNavigator({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className='flex items-center justify-between gap-3 border-t pt-4'>
+        <div className='flex items-center justify-between gap-3 border-t pt-3'>
           <Button
             variant='outline'
             size='sm'
@@ -124,7 +124,7 @@ export function EpisodeNavigator({
             <ChevronLeft className='h-4 w-4' />
             <span className='hidden sm:inline'>Previous</span>
           </Button>
-          <span className='text-xs text-muted-foreground'>
+          <span className='text-[11px] text-muted-foreground'>
             {startIdx + 1}-{Math.min(endIdx, seasonEpisodes.length)} of {seasonEpisodes.length}
           </span>
           <Button
