@@ -130,21 +130,17 @@
     @apply bg-background text-foreground;
   }
 
-  pre::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     width: 5px;
   }
-  pre::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     background: transparent;
   }
-  pre::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 5px;
   }
-  pre {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-
+  
   ::selection {
     @apply bg-accent text-accent-foreground;
   }
