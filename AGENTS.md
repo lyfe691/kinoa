@@ -3,11 +3,13 @@
 ## NOTE, THIS FILE MIGHT NOT BE UP TO DATE, MEANING THAT THE OWNER ("we", "prompter", "developer", "owner") NO LONGER RELY ON SOME OF THE INFORMATION IN THIS FILE.
 
 ## Project Overview
+
 Kinoa is a frontend-only streaming platform built with **Next.js** and **shadcn/ui**.  
 It fetches metadata from **TMDB** and uses **VidFast** for seamless video embedding.  
 The project does **not** host or serve any media files — all playback occurs via third-party VidFast iframes.
 
 ### Core Technologies
+
 - Framework: Next.js
 - Styling: TailwindCSS + shadcn/ui
 - Data: TMDB API (The Movie Database)
@@ -17,9 +19,12 @@ The project does **not** host or serve any media files — all playback occurs v
 ---
 
 ## Setup Commands
-- Install dependencies:  
+
+- Install dependencies:
   ```bash
   pnpm install
+  ```
+
 ````
 
 * Start development server:
@@ -207,3 +212,4 @@ window.addEventListener('message', ({ origin, data }) => {
 ---
 
 © 2025 Kinoa. All rights reserved.
+````

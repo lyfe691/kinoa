@@ -6,7 +6,7 @@ A cinematic front room for browsing movies & shows without the noise. Built with
 - [`/movie/[id]`](./app/movie/[id]/page.tsx) — TMDB detail views with inline playback
 - [`/tv/[id]/[season]/[episode]`](./app/tv/[id]/[season]/[episode]/page.tsx) — episodic watcher with server selection
 - [`/search`](./app/search/page.tsx) — instant lookup across movies & series
-- [`/(legal)`](./app/(legal)) — privacy & terms in one place
+- [`/(legal)`](<./app/(legal)>) — privacy & terms in one place
 
 ---
 

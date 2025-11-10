@@ -1,42 +1,57 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Star, Play } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { formatRuntime } from '@/lib/tmdb'
-import { AspectRatio } from '@/components/ui/aspect-ratio' // maybe use this later
+import Image from "next/image";
+import Link from "next/link";
+import { Star, Play } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { formatRuntime } from "@/lib/tmdb";
+import { AspectRatio } from "@/components/ui/aspect-ratio"; // maybe use this later
 
 // I think we should also add a movie or tv icon to the card or under the name of the media, next to the year, show or episode etc.
 
-import type { MediaSummary } from '@/lib/tmdb'
+import type { MediaSummary } from "@/lib/tmdb";
 
 type MediaCardProps = {
   media: MediaSummary & {
-    runtime?: number | null
-    seasonCount?: number
-    episodeCount?: number
-  }
-  className?: string
-  priority?: boolean
-}
+    runtime?: number | null;
+    seasonCount?: number;
+    episodeCount?: number;
+  };
+  className?: string;
+  priority?: boolean;
+};
 
-export function MediaCard({ media, className, priority = false }: MediaCardProps) {
-  const { href, name, posterUrl, type, releaseYear, runtime, seasonCount, episodeCount, rating } = media
+export function MediaCard({
+  media,
+  className,
+  priority = false,
+}: MediaCardProps) {
+  const {
+    href,
+    name,
+    posterUrl,
+    type,
+    releaseYear,
+    runtime,
+    seasonCount,
+    episodeCount,
+    rating,
+  } = media;
 
-  const metadata = []
-  
-  if (releaseYear) metadata.push(releaseYear)
-  if (type === 'movie' && runtime) metadata.push(formatRuntime(runtime))
-  if (type === 'tv' && seasonCount) metadata.push(`${seasonCount} Season${seasonCount > 1 ? 's' : ''}`)
+  const metadata = [];
 
-  const formattedRating = rating ? rating.toFixed(1) : null
+  if (releaseYear) metadata.push(releaseYear);
+  if (type === "movie" && runtime) metadata.push(formatRuntime(runtime));
+  if (type === "tv" && seasonCount)
+    metadata.push(`${seasonCount} Season${seasonCount > 1 ? "s" : ""}`);
+
+  const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
     <Link
       href={href}
-      className={cn('group block space-y-3', className)}
-      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ''}`}
+      className={cn("group block space-y-3", className)}
+      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
     >
       <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">
         {posterUrl ? (
@@ -49,9 +64,9 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
               className="object-cover transition duration-300 group-hover:scale-105"
               priority={priority}
             />
-            
+
             <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
-            
+
             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 backdrop-blur-sm">
                 <Play className="ml-0.5 h-5 w-5 fill-black text-black" />
@@ -90,13 +105,13 @@ export function MediaCard({ media, className, priority = false }: MediaCardProps
         <h3 className="line-clamp-1 text-sm font-medium leading-tight">
           {name}
         </h3>
-        
+
         {metadata.length > 0 && (
           <p className="truncate text-xs text-muted-foreground">
-            {metadata.join(' · ')}
+            {metadata.join(" · ")}
           </p>
         )}
       </div>
     </Link>
-  )
+  );
 }
