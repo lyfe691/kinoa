@@ -11,43 +11,45 @@ export default async function Home() {
   const trending = await getTrending();
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-12">
       <HomeHeader />
 
-      <TrendingFilter items={trending} />
+      <div className="space-y-12">
+        <TrendingFilter items={trending} />
 
-      <Suspense
-        fallback={
-          <SectionSkeleton
-            title="Latest Movies"
-            description="Fresh in theaters and newly available."
-          />
-        }
-      >
-        <LatestMoviesShelf />
-      </Suspense>
+        <Suspense
+          fallback={
+            <SectionSkeleton
+              title="Latest Movies"
+              description="Fresh in theaters and newly available."
+            />
+          }
+        >
+          <LatestMoviesShelf />
+        </Suspense>
 
-      <Suspense
-        fallback={
-          <SectionSkeleton
-            title="Latest TV Shows"
-            description="New episodes airing now."
-          />
-        }
-      >
-        <LatestTvShelf />
-      </Suspense>
+        <Suspense
+          fallback={
+            <SectionSkeleton
+              title="Latest TV Shows"
+              description="New episodes airing now."
+            />
+          }
+        >
+          <LatestTvShelf />
+        </Suspense>
 
-      <Suspense
-        fallback={
-          <SectionSkeleton
-            title="Top Rated"
-            description="Timeless classics and critically acclaimed films."
-          />
-        }
-      >
-        <TopRatedShelf />
-      </Suspense>
+        <Suspense
+          fallback={
+            <SectionSkeleton
+              title="Top Rated"
+              description="Timeless classics and critically acclaimed films."
+            />
+          }
+        >
+          <TopRatedShelf />
+        </Suspense>
+      </div>
     </section>
   );
 }

@@ -5,12 +5,12 @@ export async function LatestTvShelf() {
   const latestTv = await getLatestTvShows();
 
   return (
-    <section className="space-y-4">
-      <div className="space-y-2">
-        <h2 className="text-xl font-semibold tracking-tight">
+    <section className="space-y-5">
+      <div className="space-y-1.5">
+        <h2 className="text-2xl font-semibold tracking-tight">
           Latest TV Shows
         </h2>
-        <p className="max-w-2xl text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           New episodes airing now.
         </p>
       </div>

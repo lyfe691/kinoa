@@ -5,10 +5,10 @@ export async function TopRatedShelf() {
   const topRated = await getTopRatedMovies();
 
   return (
-    <section className="space-y-4">
-      <div className="space-y-2">
-        <h2 className="text-xl font-semibold tracking-tight">Top Rated</h2>
-        <p className="max-w-2xl text-sm text-muted-foreground">
+    <section className="space-y-5">
+      <div className="space-y-1.5">
+        <h2 className="text-2xl font-semibold tracking-tight">Top Rated</h2>
+        <p className="text-sm text-muted-foreground">
           Timeless classics and critically acclaimed films.
         </p>
       </div>

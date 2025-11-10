@@ -63,17 +63,17 @@ export function MediaCard({
               priority={priority}
             />
 
-            <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
+            <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background backdrop-blur-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/90 backdrop-blur-sm">
                 <Play className="ml-0.5 h-5 w-5 fill-foreground text-foreground" />
               </div>
             </div>
 
             {formattedRating && (
-              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/20 px-2 py-1 backdrop-blur-sm">
-                <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/30 px-2 py-1 backdrop-blur-sm">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 <span className="text-xs font-medium tabular-nums text-white">
                   {formattedRating}
                 </span>
