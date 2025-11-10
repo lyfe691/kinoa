@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Search, Star } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 type SearchBarProps = {
@@ -166,41 +165,44 @@ export function SearchBar({
           }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           className={cn(
-            'relative flex w-full overflow-hidden border bg-background transition-all duration-300 ease-out',
+            'relative flex w-full items-center overflow-hidden border bg-background transition-all duration-300 ease-out',
             hasResults ? 'rounded-t-2xl border-b-0' : 'rounded-2xl',
             isInputFocused && !hasResults && 'ring-2 ring-primary/20'
           )}
         >
-          <div className='relative flex-1'>
-            <Search
-              className={cn(
-                'pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-200',
-                isInputFocused ? 'text-primary' : 'text-muted-foreground'
-              )}
-            />
-            <Input
-              name='q'
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              placeholder={placeholder}
-              aria-label='Search movies and series'
-              autoComplete='off'
-              spellCheck={false}
-              ref={inputRef}
-              className='h-14 border-0 bg-transparent pl-11 pr-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0'
-            />
-          </div>
-
-          <Button
+          <Search
+            className={cn(
+              'pointer-events-none absolute left-4 h-4 w-4 transition-colors duration-200',
+              isInputFocused ? 'text-primary' : 'text-muted-foreground'
+            )}
+          />
+          <Input
+            name='q'
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            aria-label='Search movies and series'
+            autoComplete='off'
+            spellCheck={false}
+            ref={inputRef}
+            className='h-14 w-full border-0 bg-transparent pl-11 pr-28 text-base focus-visible:ring-0 focus-visible:ring-offset-0'
+          />
+          <motion.button
             type='submit'
-            size='lg'
-            className='h-14 rounded-none border-l-0 px-8 shadow-none hover:bg-primary/90'
-            disabled={isNavigating}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={isNavigating || !trimmedValue}
+            className={cn(
+              'absolute right-2 h-10 rounded-xl px-6 text-sm font-medium transition-all duration-200',
+              'bg-primary text-primary-foreground shadow-lg',
+              'hover:bg-primary/90',
+              'disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none'
+            )}
           >
             Search
-          </Button>
+          </motion.button>
         </motion.div>
 
         <AnimatePresence>
@@ -236,7 +238,7 @@ export function SearchBar({
                         onClick={() => navigateTo(item.href)}
                       >
                         <div className='flex items-center gap-3.5 p-3'>
-                          <div className='relative h-[72px] w-12 flex-shrink-0 overflow-hidden rounded-lg bg-muted/80 shadow-sm ring-1 ring-border/40 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-primary/30'>
+                          <div className='relative h-[72px] w-12 shrink-0 overflow-hidden rounded-lg bg-muted/80 shadow-sm ring-1 ring-border/40 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg group-hover:ring-primary/30'>
                             {item.posterUrl ? (
                               <Image
                                 src={item.posterUrl}
@@ -279,7 +281,7 @@ export function SearchBar({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className='border-t bg-gradient-to-b from-muted/20 to-transparent px-4 py-3 text-center text-xs font-medium text-muted-foreground'
+                      className='border-t bg-linear-to-b from-muted/20 to-transparent px-4 py-3 text-center text-xs font-medium text-muted-foreground'
                     >
                       <span className='inline-flex items-center gap-2'>
                         <motion.span
