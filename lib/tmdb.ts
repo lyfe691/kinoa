@@ -103,6 +103,16 @@ export type MediaSummary = {
   voteCount?: number
 }
 
+export type MediaPreview = {
+  id: number
+  type: 'movie' | 'tv'
+  name: string
+  posterUrl: string | null
+  releaseYear?: string
+  href: string
+  rating?: number
+}
+
 export async function getTrending(): Promise<MediaSummary[]> {
   const data = await tmdbFetch<TmdbTrendingResponse>(
     '/trending/all/week',
@@ -275,6 +285,40 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
     })
 
   return enrichMediaSummaries(summaries)
+}
+
+export async function searchPreviews(query: string): Promise<MediaPreview[]> {
+  const trimmed = query.trim()
+  if (!trimmed) {
+    return []
+  }
+
+  const data = await tmdbFetch<TmdbSearchResponse>(
+    '/search/multi',
+    { language: 'en-US', query: trimmed, include_adult: 'false' },
+    CACHE_REVALIDATE.short
+  )
+
+  return data.results
+    .filter((item): item is TmdbSearchResult & { media_type: 'movie' | 'tv' } => {
+      return (item.media_type === 'movie' || item.media_type === 'tv') && !!(item.title ?? item.name)
+    })
+    .slice(0, 8)
+    .map((item) => {
+      const type = item.media_type
+      const releaseDate = type === 'movie' ? item.release_date : item.first_air_date
+      const name = type === 'movie' ? item.title ?? '' : item.name ?? ''
+
+      return {
+        id: item.id,
+        type,
+        name,
+        posterUrl: buildImage(item.poster_path, POSTER_SIZE),
+        releaseYear: releaseDate ? new Date(releaseDate).getFullYear().toString() : undefined,
+        href: type === 'movie' ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        rating: item.vote_average,
+      }
+    })
 }
 
 type TmdbMovieResponse = {

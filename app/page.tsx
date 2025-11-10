@@ -18,7 +18,7 @@ export default async function Home() {
           <p className='max-w-2xl text-sm text-muted-foreground'>Search across movies and series.</p>
         </div>
         <Suspense fallback={null}>
-          <SearchBar />
+          <SearchBar enableSuggestions={false} />
         </Suspense>
       </header>
 
