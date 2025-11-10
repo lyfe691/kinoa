@@ -17,7 +17,7 @@ const legalLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/60 bg-background/80 backdrop-blur">
+    <footer className="bg-background">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:text-sm lg:px-8">
         <p className="text-center sm:text-left leading-relaxed">
           &copy; {new Date().getFullYear()} Kinoa. All rights reserved.
@@ -35,7 +35,7 @@ export function SiteFooter() {
                 <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="center">
               {legalLinks.map((link) => (
                 <DropdownMenuItem key={link.href} asChild>
                   <Link href={link.href} className="cursor-pointer">
