@@ -16,9 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Kinoa',
-  description:
-    'Watch something new every night with beautifully curated films and series.',
+  title: 'Kinoa — Watch Something New Every Night',
+  description: 'Beautifully curated films and series for curious viewers.',
 }
 
 export default function RootLayout({
