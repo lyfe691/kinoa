@@ -44,6 +44,8 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* If we no longer want to use our Monokai theme, we can head over to https://github.com/cosscom/coss/blob/main/apps/origin/app/globals.css and grab their theme. */
+
 /* Monokai */
 :root {
   --radius: 0.625rem;
