@@ -21,9 +21,9 @@ export default async function SearchResults({ query }: { query: string }) {
       <div className='space-y-8'>
         <div className='space-y-2 text-center'>
           <p className='text-sm text-muted-foreground'>
-            No results for <span className='font-medium text-foreground'>"{query}"</span>
+            No results for <span className='font-medium text-foreground'>&ldquo;{query}&rdquo;</span>
           </p>
-          <p className='text-xs text-muted-foreground'>Try a different search or explore what's popular</p>
+          <p className='text-xs text-muted-foreground'>Try a different search or explore what&rsquo;s popular</p>
         </div>
 
         {trending.length > 0 && (
@@ -60,7 +60,7 @@ export default async function SearchResults({ query }: { query: string }) {
     <div className='space-y-4'>
       <p className='text-sm text-muted-foreground'>
         <span className='font-medium text-foreground'>{results.length}</span> result
-        {results.length === 1 ? '' : 's'} for "{query}"
+        {results.length === 1 ? '' : 's'} for &ldquo;{query}&rdquo;
       </p>
       <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
         {results.map((item, index) => (
