@@ -7,11 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function HomeHeader() {
   return (
     <header className="space-y-6">
-      {/* we're going to shuffle the adjectives
-      1. the adjective will be shuffling between other nice adjectives like "arresting", "engrossing", "compelling", "great", "awesome", "fantastic" etc
-      */}
       <h1 className="text-3xl font-semibold tracking-tight">
-        Find something transcendent to watch tonight
+        What do you want to watch?
       </h1>
       <p className="max-w-2xl text-sm text-muted-foreground pl-0.5">
         Everything you want to watch, in one place.

@@ -36,8 +36,8 @@ export function SiteHeader() {
         className={cn(
           "sticky top-0 z-50 transition-all duration-300",
           scrolled
-            ? "bg-background/80 backdrop-blur-xl"
-            : "bg-background/50 backdrop-blur-sm",
+            ? "bg-background backdrop-blur-xl" //80%
+            : "bg-background backdrop-blur-sm", //50%
         )}
       >
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
@@ -99,7 +99,7 @@ export function SiteHeader() {
       </header>
 
       {/* Drawer */}
-      <DrawerContent className="flex h-[70vh] flex-col">
+      <DrawerContent className="flex flex-col">
         <VisuallyHidden>
           <DrawerTitle>Navigation Menu</DrawerTitle>
         </VisuallyHidden>

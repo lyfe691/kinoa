@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kinoa — Watch Something New Every Night",
-  description: "Beautifully curated films and series for curious viewers.",
+  title: "Kinoa — The Cinema Experience, at Home",
+  description: "Everything you want to watch, in one place.",
 };
 
 export default function RootLayout({
@@ -34,6 +34,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           enableSystem
+          enableColorScheme
           disableTransitionOnChange
         >
           <div data-vaul-drawer-wrapper className="flex min-h-screen flex-col">

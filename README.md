@@ -40,6 +40,7 @@ NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key
 pnpm lint   # static analysis & formatting
 pnpm build  # production compile
 pnpm start  # preview the production build
+pnpm format # format the code
 ```
 
 ---
