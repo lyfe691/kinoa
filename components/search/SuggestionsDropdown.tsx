@@ -22,8 +22,7 @@ export function SuggestionsDropdown({
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          className='overflow-hidden rounded-b-2xl border border-t-0 shadow-2xl'
+          transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
         >
           <div className='max-h-[440px] overflow-y-auto scrollbar-thin'>
             <div className='p-2'>

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/search/SearchInput'
 import { SuggestionsDropdown } from '@/components/search/SuggestionsDropdown'
 import type { Suggestion } from '@/components/search/SuggestionItem'
+import { motion } from 'framer-motion'
 
 type SearchBarProps = {
   placeholder?: string
@@ -108,7 +109,18 @@ export function SearchBar({
 
   return (
     <form onSubmit={handleSubmit} className={cn('relative', className)}>
-      <div className='relative'>
+      <motion.div
+        layout
+        initial={false}
+        animate={{
+          boxShadow: (isInputFocused || hasResults)
+            ? '0 16px 40px rgba(0,0,0,0.24)'
+            : '0 6px 18px rgba(0,0,0,0.12)',
+        }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        className='relative overflow-hidden rounded-2xl bg-card border border-border'
+        aria-expanded={hasResults}
+      >
         <SearchInput
           value={value}
           onChange={setValue}
@@ -125,7 +137,7 @@ export function SearchBar({
           suggestions={suggestions}
           onSelect={navigateTo}
         />
-      </div>
+      </motion.div>
     </form>
   )
 }
