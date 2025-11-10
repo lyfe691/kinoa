@@ -53,9 +53,9 @@ export function ModeToggle() {
       activeId={active}
       onTabChange={(id) => setTheme(id)}
       className="w-auto"
-      itemClassName="inline-flex h-9 w-9 items-center justify-center p-0 flex-none"
+       itemClassName="inline-flex h-8 w-8 items-center justify-center p-0 flex-none"
       animationStrategy="transform"
-      equalItemWidthPx={36}
+       equalItemWidthPx={32}
       gapPx={2}
     />
   );

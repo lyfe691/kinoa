@@ -18,8 +18,8 @@ const legalLinks = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <p className="text-center sm:text-left">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:text-sm lg:px-8">
+        <p className="text-center sm:text-left leading-relaxed">
           &copy; {new Date().getFullYear()} Kinoa. All rights reserved.
         </p>
         <nav className="flex items-center" aria-label="Footer">
@@ -29,6 +29,7 @@ export function SiteFooter() {
                 variant="ghost"
                 size="sm"
                 className="h-8 text-sm text-muted-foreground hover:text-foreground"
+                aria-label="Open legal links"
               >
                 Legal
                 <ChevronDown className="ml-1 h-3 w-3" />

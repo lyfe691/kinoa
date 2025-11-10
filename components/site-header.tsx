@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -22,23 +21,11 @@ const navItems = [
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <Drawer shouldScaleBackground setBackgroundColorOnScale={false}>
       <header
-        className={cn(
-          "sticky top-0 z-50 transition-all duration-300",
-          scrolled
-            ? "bg-background backdrop-blur-xl" //80%
-            : "bg-background backdrop-blur-sm", //50%
-        )}
+        className={cn("sticky top-0 z-50 bg-background")}
       >
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           {/* Logo */}
@@ -67,6 +54,7 @@ export function SiteHeader() {
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   )}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {label}
                 </Link>
@@ -75,7 +63,7 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop theme toggle */}
-          <div className="hidden md:flex ml-6">
+          <div className="hidden md:flex ml-4">
             <ModeToggle />
           </div>
 
@@ -118,6 +106,7 @@ export function SiteHeader() {
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   )}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {label}
                 </Link>
