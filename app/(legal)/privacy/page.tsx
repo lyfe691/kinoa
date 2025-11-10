@@ -101,8 +101,8 @@ export default function PrivacyPage() {
         <p>
           We use industry-standard safeguards—HTTPS, access controls, monitoring—to protect data. No system can be fully
           secure, so we encourage you to report suspected vulnerabilities to{' '}
-          <Link href='mailto:security@kinoa.tf' className='text-foreground underline underline-offset-4'>
-            security@kinoa.tf
+          <Link href='mailto:security@kinoa.lol' className='text-foreground underline underline-offset-4'>
+            security@kinoa.lol
           </Link>
           .
         </p>
@@ -114,8 +114,8 @@ export default function PrivacyPage() {
           <li>Opt out of non-essential cookies through your browser or device settings.</li>
           <li>
             Request access to or deletion of the limited personal data we hold by emailing{' '}
-            <Link href='mailto:privacy@kinoa.tf' className='text-foreground underline underline-offset-4'>
-              privacy@kinoa.tf
+            <Link href='mailto:privacy@kinoa.lol' className='text-foreground underline underline-offset-4'>
+              privacy@kinoa.lol
             </Link>
             . We may need to retain certain information for legal compliance.
           </li>
@@ -156,8 +156,8 @@ export default function PrivacyPage() {
         <h2 className='text-base font-semibold text-foreground'>11. Contact Us</h2>
         <p>
           For privacy questions or requests, email{' '}
-          <Link href='mailto:privacy@kinoa.tf' className='text-foreground underline underline-offset-4'>
-            privacy@kinoa.tf
+          <Link href='mailto:privacy@kinoa.lol' className='text-foreground underline underline-offset-4'>
+            privacy@kinoa.lol
           </Link>
           .
         </p>

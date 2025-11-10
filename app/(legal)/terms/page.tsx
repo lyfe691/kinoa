@@ -97,8 +97,8 @@ export default function TermsPage() {
         <h2 className='text-base font-semibold text-foreground'>7. DMCA and Content Notices</h2>
         <p>
           If you believe content accessible through the Service infringes your intellectual property, send a notice to
-          <Link href='mailto:legal@kinoa.tf' className='ml-1 text-foreground underline underline-offset-4'>
-            legal@kinoa.tf
+          <Link href='mailto:legal@kinoa.lol' className='ml-1 text-foreground underline underline-offset-4'>
+            legal@kinoa.lol
           </Link>
           . Include your contact information, description of the copyrighted work, the allegedly infringing material,
           and a statement of good-faith belief. We may forward your notice to the relevant third-party host.
@@ -166,8 +166,8 @@ export default function TermsPage() {
         <h2 className='text-base font-semibold text-foreground'>14. Contact</h2>
         <p>
           For questions about these Terms, reach us at{' '}
-          <Link href='mailto:legal@kinoa.tf' className='text-foreground underline underline-offset-4'>
-            legal@kinoa.tf
+          <Link href='mailto:legal@kinoa.lol' className='text-foreground underline underline-offset-4'>
+            legal@kinoa.lol
           </Link>
           .
         </p>
