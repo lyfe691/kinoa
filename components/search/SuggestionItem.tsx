@@ -16,18 +16,18 @@ export type Suggestion = {
 
 type SuggestionItemProps = {
   item: Suggestion;
-  onSelect: (href: string) => void;
+  onSelectAction: (href: string) => void;
 };
 
 export const SuggestionItem = React.memo(function SuggestionItem({
   item,
-  onSelect,
+  onSelectAction,
 }: SuggestionItemProps) {
   return (
     <div
       className="group relative mb-1 cursor-pointer overflow-hidden rounded-xl transition-all duration-200 hover:bg-muted/60"
       onMouseDown={(e) => e.preventDefault()}
-      onClick={() => onSelect(item.href)}
+      onClick={() => onSelectAction(item.href)}
     >
       <div className="flex items-center gap-3.5 p-3">
         <div className="relative h-[72px] w-12 shrink-0 overflow-hidden rounded-lg bg-muted/80 shadow-sm ring-1 ring-border/40 transition-all duration-200 group-hover:scale-102 group-hover:shadow-lg">

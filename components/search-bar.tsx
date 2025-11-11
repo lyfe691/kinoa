@@ -134,7 +134,6 @@ export function SearchBar({
       className={cn("relative text-left", className)}
     >
       <motion.div
-        layout
         initial={false}
         animate={{
           boxShadow:
@@ -159,7 +158,7 @@ export function SearchBar({
         <SuggestionsDropdown
           isOpen={hasResults}
           suggestions={suggestions}
-          onSelect={navigateTo}
+          onSelectAction={navigateTo}
         />
       </motion.div>
     </form>
