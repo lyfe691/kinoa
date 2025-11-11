@@ -25,19 +25,17 @@ export function SiteHeader() {
   return (
     <Drawer shouldScaleBackground setBackgroundColorOnScale={false}>
       <header className={cn("sticky top-0 z-50 bg-background")}>
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link
             href="/"
-            className="text-lg font-bold tracking-tight text-foreground transition-opacity hover:opacity-70"
+            className="text-xl font-bold tracking-tight text-foreground transition-opacity hover:opacity-70"
           >
             kinoa
           </Link>
 
-          <div className="flex-1" />
-
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-1">
             {navItems.map(({ href, label }) => {
               const isActive =
                 pathname === href ||
@@ -47,10 +45,10 @@ export function SiteHeader() {
                   key={href}
                   href={href}
                   className={cn(
-                    "text-sm font-medium transition-colors",
+                    "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground",
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
@@ -60,8 +58,10 @@ export function SiteHeader() {
             })}
           </nav>
 
+          <div className="flex-1" />
+
           {/* Desktop theme toggle */}
-          <div className="hidden md:flex ml-4">
+          <div className="hidden md:flex">
             <ModeToggle />
           </div>
 
@@ -72,7 +72,7 @@ export function SiteHeader() {
                 variant="ghost"
                 size="icon"
                 aria-label="Toggle menu"
-                className="h-8 w-8"
+                className="h-9 w-9"
               >
                 <div className="flex h-4 w-4 flex-col items-center justify-center gap-1">
                   <span className="h-0.5 w-full rounded-full bg-current" />
@@ -90,7 +90,7 @@ export function SiteHeader() {
           <DrawerTitle>Navigation Menu</DrawerTitle>
         </VisuallyHidden>
 
-        <nav className="flex flex-col gap-2 p-6 pt-4">
+        <nav className="flex flex-col gap-1 p-6 pt-4">
           {navItems.map(({ href, label }) => {
             const isActive =
               pathname === href || (href !== "/" && pathname?.startsWith(href));
@@ -99,10 +99,10 @@ export function SiteHeader() {
                 <Link
                   href={href}
                   className={cn(
-                    "py-2 text-base font-medium transition-colors",
+                    "rounded-lg px-3 py-2.5 text-base font-medium transition-colors",
                     isActive
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground",
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
