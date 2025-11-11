@@ -59,6 +59,51 @@ export default async function SearchResults({
       type === "all" ? results : results.filter((r) => r.type === type);
 
     if (!typed.length) {
+      // If user filtered to a specific type but the other type has results,
+      // show a clean, contextual message under the toggles instead of generic empty.
+      if (type !== "all" && results.length > 0) {
+        const otherType = type === "movie" ? "tv" : "movie";
+        const otherCount = results.filter((r) => r.type === otherType).length;
+
+        if (otherCount > 0) {
+          const currentLabel = type === "movie" ? "Movies" : "TV Shows";
+          const otherLabel = otherType === "movie" ? "Movies" : "TV Shows";
+          return (
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center gap-2">
+                {(["all", "movie", "tv"] as const).map((t) => (
+                  <Button
+                    key={t}
+                    asChild
+                    size="sm"
+                    variant={type === t ? "default" : "ghost"}
+                  >
+                    <Link
+                      href={buildHref({ q: query, type: t === "all" ? "all" : t })}
+                    >
+                      {t === "all" ? "All" : t === "movie" ? "Movies" : "TV Shows"}
+                    </Link>
+                  </Button>
+                ))}
+                <Button asChild size="sm" variant="secondary">
+                  <Link href={buildHref({ q: "" })}>Clear search</Link>
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                No {currentLabel.toLowerCase()} for &ldquo;{query}&rdquo;.{" "}
+                <Link
+                  href={buildHref({ q: query, type: otherType })}
+                  className="underline underline-offset-4 text-foreground"
+                >
+                  {otherCount} {otherLabel.toLowerCase()}
+                </Link>{" "}
+                match this search.
+              </p>
+            </div>
+          );
+        }
+      }
+
       const trending = await getTrending().catch(() => []);
 
       return (
