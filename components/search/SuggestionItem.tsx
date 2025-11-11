@@ -25,6 +25,8 @@ export const SuggestionItem = React.memo(function SuggestionItem({
 }: SuggestionItemProps) {
   return (
     <div
+      role="option"
+      aria-selected="false"
       className="group relative mb-1 cursor-pointer overflow-hidden rounded-xl transition-all duration-200 hover:bg-muted/60"
       onMouseDown={(e) => e.preventDefault()}
       onClick={() => onSelectAction(item.href)}

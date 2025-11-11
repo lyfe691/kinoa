@@ -113,16 +113,16 @@ export default async function SearchResults({
               No results for{" "}
               <span className="text-foreground">&ldquo;{query}&rdquo;</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Explore what&rsquo;s trending below or{" "}
-              <Link
-                href={buildHref({ q: "" })}
-                className="underline underline-offset-4 text-foreground"
-              >
-                clear the search
-              </Link>
-              .
-            </p>
+              <p className="text-sm text-muted-foreground">
+                Explore what&rsquo;s trending below or{" "}
+                <Link
+                  href={buildHref({ q: "" })}
+                  className="underline underline-offset-4 text-foreground"
+                >
+                  clear the search
+                </Link>
+                .
+              </p>
           </div>
 
           {trending.length > 0 && (

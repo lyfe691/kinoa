@@ -153,6 +153,8 @@ export function SearchBar({
           placeholder={placeholder}
           isFocused={isInputFocused}
           isNavigating={isNavigating}
+          ariaControlsId="search-suggestions"
+          isExpanded={hasResults}
         />
 
         <SuggestionsDropdown

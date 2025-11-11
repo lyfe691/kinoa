@@ -13,6 +13,8 @@ type SearchInputProps = {
   placeholder: string;
   isFocused: boolean;
   isNavigating: boolean;
+  ariaControlsId?: string;
+  isExpanded?: boolean;
 };
 
 export function SearchInput({
@@ -23,6 +25,8 @@ export function SearchInput({
   placeholder,
   isFocused,
   isNavigating,
+  ariaControlsId,
+  isExpanded,
 }: SearchInputProps) {
   const trimmedValue = value.trim();
 
@@ -43,6 +47,9 @@ export function SearchInput({
         onBlur={onBlur}
         placeholder={placeholder}
         aria-label="Search movies and series"
+        aria-controls={ariaControlsId}
+        aria-expanded={isExpanded}
+        aria-autocomplete="list"
         autoComplete="off"
         spellCheck={false}
         className="h-14 w-full bg-transparent pl-11 pr-28 text-base outline-none placeholder:text-muted-foreground text-left"

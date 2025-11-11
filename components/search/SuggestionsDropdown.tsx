@@ -57,6 +57,8 @@ export function SuggestionsDropdown({
         >
           <div
             ref={contentRef}
+            id="search-suggestions"
+            role="listbox"
             className="max-h-[440px] overflow-y-auto scrollbar-thin text-left"
             style={{ scrollbarGutter: "stable" as any }}
           >
