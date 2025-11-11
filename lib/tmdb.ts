@@ -267,7 +267,9 @@ type TmdbGenresResponse = {
   genres: { id: number; name: string }[];
 };
 
-export async function getMovieGenres(): Promise<{ id: number; name: string }[]> {
+export async function getMovieGenres(): Promise<
+  { id: number; name: string }[]
+> {
   const data = await tmdbFetch<TmdbGenresResponse>(
     "/genre/movie/list",
     { language: "en-US" },
@@ -287,12 +289,12 @@ export async function getTvGenres(): Promise<{ id: number; name: string }[]> {
 
 // Discover
 type DiscoverParams = {
-  with_genres?: string
-  sort_by?: string
-  primary_release_year?: string
-  first_air_date_year?: string
-  page?: number
-  vote_count_gte?: number
+  with_genres?: string;
+  sort_by?: string;
+  primary_release_year?: string;
+  first_air_date_year?: string;
+  page?: number;
+  vote_count_gte?: number;
 };
 
 export async function discoverMovies(

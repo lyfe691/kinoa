@@ -35,7 +35,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
             Find movies and TV shows
           </p>
         </div>
-        
+
         <div className="mx-auto max-w-2xl">
           <Suspense fallback={null}>
             <SearchBar placeholder="Search..." />
@@ -45,7 +45,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 
       {!query && (
         <SearchFilters
-          type={(typeParam as 'all' | 'movie' | 'tv') || 'all'}
+          type={(typeParam as "all" | "movie" | "tv") || "all"}
           genre={genreParam}
           sort={sortParam}
           showAllGenres={showAllGenresParam === "1"}
@@ -64,7 +64,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       >
         <SearchResults
           query={query}
-          type={(typeParam as 'all' | 'movie' | 'tv') || 'all'}
+          type={(typeParam as "all" | "movie" | "tv") || "all"}
           genre={genreParam}
           sort={sortParam}
         />

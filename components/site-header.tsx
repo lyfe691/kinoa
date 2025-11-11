@@ -24,9 +24,7 @@ export function SiteHeader() {
 
   return (
     <Drawer shouldScaleBackground setBackgroundColorOnScale={false}>
-      <header
-        className={cn("sticky top-0 z-50 bg-background")}
-      >
+      <header className={cn("sticky top-0 z-50 bg-background")}>
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link

@@ -115,7 +115,10 @@ export function SearchBar({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("relative text-left", className)}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn("relative text-left", className)}
+    >
       <motion.div
         layout
         initial={false}

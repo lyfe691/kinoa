@@ -42,7 +42,11 @@ const PillTabs = React.forwardRef<HTMLDivElement, PillTabsProps>(
     const activeTab = activeId ?? uncontrolledActive;
     const layoutInstanceId = React.useId();
     const activeIndex = React.useMemo(
-      () => Math.max(0, tabs.findIndex((t) => t.id === activeTab)),
+      () =>
+        Math.max(
+          0,
+          tabs.findIndex((t) => t.id === activeTab),
+        ),
       [tabs, activeTab],
     );
 
@@ -92,23 +96,24 @@ const PillTabs = React.forwardRef<HTMLDivElement, PillTabsProps>(
             <span className="relative z-10">{tab.label}</span>
           </button>
         ))}
-        {animationStrategy === "transform" && typeof equalItemWidthPx === "number" && (
-          <motion.div
-            aria-hidden="true"
-            className={cn(
-              "absolute top-0.5 left-0.5 rounded-full bg-primary",
-              activePillClassName,
-            )}
-            style={{
-              width: equalItemWidthPx,
-              height: equalItemWidthPx,
-            }}
-            transition={{ type: "spring", duration: 0.5 }}
-            animate={{
-              x: activeIndex * (equalItemWidthPx + gapPx),
-            }}
-          />
-        )}
+        {animationStrategy === "transform" &&
+          typeof equalItemWidthPx === "number" && (
+            <motion.div
+              aria-hidden="true"
+              className={cn(
+                "absolute top-0.5 left-0.5 rounded-full bg-primary",
+                activePillClassName,
+              )}
+              style={{
+                width: equalItemWidthPx,
+                height: equalItemWidthPx,
+              }}
+              transition={{ type: "spring", duration: 0.5 }}
+              animate={{
+                x: activeIndex * (equalItemWidthPx + gapPx),
+              }}
+            />
+          )}
       </div>
     );
   },
