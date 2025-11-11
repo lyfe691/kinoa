@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatRuntime } from "@/lib/tmdb";
-import { AspectRatio } from "@/components/ui/aspect-ratio"; // maybe use this later
+import { formatRuntime } from "@/lib/format-runtime";
 
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -32,7 +31,6 @@ export function MediaCard({
     releaseYear,
     runtime,
     seasonCount,
-    episodeCount,
     rating,
   } = media;
 

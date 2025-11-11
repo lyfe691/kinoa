@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { ensureImdbId } from "./imdb";
+
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 const POSTER_SIZE = "w500";
@@ -102,6 +105,7 @@ export type MediaSummary = {
   backdropUrl: string | null;
   releaseYear?: string;
   href: string;
+  imdbId?: string | null;
   runtime?: number | null;
   seasonCount?: number;
   episodeCount?: number;
@@ -151,6 +155,7 @@ export async function getTrending(): Promise<MediaSummary[]> {
           ? new Date(releaseDate).getFullYear().toString()
           : undefined,
         href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        imdbId: null,
         rating: item.vote_average,
         voteCount: item.vote_count,
       };
@@ -201,6 +206,7 @@ function mapMovieList(items: TmdbMovieListItem[]): MediaSummary[] {
       backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
       releaseYear,
       href: `/movie/${item.id}`,
+      imdbId: null,
       rating: item.vote_average,
       voteCount: item.vote_count,
     };
@@ -222,6 +228,7 @@ function mapTvList(items: TmdbTvListItem[]): MediaSummary[] {
       backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
       releaseYear,
       href: `/tv/${item.id}/1/1`,
+      imdbId: null,
       rating: item.vote_average,
       voteCount: item.vote_count,
     };
@@ -267,25 +274,27 @@ type TmdbGenresResponse = {
   genres: { id: number; name: string }[];
 };
 
-export async function getMovieGenres(): Promise<
-  { id: number; name: string }[]
-> {
-  const data = await tmdbFetch<TmdbGenresResponse>(
-    "/genre/movie/list",
-    { language: "en-US" },
-    CACHE_REVALIDATE.day,
-  );
-  return data.genres ?? [];
-}
+export const getMovieGenres = cache(
+  async (): Promise<{ id: number; name: string }[]> => {
+    const data = await tmdbFetch<TmdbGenresResponse>(
+      "/genre/movie/list",
+      { language: "en-US" },
+      CACHE_REVALIDATE.day,
+    );
+    return data.genres ?? [];
+  },
+);
 
-export async function getTvGenres(): Promise<{ id: number; name: string }[]> {
-  const data = await tmdbFetch<TmdbGenresResponse>(
-    "/genre/tv/list",
-    { language: "en-US" },
-    CACHE_REVALIDATE.day,
-  );
-  return data.genres ?? [];
-}
+export const getTvGenres = cache(
+  async (): Promise<{ id: number; name: string }[]> => {
+    const data = await tmdbFetch<TmdbGenresResponse>(
+      "/genre/tv/list",
+      { language: "en-US" },
+      CACHE_REVALIDATE.day,
+    );
+    return data.genres ?? [];
+  },
+);
 
 // Discover
 type DiscoverParams = {
@@ -366,6 +375,7 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
           ? new Date(releaseDate).getFullYear().toString()
           : undefined,
         href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        imdbId: null,
         rating: item.vote_average,
         voteCount: item.vote_count,
       };
@@ -453,6 +463,17 @@ export async function getMovieDetails(id: string): Promise<MovieDetails> {
     CACHE_REVALIDATE.long,
   );
 
+  const releaseYear = movie.release_date
+    ? new Date(movie.release_date).getFullYear().toString()
+    : undefined;
+
+  const imdbId = await ensureImdbId({
+    imdbId: movie.imdb_id,
+    title: movie.title,
+    year: releaseYear,
+    type: "movie",
+  });
+
   return {
     id: movie.id,
     title: movie.title,
@@ -462,7 +483,7 @@ export async function getMovieDetails(id: string): Promise<MovieDetails> {
     releaseDate: movie.release_date ?? undefined,
     runtime: movie.runtime,
     genres: movie.genres.map((genre) => genre.name),
-    imdbId: movie.imdb_id,
+    imdbId,
     rating: movie.vote_average,
     voteCount: movie.vote_count,
   };
@@ -474,6 +495,7 @@ type TmdbTvResponse = {
   overview: string;
   poster_path: string | null;
   backdrop_path: string | null;
+  first_air_date?: string | null;
   genres: { id: number; name: string }[];
   number_of_seasons: number;
   number_of_episodes: number;
@@ -511,6 +533,7 @@ export type TvEpisodeDetails = {
   posterUrl: string | null;
   backdropUrl: string | null;
   genres: string[];
+  imdbId?: string | null;
   rating?: number;
   voteCount?: number;
   seasons: {
@@ -554,6 +577,17 @@ export async function getTvEpisodeDetails(
     ),
   ]);
 
+  const firstAirYear = show.first_air_date
+    ? new Date(show.first_air_date).getFullYear().toString()
+    : undefined;
+
+  const imdbId = await ensureImdbId({
+    imdbId: undefined,
+    title: show.name,
+    year: firstAirYear,
+    type: "series",
+  });
+
   const seasons = (show.seasons ?? [])
     .filter((seasonInfo) => seasonInfo.season_number > 0)
     .map((seasonInfo) => ({
@@ -576,6 +610,7 @@ export async function getTvEpisodeDetails(
     posterUrl: buildImage(show.poster_path, POSTER_SIZE),
     backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
     genres: show.genres.map((genre) => genre.name),
+    imdbId,
     rating: show.vote_average,
     voteCount: show.vote_count,
     seasons,
@@ -596,13 +631,39 @@ export async function getTvEpisodeDetails(
 async function enrichMediaSummaries(
   items: MediaSummary[],
 ): Promise<MediaSummary[]> {
+  // Limit expensive detail lookups to the first few items so we stay under TMDB rate limits.
+  const ENRICH_LIMIT = 4;
+
   const enriched = await Promise.all(
-    items.map(async (item) => {
-      if (item.type === "movie") {
-        if (item.runtime && item.runtime > 0) {
-          return item;
+    items.map(async (item, index) => {
+      if (index >= ENRICH_LIMIT) {
+        if (item.type === "movie") {
+          const imdbId = await ensureImdbId({
+            imdbId: item.imdbId,
+            title: item.name,
+            year: item.releaseYear,
+            type: "movie",
+          });
+          return {
+            ...item,
+            imdbId: imdbId ?? item.imdbId ?? null,
+          };
         }
 
+        const seriesImdbId = await ensureImdbId({
+          imdbId: item.imdbId,
+          title: item.name,
+          year: item.releaseYear,
+          type: "series",
+        });
+
+        return {
+          ...item,
+          imdbId: seriesImdbId ?? item.imdbId ?? null,
+        };
+      }
+
+      if (item.type === "movie") {
         try {
           const details = await tmdbFetch<TmdbMovieResponse>(
             `/movie/${item.id}`,
@@ -613,22 +674,53 @@ async function enrichMediaSummaries(
           const runtime =
             details.runtime && details.runtime > 0
               ? details.runtime
-              : undefined;
+              : item.runtime;
+          const releaseYear =
+            details.release_date && details.release_date.length >= 4
+              ? new Date(details.release_date).getFullYear().toString()
+              : item.releaseYear;
+          const imdbId = await ensureImdbId({
+            imdbId: details.imdb_id ?? item.imdbId,
+            title: details.title,
+            year: releaseYear,
+            type: "movie",
+          });
 
           return {
             ...item,
-            runtime: runtime ?? item.runtime,
+            runtime,
+            imdbId: imdbId ?? item.imdbId ?? null,
           };
         } catch {
-          return item;
+          const imdbId = await ensureImdbId({
+            imdbId: item.imdbId,
+            title: item.name,
+            year: item.releaseYear,
+            type: "movie",
+          });
+
+          return {
+            ...item,
+            imdbId: imdbId ?? item.imdbId ?? null,
+          };
         }
       }
 
       const hasSeasonInfo = item.seasonCount && item.seasonCount > 0;
       const hasEpisodeInfo = item.episodeCount && item.episodeCount > 0;
 
+      const fallbackImdbId = await ensureImdbId({
+        imdbId: item.imdbId,
+        title: item.name,
+        year: item.releaseYear,
+        type: "series",
+      });
+
       if (hasSeasonInfo && hasEpisodeInfo) {
-        return item;
+        return {
+          ...item,
+          imdbId: fallbackImdbId ?? item.imdbId ?? null,
+        };
       }
 
       try {
@@ -646,14 +738,28 @@ async function enrichMediaSummaries(
           details.number_of_episodes && details.number_of_episodes > 0
             ? details.number_of_episodes
             : item.episodeCount;
+        const releaseYear =
+          details.first_air_date && details.first_air_date.length >= 4
+            ? new Date(details.first_air_date).getFullYear().toString()
+            : item.releaseYear;
+        const imdbId = await ensureImdbId({
+          imdbId: item.imdbId,
+          title: details.name,
+          year: releaseYear,
+          type: "series",
+        });
 
         return {
           ...item,
           seasonCount,
           episodeCount,
+          imdbId: imdbId ?? fallbackImdbId ?? item.imdbId ?? null,
         };
       } catch {
-        return item;
+        return {
+          ...item,
+          imdbId: fallbackImdbId ?? item.imdbId ?? null,
+        };
       }
     }),
   );
@@ -661,18 +767,4 @@ async function enrichMediaSummaries(
   return enriched;
 }
 
-export function formatRuntime(runtime?: number | null) {
-  if (!runtime) {
-    return undefined;
-  }
-
-  const hours = Math.floor(runtime / 60);
-  const minutes = runtime % 60;
-  if (!hours) {
-    return `${minutes}m`;
-  }
-  if (!minutes) {
-    return `${hours}h`;
-  }
-  return `${hours}h ${minutes}m`;
-}
+export { formatRuntime } from "./format-runtime";

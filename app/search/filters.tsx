@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getMovieGenres, getTvGenres } from "@/lib/tmdb";
+import { MOVIE_SORTS, TV_SORTS } from "./sort-options";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
 import {
@@ -15,19 +15,9 @@ type FiltersProps = {
   sort: string;
   query?: string;
   showAllGenres?: boolean;
+  movieGenres: { id: number; name: string }[];
+  tvGenres: { id: number; name: string }[];
 };
-
-const MOVIE_SORTS = [
-  { id: "popularity.desc", label: "Popularity" },
-  { id: "vote_average.desc", label: "Rating" },
-  { id: "primary_release_date.desc", label: "Release date" },
-];
-
-const TV_SORTS = [
-  { id: "popularity.desc", label: "Popularity" },
-  { id: "vote_average.desc", label: "Rating" },
-  { id: "first_air_date.desc", label: "Air date" },
-];
 
 function buildHrefFactory(currentQuery?: string) {
   return function buildHref(params: Record<string, string | undefined>) {
@@ -43,21 +33,21 @@ function buildHrefFactory(currentQuery?: string) {
   };
 }
 
-export default async function SearchFilters({
+export default function SearchFilters({
   type,
   genre,
   sort,
   query,
   showAllGenres = false,
+  movieGenres,
+  tvGenres,
 }: FiltersProps) {
-  const [movieGenres, tvGenres] = await Promise.all([
-    getMovieGenres(),
-    getTvGenres(),
-  ]);
-
   const allGenres = Array.from(
     new Map([...movieGenres, ...tvGenres].map((g) => [g.id, g])).values(),
   ).sort((a, b) => a.name.localeCompare(b.name));
+
+  const activeGenres =
+    type === "movie" ? movieGenres : type === "tv" ? tvGenres : allGenres;
 
   const sorts = type === "tv" ? TV_SORTS : MOVIE_SORTS;
   const buildHref = buildHrefFactory(query);
@@ -65,11 +55,11 @@ export default async function SearchFilters({
   const maxGenresMobile = 8;
   const maxGenresDesktop = 16;
   const visibleGenresMobile = showAllGenres
-    ? allGenres
-    : allGenres.slice(0, maxGenresMobile);
+    ? activeGenres
+    : activeGenres.slice(0, maxGenresMobile);
   const visibleGenresDesktop = showAllGenres
-    ? allGenres
-    : allGenres.slice(0, maxGenresDesktop);
+    ? activeGenres
+    : activeGenres.slice(0, maxGenresDesktop);
 
   return (
     <div className="space-y-6">
@@ -85,7 +75,7 @@ export default async function SearchFilters({
               <Link
                 href={buildHref({
                   type: t === "all" ? undefined : t,
-                  genre,
+                  genre: genre || undefined,
                   sort,
                   showAllGenres: showAllGenres ? "1" : undefined,
                 })}
@@ -102,9 +92,14 @@ export default async function SearchFilters({
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium">Genres</h3>
             <div className="flex items-center gap-3">
-              {!showAllGenres && allGenres.length > maxGenresMobile && (
+              {!showAllGenres && activeGenres.length > maxGenresMobile && (
                 <Link
-                  href={buildHref({ type, genre, sort, showAllGenres: "1" })}
+                  href={buildHref({
+                    type,
+                    genre: genre || undefined,
+                    sort,
+                    showAllGenres: "1",
+                  })}
                   className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   Show more
@@ -114,7 +109,7 @@ export default async function SearchFilters({
                 <Link
                   href={buildHref({
                     type,
-                    genre,
+                    genre: genre || undefined,
                     sort,
                     showAllGenres: undefined,
                   })}
@@ -141,7 +136,8 @@ export default async function SearchFilters({
           {/* Mobile genres */}
           <div className="flex flex-wrap gap-2 md:hidden">
             {visibleGenresMobile.map((g) => {
-              const selected = genre === String(g.id);
+              const id = String(g.id);
+              const selected = genre === id;
               return (
                 <Badge
                   key={g.id}
@@ -152,7 +148,7 @@ export default async function SearchFilters({
                   <Link
                     href={buildHref({
                       type,
-                      genre: String(g.id),
+                      genre: id,
                       sort,
                       showAllGenres: showAllGenres ? "1" : undefined,
                     })}
@@ -167,7 +163,8 @@ export default async function SearchFilters({
           {/* Desktop genres */}
           <div className="hidden flex-wrap gap-2 md:flex">
             {visibleGenresDesktop.map((g) => {
-              const selected = genre === String(g.id);
+              const id = String(g.id);
+              const selected = genre === id;
               return (
                 <Badge
                   key={g.id}
@@ -178,7 +175,7 @@ export default async function SearchFilters({
                   <Link
                     href={buildHref({
                       type,
-                      genre: String(g.id),
+                      genre: id,
                       sort,
                       showAllGenres: showAllGenres ? "1" : undefined,
                     })}
@@ -228,7 +225,7 @@ export default async function SearchFilters({
                   <Link
                     href={buildHref({
                       type,
-                      genre,
+                      genre: genre || undefined,
                       sort: s.id,
                       showAllGenres: showAllGenres ? "1" : undefined,
                     })}

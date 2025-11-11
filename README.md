@@ -21,6 +21,7 @@ Create a `.env.local` with:
 
 ```
 NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key
+OMDB_API_KEY=your_omdb_api_key
 ```
 
 ---

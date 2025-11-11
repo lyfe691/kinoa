@@ -10,7 +10,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { formatRuntime, getMovieDetails } from "@/lib/tmdb";
+import { getMovieDetails } from "@/lib/tmdb";
+import { formatRuntime } from "@/lib/format-runtime";
 import {
   MediaDetailLayout,
   MediaHeader,
@@ -117,7 +118,12 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
         <MediaOverview>{movie.overview}</MediaOverview>
 
-        <Player kind="movie" imdbId={movie.imdbId} title={movie.title} />
+        <Player
+          kind="movie"
+          imdbId={movie.imdbId}
+          tmdbId={movie.id}
+          title={movie.title}
+        />
       </MediaDetailLayout>
     </div>
   );

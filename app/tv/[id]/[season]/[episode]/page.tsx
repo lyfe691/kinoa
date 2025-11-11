@@ -11,7 +11,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { formatRuntime, getTvEpisodeDetails } from "@/lib/tmdb";
+import { getTvEpisodeDetails } from "@/lib/tmdb";
+import { formatRuntime } from "@/lib/format-runtime";
 import {
   MediaDetailLayout,
   MediaHeader,

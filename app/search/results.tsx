@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { normalizeSort } from "./sort-options";
 import { MediaCard } from "@/components/media-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import { ErrorState } from "@/components/error-state";
 import {
   searchTitles,
   getTrending,
-  getLatestMovies,
   discoverMovies,
   discoverTv,
 } from "@/lib/tmdb";
@@ -24,15 +24,15 @@ type Props = {
   sort: string;
 };
 
-const DEFAULT_SORT = "popularity.desc";
-
 export default async function SearchResults({
   query,
   type,
   genre,
   sort,
 }: Props) {
-  const sortBy = sort || DEFAULT_SORT;
+  const sortForMovies = normalizeSort("movie", sort);
+  const sortForTv = normalizeSort("tv", sort);
+  const sortBy = type === "tv" ? sortForTv : sortForMovies;
   const buildHref = (params: {
     q?: string;
     type?: "all" | "movie" | "tv";
@@ -150,8 +150,8 @@ export default async function SearchResults({
   if (type === "movie") {
     let movies: Awaited<ReturnType<typeof discoverMovies>> = [];
     try {
-      movies = await discoverMovies({ with_genres, sort_by: sortBy });
-    } catch (e) {
+      movies = await discoverMovies({ with_genres, sort_by: sortForMovies });
+    } catch {
       return (
         <ErrorState
           title="Could not load movies"
@@ -202,8 +202,8 @@ export default async function SearchResults({
   if (type === "tv") {
     let shows: Awaited<ReturnType<typeof discoverTv>> = [];
     try {
-      shows = await discoverTv({ with_genres, sort_by: sortBy });
-    } catch (e) {
+      shows = await discoverTv({ with_genres, sort_by: sortForTv });
+    } catch {
       return (
         <ErrorState
           title="Could not load TV shows"
@@ -253,8 +253,8 @@ export default async function SearchResults({
 
   // type === 'all' → show both sections
   const [movies, shows] = await Promise.all([
-    discoverMovies({ with_genres, sort_by: sortBy }).catch(() => []),
-    discoverTv({ with_genres, sort_by: sortBy }).catch(() => []),
+    discoverMovies({ with_genres, sort_by: sortForMovies }).catch(() => []),
+    discoverTv({ with_genres, sort_by: sortForTv }).catch(() => []),
   ]);
 
   if (!movies.length && !shows.length) {

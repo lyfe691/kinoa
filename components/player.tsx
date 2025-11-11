@@ -11,6 +11,7 @@ const PLAYER_ALLOW =
 type MoviePlayerProps = {
   kind: "movie";
   imdbId?: string | null;
+  tmdbId?: number;
   title?: string;
   className?: string;
 };
@@ -28,9 +29,11 @@ type PlayerProps = MoviePlayerProps | TvPlayerProps;
 
 export function Player(props: PlayerProps) {
   if (props.kind === "movie") {
-    const { imdbId, title, className } = props;
+    const { imdbId, tmdbId, title, className } = props;
+    const videoId =
+      imdbId ?? (typeof tmdbId === "number" ? String(tmdbId) : null);
 
-    if (!imdbId) {
+    if (!videoId) {
       return (
         <div
           className={cn(
@@ -51,7 +54,7 @@ export function Player(props: PlayerProps) {
         )}
       >
         <iframe
-          src={`https://vidfast.pro/movie/${imdbId}?autoPlay=true&theme=16A085`}
+          src={`https://vidfast.pro/movie/${videoId}?autoPlay=true&theme=16A085`}
           title={title ?? "Video player"}
           className="absolute inset-0 h-full w-full rounded-lg border-0"
           frameBorder="0"

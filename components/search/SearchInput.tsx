@@ -13,7 +13,6 @@ type SearchInputProps = {
   placeholder: string;
   isFocused: boolean;
   isNavigating: boolean;
-  hasResultsOpen: boolean;
 };
 
 export function SearchInput({
@@ -24,7 +23,6 @@ export function SearchInput({
   placeholder,
   isFocused,
   isNavigating,
-  hasResultsOpen,
 }: SearchInputProps) {
   const trimmedValue = value.trim();
 

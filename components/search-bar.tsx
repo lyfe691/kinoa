@@ -42,6 +42,15 @@ export function SearchBar({
   }, [q]);
 
   React.useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
     if (!enableSuggestions || trimmedValue.length < 2) {
       setSuggestions([]);
       setIsDropdownOpen(false);
@@ -63,7 +72,7 @@ export function SearchBar({
 
         setSuggestions(items);
         setIsDropdownOpen(items.length > 0 && isInputFocused);
-      } catch (error) {
+      } catch {
         if (!controller.signal.aborted) {
           setSuggestions([]);
           setIsDropdownOpen(false);
@@ -89,9 +98,14 @@ export function SearchBar({
   };
 
   const handleBlur = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     closeTimerRef.current = setTimeout(() => {
       setIsInputFocused(false);
       setIsDropdownOpen(false);
+      closeTimerRef.current = null;
     }, 120);
   };
 
@@ -140,7 +154,6 @@ export function SearchBar({
           placeholder={placeholder}
           isFocused={isInputFocused}
           isNavigating={isNavigating}
-          hasResultsOpen={hasResults}
         />
 
         <SuggestionsDropdown
