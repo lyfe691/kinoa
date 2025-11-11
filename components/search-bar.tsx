@@ -115,7 +115,7 @@ export function SearchBar({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("relative", className)}>
+    <form onSubmit={handleSubmit} className={cn("relative text-left", className)}>
       <motion.div
         layout
         initial={false}
@@ -126,7 +126,7 @@ export function SearchBar({
               : "0 6px 18px rgba(0,0,0,0.12)",
         }}
         transition={{ type: "spring", stiffness: 320, damping: 28 }}
-        className="relative overflow-hidden rounded-2xl bg-card border border-border"
+        className="relative overflow-hidden rounded-2xl bg-card border border-border text-left"
         aria-expanded={hasResults}
       >
         <SearchInput

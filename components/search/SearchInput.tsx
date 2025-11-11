@@ -47,7 +47,7 @@ export function SearchInput({
         aria-label="Search movies and series"
         autoComplete="off"
         spellCheck={false}
-        className="h-14 w-full bg-transparent pl-11 pr-28 text-base outline-none placeholder:text-muted-foreground"
+        className="h-14 w-full bg-transparent pl-11 pr-28 text-base outline-none placeholder:text-muted-foreground text-left"
       />
       <motion.button
         type="submit"

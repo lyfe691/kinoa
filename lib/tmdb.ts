@@ -262,6 +262,70 @@ export async function getTopRatedMovies(): Promise<MediaSummary[]> {
   return enrichMediaSummaries(mapMovieList(data.results));
 }
 
+// Genres
+type TmdbGenresResponse = {
+  genres: { id: number; name: string }[];
+};
+
+export async function getMovieGenres(): Promise<{ id: number; name: string }[]> {
+  const data = await tmdbFetch<TmdbGenresResponse>(
+    "/genre/movie/list",
+    { language: "en-US" },
+    CACHE_REVALIDATE.day,
+  );
+  return data.genres ?? [];
+}
+
+export async function getTvGenres(): Promise<{ id: number; name: string }[]> {
+  const data = await tmdbFetch<TmdbGenresResponse>(
+    "/genre/tv/list",
+    { language: "en-US" },
+    CACHE_REVALIDATE.day,
+  );
+  return data.genres ?? [];
+}
+
+// Discover
+type DiscoverParams = {
+  with_genres?: string
+  sort_by?: string
+  primary_release_year?: string
+  first_air_date_year?: string
+  page?: number
+  vote_count_gte?: number
+};
+
+export async function discoverMovies(
+  params: DiscoverParams = {},
+): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbMovieListItem>>(
+    "/discover/movie",
+    {
+      language: "en-US",
+      include_adult: "false",
+      include_video: "false",
+      ...params,
+    },
+    CACHE_REVALIDATE.medium,
+  );
+  return enrichMediaSummaries(mapMovieList(data.results));
+}
+
+export async function discoverTv(
+  params: DiscoverParams = {},
+): Promise<MediaSummary[]> {
+  const data = await tmdbFetch<TmdbListResponse<TmdbTvListItem>>(
+    "/discover/tv",
+    {
+      language: "en-US",
+      include_adult: "false",
+      ...params,
+    },
+    CACHE_REVALIDATE.medium,
+  );
+  return enrichMediaSummaries(mapTvList(data.results));
+}
+
 export async function searchTitles(query: string): Promise<MediaSummary[]> {
   if (!query.trim()) {
     return [];
