@@ -79,9 +79,16 @@ export default async function SearchResults({
                     variant={type === t ? "default" : "ghost"}
                   >
                     <Link
-                      href={buildHref({ q: query, type: t === "all" ? "all" : t })}
+                      href={buildHref({
+                        q: query,
+                        type: t === "all" ? "all" : t,
+                      })}
                     >
-                      {t === "all" ? "All" : t === "movie" ? "Movies" : "TV Shows"}
+                      {t === "all"
+                        ? "All"
+                        : t === "movie"
+                          ? "Movies"
+                          : "TV Shows"}
                     </Link>
                   </Button>
                 ))}
@@ -113,16 +120,16 @@ export default async function SearchResults({
               No results for{" "}
               <span className="text-foreground">&ldquo;{query}&rdquo;</span>
             </div>
-              <p className="text-sm text-muted-foreground">
-                Explore what&rsquo;s trending below or{" "}
-                <Link
-                  href={buildHref({ q: "" })}
-                  className="underline underline-offset-4 text-foreground"
-                >
-                  clear the search
-                </Link>
-                .
-              </p>
+            <p className="text-sm text-muted-foreground">
+              Explore what&rsquo;s trending below or{" "}
+              <Link
+                href={buildHref({ q: "" })}
+                className="underline underline-offset-4 text-foreground"
+              >
+                clear the search
+              </Link>
+              .
+            </p>
           </div>
 
           {trending.length > 0 && (

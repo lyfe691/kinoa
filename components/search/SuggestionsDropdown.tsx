@@ -10,6 +10,10 @@ type SuggestionsDropdownProps = {
   onSelectAction: (href: string) => void;
 };
 
+const scrollContainerStyle: React.CSSProperties = {
+  scrollbarGutter: "stable",
+};
+
 export function SuggestionsDropdown({
   isOpen,
   suggestions,
@@ -60,7 +64,7 @@ export function SuggestionsDropdown({
             id="search-suggestions"
             role="listbox"
             className="max-h-[440px] overflow-y-auto scrollbar-thin text-left"
-            style={{ scrollbarGutter: "stable" as any }}
+            style={scrollContainerStyle}
           >
             <div className="p-2">
               {suggestions.map((item) => (

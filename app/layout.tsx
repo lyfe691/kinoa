@@ -46,9 +46,7 @@ export default function RootLayout({
         >
           <div data-vaul-drawer-wrapper className="flex min-h-screen flex-col">
             {!maintenanceMode && <SiteHeader />}
-            <main className={mainClassName}>
-              {children}
-            </main>
+            <main className={mainClassName}>{children}</main>
             {!maintenanceMode && <SiteFooter />}
           </div>
         </ThemeProvider>

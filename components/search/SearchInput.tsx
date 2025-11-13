@@ -40,6 +40,7 @@ export function SearchInput({
       />
       <input
         type="text"
+        role="combobox"
         name="q"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -49,6 +50,7 @@ export function SearchInput({
         aria-label="Search movies and series"
         aria-controls={ariaControlsId}
         aria-expanded={isExpanded}
+        aria-haspopup="listbox"
         aria-autocomplete="list"
         autoComplete="off"
         spellCheck={false}

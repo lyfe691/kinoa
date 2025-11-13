@@ -33,6 +33,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/|maintenance|api/|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.json).*)"],
+  matcher: [
+    "/((?!_next/|maintenance|api/|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.json).*)",
+  ],
 };
-

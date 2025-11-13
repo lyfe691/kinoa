@@ -60,7 +60,12 @@ export function SiteFooter() {
                 <DropdownMenuContent align="center">
                   {legalLinks.map((link) => (
                     <DropdownMenuItem key={link.href} asChild>
-                      <Link href={link.href} target="_blank" rel="noreferrer" className="cursor-pointer flex items-center gap-2">
+                      <Link
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="cursor-pointer flex items-center gap-2"
+                      >
                         <span className="flex-1">{link.label}</span>
                         <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
                       </Link>

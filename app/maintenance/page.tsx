@@ -6,8 +6,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ArrowUpRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Kinoa — Scheduled Maintenance",
-  description: "Kinoa is undergoing a short maintenance window. We will return shortly.",
+  title: "Kinoa — High Traffic",
+  description: "Kinoa is experiencing unusually high traffic at the moment.",
 };
 
 export default function MaintenancePage() {
@@ -17,7 +17,7 @@ export default function MaintenancePage() {
         <AspectRatio ratio={16 / 9}>
           <Image
             src="/not-found.gif"
-            alt="Maintenance in progress"
+            alt="High traffic"
             fill
             priority
             unoptimized
@@ -26,10 +26,13 @@ export default function MaintenancePage() {
         </AspectRatio>
       </div>
       <div className="space-y-3">
-        <h1 className="text-4xl font-semibold tracking-tight">We&apos;ll be back soon</h1>
+        <h1 className="text-4xl font-semibold tracking-tight">
+          We’re a little crowded right now
+        </h1>
         <p className="text-sm text-muted-foreground">
-          We&apos;re making a few updates to keep everything running smoothly. Thanks for your patience
-          — Kinoa will be online again shortly.
+          A surge of traffic is passing through Kinoa at the moment. Things
+          might be a bit slower than usual, but we’re handling it — you’ll be
+          back inside shortly.
         </p>
       </div>
       <Button asChild variant="secondary">
@@ -40,11 +43,10 @@ export default function MaintenancePage() {
           aria-label="Open Neal's Infinite Craft (opens in a new tab)"
           className="inline-flex items-center"
         >
-          Craft something while you wait
+          Pass the time for a minute
           <ArrowUpRight className="h-4 w-4" />
         </Link>
       </Button>
     </section>
   );
 }
-
