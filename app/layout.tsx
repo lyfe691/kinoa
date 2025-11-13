@@ -26,6 +26,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const maintenanceMode = process.env.MAINTENANCE_MODE === "true";
+  const mainClassName = maintenanceMode
+    ? "mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-12"
+    : "mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-12 sm:px-6 lg:px-8";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -40,11 +45,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div data-vaul-drawer-wrapper className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 pb-20 pt-12 sm:px-6 lg:px-8">
+            {!maintenanceMode && <SiteHeader />}
+            <main className={mainClassName}>
               {children}
             </main>
-            <SiteFooter />
+            {!maintenanceMode && <SiteFooter />}
           </div>
         </ThemeProvider>
       </body>

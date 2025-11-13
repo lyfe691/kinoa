@@ -191,7 +191,7 @@ window.addEventListener("message", ({ origin, data }) => {
 
 - Deploy via [Vercel](https://vercel.com/).
 - Environment variable required: `NEXT_PUBLIC_TMDB_API_KEY`.
-- Domain suggestion: `kinoa.<tld>` (example: `kinoa.to`, `kinoa.me`, `kinoa.watch`).
+- Domain: kinoa.lol
 - CI/CD: use Vercel auto-build on push to `main`.
 
 ---
