@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MOVIE_SORTS, TV_SORTS } from "./sort-options";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +10,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 
 type FiltersProps = {
   type: "all" | "movie" | "tv";
@@ -193,23 +205,56 @@ export default function SearchFilters({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium">Sort by</h3>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="text-muted-foreground hover:text-foreground"
-                    aria-label="Sort information"
-                  >
-                    <Info className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[232px] text-xs ">
-                  Sorting by Rating or Release Date may show less relevant
-                  results. Use Popularity for the best experience.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            
+            {/* Desktop: Tooltip */}
+            <div className="hidden md:block">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label="Sort information"
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[232px] text-xs">
+                    Sorting by Rating or Release Date may show less relevant
+                    results. Use Popularity for the best experience.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            {/* Mobile: Drawer */}
+            <Drawer>
+              <DrawerTrigger asChild>
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground md:hidden"
+                  aria-label="Sort information"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Sort Options</DrawerTitle>
+                  <DrawerDescription>
+                    Sorting by Rating or Release Date may show less relevant
+                    results. Use Popularity for the best experience.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="px-4 pb-8">
+                  <DrawerClose asChild>
+                    <Button variant="outline" className="w-full">
+                      Close
+                    </Button>
+                  </DrawerClose>
+                </div>
+              </DrawerContent>
+            </Drawer>
           </div>
           <div className="flex flex-wrap gap-2">
             {sorts.map((s) => {
