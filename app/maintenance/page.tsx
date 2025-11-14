@@ -25,16 +25,17 @@ export default function MaintenancePage() {
           />
         </AspectRatio>
       </div>
+
       <div className="space-y-3">
         <h1 className="text-4xl font-semibold tracking-tight">
-          We’re a little crowded right now
+          We’re experiencing high traffic
         </h1>
         <p className="text-sm text-muted-foreground">
-          A surge of traffic is passing through Kinoa at the moment. Things
-          might be a bit slower than usual, but we’re handling it — you’ll be
-          back inside shortly.
+          Kinoa is receiving more requests than usual. We’re scaling up — you’ll
+          be back in shortly.
         </p>
       </div>
+
       <Button asChild variant="secondary">
         <Link
           href="https://neal.fun/infinite-craft/"
@@ -43,7 +44,7 @@ export default function MaintenancePage() {
           aria-label="Open Neal's Infinite Craft (opens in a new tab)"
           className="inline-flex items-center"
         >
-          Pass the time for a minute
+          Pass the time
           <ArrowUpRight className="h-4 w-4" />
         </Link>
       </Button>

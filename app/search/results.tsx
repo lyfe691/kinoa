@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { normalizeSort } from "./sort-options";
-import { MediaCard } from "@/components/media-card";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -16,6 +15,8 @@ import {
   discoverMovies,
   discoverTv,
 } from "@/lib/tmdb";
+import { MediaCard } from "@/components/media-card";
+import { SearchTypeTabs } from "@/components/search/SearchTypeTabs";
 
 type Props = {
   query: string;
@@ -55,62 +56,7 @@ export default async function SearchResults({
   // If searching by text, prefer search endpoint (ignores genre/sort)
   if (query) {
     const results = await searchTitles(query);
-    const typed =
-      type === "all" ? results : results.filter((r) => r.type === type);
-
-    if (!typed.length) {
-      // If user filtered to a specific type but the other type has results,
-      // show a clean, contextual message under the toggles instead of generic empty.
-      if (type !== "all" && results.length > 0) {
-        const otherType = type === "movie" ? "tv" : "movie";
-        const otherCount = results.filter((r) => r.type === otherType).length;
-
-        if (otherCount > 0) {
-          const currentLabel = type === "movie" ? "Movies" : "TV Shows";
-          const otherLabel = otherType === "movie" ? "Movies" : "TV Shows";
-          return (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-2">
-                {(["all", "movie", "tv"] as const).map((t) => (
-                  <Button
-                    key={t}
-                    asChild
-                    size="sm"
-                    variant={type === t ? "default" : "ghost"}
-                  >
-                    <Link
-                      href={buildHref({
-                        q: query,
-                        type: t === "all" ? "all" : t,
-                      })}
-                    >
-                      {t === "all"
-                        ? "All"
-                        : t === "movie"
-                          ? "Movies"
-                          : "TV Shows"}
-                    </Link>
-                  </Button>
-                ))}
-                <Button asChild size="sm" variant="secondary">
-                  <Link href={buildHref({ q: "" })}>Clear search</Link>
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                No {currentLabel.toLowerCase()} for &ldquo;{query}&rdquo;.{" "}
-                <Link
-                  href={buildHref({ q: query, type: otherType })}
-                  className="underline underline-offset-4 text-foreground"
-                >
-                  {otherCount} {otherLabel.toLowerCase()}
-                </Link>{" "}
-                match this search.
-              </p>
-            </div>
-          );
-        }
-      }
-
+    if (!results.length) {
       const trending = await getTrending().catch(() => []);
 
       return (
@@ -158,41 +104,16 @@ export default async function SearchResults({
     }
 
     return (
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-center gap-2">
-          {(["all", "movie", "tv"] as const).map((t) => (
-            <Button
-              key={t}
-              asChild
-              size="sm"
-              variant={type === t ? "default" : "ghost"}
-            >
-              <Link
-                href={buildHref({ q: query, type: t === "all" ? "all" : t })}
-              >
-                {t === "all" ? "All" : t === "movie" ? "Movies" : "TV Shows"}
-              </Link>
-            </Button>
-          ))}
-          <Button asChild size="sm" variant="secondary">
-            <Link href={buildHref({ q: "" })}>Clear search</Link>
-          </Button>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{typed.length}</span>{" "}
-          {typed.length === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
-        </p>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-          {typed.map((item, index) => (
-            <MediaCard
-              key={`${item.type}-${item.id}`}
-              media={item}
-              priority={index < 2}
-            />
-          ))}
-        </div>
-      </div>
+      <SearchTypeTabs
+        query={query}
+        results={{
+          all: results,
+          movie: results.filter((item) => item.type === "movie"),
+          tv: results.filter((item) => item.type === "tv"),
+        }}
+        initialType={type}
+        clearHref={buildHref({ q: "" })}
+      />
     );
   }
 
