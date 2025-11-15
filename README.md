@@ -23,7 +23,19 @@ Create a `.env.local` with:
 NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key
 OMDB_API_KEY=your_omdb_api_key
 MAINTENANCE_MODE=false
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_public_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
+
+> Keep `SUPABASE_SERVICE_ROLE_KEY` for server-side use only (migrations, API routes); never expose it to client bundles.
+
+**Supabase Auth Setup:**
+1. In Supabase Dashboard → Authentication → Providers, enable **Email** provider
+2. Under URL Configuration, add redirect URLs:
+   - `http://localhost:3000/auth/callback` (dev)
+   - `https://kinoa.lol/auth/callback` (production)
+3. Optionally disable email confirmation in Settings → Auth for faster dev iteration
 
 ---
 
