@@ -526,6 +526,31 @@ type TmdbSeasonResponse = {
   }[];
 };
 
+const getTvShowCached = cache(async (id: string) =>
+  tmdbFetch<TmdbTvResponse>(
+    `/tv/${id}`,
+    { language: "en-US" },
+    CACHE_REVALIDATE.day,
+  ),
+);
+
+const getTvSeasonCached = cache(async (id: string, season: string) =>
+  tmdbFetch<TmdbSeasonResponse>(
+    `/tv/${id}/season/${season}`,
+    { language: "en-US" },
+    CACHE_REVALIDATE.day,
+  ),
+);
+
+const getTvEpisodeCached = cache(
+  async (id: string, season: string, episode: string) =>
+    tmdbFetch<TmdbEpisodeResponse>(
+      `/tv/${id}/season/${season}/episode/${episode}`,
+      { language: "en-US" },
+      CACHE_REVALIDATE.long,
+    ),
+);
+
 export type TvEpisodeDetails = {
   showId: number;
   showName: string;
@@ -560,21 +585,9 @@ export async function getTvEpisodeDetails(
   episode: string,
 ): Promise<TvEpisodeDetails> {
   const [show, seasonDetails, episodeDetails] = await Promise.all([
-    tmdbFetch<TmdbTvResponse>(
-      `/tv/${id}`,
-      { language: "en-US" },
-      CACHE_REVALIDATE.day,
-    ),
-    tmdbFetch<TmdbSeasonResponse>(
-      `/tv/${id}/season/${season}`,
-      { language: "en-US" },
-      CACHE_REVALIDATE.day,
-    ),
-    tmdbFetch<TmdbEpisodeResponse>(
-      `/tv/${id}/season/${season}/episode/${episode}`,
-      { language: "en-US" },
-      CACHE_REVALIDATE.long,
-    ),
+    getTvShowCached(id),
+    getTvSeasonCached(id, season),
+    getTvEpisodeCached(id, season, episode),
   ]);
 
   const firstAirYear = show.first_air_date
