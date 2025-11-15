@@ -28,6 +28,7 @@ export function MediaPoster({
               src={src}
               alt={title}
               fill
+              unoptimized
               className="object-cover"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 35vw, 280px"
               priority={priority}

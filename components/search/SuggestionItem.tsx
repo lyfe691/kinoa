@@ -38,6 +38,7 @@ export const SuggestionItem = React.memo(function SuggestionItem({
               src={item.posterUrl}
               alt={item.name}
               fill
+              unoptimized
               sizes="48px"
               className="object-cover"
             />

@@ -56,6 +56,7 @@ export function MediaCard({
               src={posterUrl}
               alt=""
               fill
+              unoptimized
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition duration-300 group-hover:scale-105"
               priority={priority}
