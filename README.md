@@ -40,6 +40,17 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 ---
 
+### Supabase Profiles
+
+- Create a `profiles` table keyed to `auth.users` with columns:
+  - `id uuid primary key references auth.users`
+  - `display_name text`
+  - `avatar_url text`
+  - `updated_at timestamp default now()`
+- Create an `avatars` storage bucket with authenticated uploads and public read access; the profile settings page will upload user avatars here.
+
+---
+
 ## Stack
 
 - **Framework:** Next.js App Router + React Server Components
