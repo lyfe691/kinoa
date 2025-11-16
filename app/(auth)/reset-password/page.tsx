@@ -6,22 +6,7 @@ export const metadata: Metadata = {
   description: "Set a new password for your Kinoa account",
 };
 
-type ResetPasswordPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default async function ResetPasswordPage({
-  searchParams,
-}: ResetPasswordPageProps) {
-  const params = await searchParams;
-  const codeParam = params.code;
-  const code =
-    typeof codeParam === "string"
-      ? codeParam
-      : Array.isArray(codeParam)
-        ? codeParam[0]
-        : null;
-
+export default function ResetPasswordPage() {
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="space-y-2 text-center">
@@ -31,7 +16,7 @@ export default async function ResetPasswordPage({
         </p>
       </div>
 
-      <ResetPasswordForm code={code} />
+      <ResetPasswordForm />
     </div>
   );
 }

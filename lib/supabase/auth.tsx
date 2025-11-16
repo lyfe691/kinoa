@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useMemo, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { createSupabaseBrowserClient } from "./client";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -11,6 +18,7 @@ type AuthContextValue = {
   session: Session | null;
   loading: boolean;
   supabase: BrowserSupabase | null;
+  refreshSession: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue>({
@@ -18,6 +26,7 @@ const AuthContext = createContext<AuthContextValue>({
   session: null,
   loading: true,
   supabase: null,
+  refreshSession: async () => {},
 });
 
 type AuthProviderProps = {
@@ -33,6 +42,15 @@ export function AuthProvider({
   const [user, setUser] = useState<User | null>(initialSession?.user ?? null);
   const [loading, setLoading] = useState(!initialSession);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+
+  const refreshSession = useCallback(async () => {
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession();
+
+    setSession(currentSession);
+    setUser(currentSession?.user ?? null);
+  }, [supabase]);
 
   useEffect(() => {
     let isMounted = true;
@@ -60,7 +78,24 @@ export function AuthProvider({
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (!isMounted) return;
+
+      // Handle sign out - clear everything
+      if (event === "SIGNED_OUT") {
+        setSession(null);
+        setUser(null);
+        return;
+      }
+
+      // Handle password recovery
+      if (event === "PASSWORD_RECOVERY") {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        return;
+      }
+
+      // Handle all other auth state changes
       setSession(newSession);
       setUser(newSession?.user ?? null);
     });
@@ -72,8 +107,8 @@ export function AuthProvider({
   }, [supabase]);
 
   const value = useMemo(
-    () => ({ user, session, loading, supabase }),
-    [user, session, loading, supabase],
+    () => ({ user, session, loading, supabase, refreshSession }),
+    [user, session, loading, supabase, refreshSession],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

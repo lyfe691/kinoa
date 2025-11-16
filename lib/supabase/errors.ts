@@ -30,6 +30,10 @@ const AUTH_ERROR_MATCHERS: ErrorMatcher[] = [
     includes: "signup requires a valid password",
     friendly: "Please choose a stronger password.",
   },
+  {
+    includes: "new password should be different from the old password",
+    friendly: "Please choose a password you haven’t used before.",
+  },
 ];
 
 function extractErrorMessage(error: unknown): string | null {
