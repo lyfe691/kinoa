@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { Loader, CircleAlertIcon } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useSession } from "@/lib/supabase/auth";
 
 export function LoginForm() {
   const router = useRouter();
@@ -17,13 +18,21 @@ export function LoginForm() {
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const supabase = React.useMemo(() => createSupabaseBrowserClient(), []);
+  const { supabase } = useSession();
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       setError(null);
       setLoading(true);
+
+      if (!supabase) {
+        setError(
+          "Unable to reach the authentication service. Please try again.",
+        );
+        setLoading(false);
+        return;
+      }
 
       try {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -91,6 +100,17 @@ export function LoginForm() {
         {loading && <Loader className="h-4 w-4 animate-spin" />}
         {loading ? "Signing in..." : "Sign in"}
       </Button>
+
+      <p className="text-xs text-center text-muted-foreground">
+        Forgot your password?{" "}
+        <Link
+          href="/forgot-password"
+          className="underline underline-offset-4 text-foreground"
+        >
+          Reset it
+        </Link>
+        .
+      </p>
     </form>
   );
 }

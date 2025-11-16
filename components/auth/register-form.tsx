@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +10,7 @@ import { Loader, CircleAlertIcon, InfoIcon } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useSession } from "@/lib/supabase/auth";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export function RegisterForm() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
-  const supabase = React.useMemo(() => createSupabaseBrowserClient(), []);
+  const { supabase } = useSession();
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -34,6 +34,14 @@ export function RegisterForm() {
 
       if (trimmedUsername.length < 3) {
         setError("Display name must be at least 3 characters");
+        setLoading(false);
+        return;
+      }
+
+      if (!supabase) {
+        setError(
+          "Unable to reach the authentication service. Please try again.",
+        );
         setLoading(false);
         return;
       }
