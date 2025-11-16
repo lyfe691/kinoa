@@ -48,25 +48,47 @@ export async function saveProfileAction(input: SaveProfileInput) {
 
   const currentEmail = user.email ?? "";
 
-  if (sanitizedEmail && sanitizedEmail !== currentEmail) {
-    const { data, error: emailError } = await supabase.auth.updateUser({
-      email: sanitizedEmail,
-    });
+  const metadataUpdates: Record<string, string | null> = {};
+  if (sanitizedDisplayName !== null) {
+    metadataUpdates.display_name = sanitizedDisplayName;
+  } else {
+    metadataUpdates.display_name = null;
+  }
 
-    if (emailError) {
+  if (input.avatarUrl !== undefined) {
+    metadataUpdates.avatar_url = sanitizedAvatarUrl ?? null;
+  }
+
+  const userUpdatePayload: Parameters<
+    typeof supabase.auth.updateUser
+  >[0] = {};
+
+  if (sanitizedEmail && sanitizedEmail !== currentEmail) {
+    userUpdatePayload.email = sanitizedEmail;
+  }
+
+  if (Object.keys(metadataUpdates).length > 0) {
+    userUpdatePayload.data = metadataUpdates;
+  }
+
+  if (Object.keys(userUpdatePayload).length > 0) {
+    const { data, error: updateError } =
+      await supabase.auth.updateUser(userUpdatePayload);
+
+    if (updateError) {
       return {
         success: false,
         error:
-          emailError.message ??
-          "We couldn’t update your email. Please try again.",
+          updateError.message ??
+          "We couldn’t update your profile details. Please try again.",
       };
     }
 
-    emailChanged = true;
-
-    // Supabase returns the original user until the new email is confirmed.
-    if (data?.user?.email !== sanitizedEmail) {
-      emailRequiresConfirmation = true;
+    if (userUpdatePayload.email) {
+      emailChanged = true;
+      if (data?.user?.email !== sanitizedEmail) {
+        emailRequiresConfirmation = true;
+      }
     }
   }
 

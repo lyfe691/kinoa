@@ -6,9 +6,10 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2, Trash2, UploadCloud } from "lucide-react";
+import { Loader, Trash2, UploadCloud } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useSession } from "@/lib/supabase/auth";
 import type { AccountProfile } from "@/lib/supabase/profile";
 import { saveProfileAction } from "../actions";
 import {
@@ -59,6 +60,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
   const router = useRouter();
   const supabase = React.useMemo(() => createSupabaseBrowserClient(), []);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const { refreshSession } = useSession();
 
   const initialDisplayName = profile?.displayName ?? "";
   const initialEmail = profile?.email ?? "";
@@ -219,6 +221,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
         description,
       });
 
+      await refreshSession();
       router.refresh();
     } catch (error) {
       console.error("[profiles] Failed to save profile", error);
@@ -273,7 +276,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                     disabled={uploading}
                   >
                     {uploading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
                       <UploadCloud className="mr-2 h-4 w-4" />
                     )}
@@ -376,7 +379,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
             </Button>
             <Button type="submit" disabled={isSaveDisabled}>
               {(saving || uploading) && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
               )}
               Save changes
             </Button>

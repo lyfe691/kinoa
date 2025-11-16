@@ -15,12 +15,12 @@ const settingsTabs = [
   {
     value: "profile",
     label: "Profile",
-    description: "Personal details, contact info, and profile photo",
+    description: "Personal basics",
   },
   {
     value: "security",
     label: "Security & Data",
-    description: "Password, data exports, and account controls",
+    description: "Account controls",
   },
 ] as const;
 
@@ -60,32 +60,35 @@ export default async function SettingsPage() {
       <Tabs
         defaultValue="profile"
         orientation="vertical"
-        className="flex flex-col gap-10 lg:flex-row lg:items-start"
+        className="flex flex-col gap-12 lg:flex-row lg:items-start"
       >
-        <TabsList
-          variant="underline"
-          className="flex w-full flex-row gap-4 overflow-x-auto border-b border-border/60 pb-2 lg:w-72 lg:flex-col lg:items-stretch lg:gap-1 lg:border-b-0 lg:border-s lg:pb-0 lg:pl-4 lg:pt-2"
-        >
-          {settingsTabs.map((tab) => (
-            <TabsTab
-              key={tab.value}
-              value={tab.value}
-              className="group flex w-full flex-col items-start gap-1 rounded-none border-0 bg-transparent px-0 py-3 text-left text-sm font-medium leading-tight transition-colors hover:text-foreground/80 data-[selected=true]:text-foreground"
-            >
-              <span className="text-base font-semibold">{tab.label}</span>
-              <span className="text-xs font-normal text-muted-foreground transition-colors group-data-[selected=true]:text-muted-foreground/80">
-                {tab.description}
-              </span>
-            </TabsTab>
-          ))}
-        </TabsList>
+        <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-64 lg:max-w-xs">
+          <TabsList
+            variant="underline"
+            className="flex w-full flex-row gap-4 overflow-x-auto border-b border-border/60 pb-2 lg:flex-col lg:gap-2 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-0"
+          >
+            {settingsTabs.map((tab) => (
+              <TabsTab
+                key={tab.value}
+                value={tab.value}
+                className="group relative flex w-full flex-col gap-1 rounded-md px-2 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[selected=true]:bg-muted/20 data-[selected=true]:text-foreground"
+              >
+                <span className="text-sm font-semibold">{tab.label}</span>
+                <span className="text-xs text-muted-foreground/80">
+                  {tab.description}
+                </span>
+                <span className="absolute inset-y-1 left-0 hidden w-0.5 rounded-full bg-primary group-data-[selected=true]:block lg:-left-1" />
+              </TabsTab>
+            ))}
+          </TabsList>
+        </aside>
 
-        <div className="flex-1 space-y-6">
-          <TabsPanel value="profile" className="space-y-6 lg:mt-0">
+        <div className="flex-1 space-y-8">
+          <TabsPanel value="profile" className="space-y-6">
             <ProfileSettingsPanel profile={profile} />
           </TabsPanel>
 
-          <TabsPanel value="security" className="space-y-6 lg:mt-0">
+          <TabsPanel value="security" className="space-y-6">
             <SecuritySettingsPanel />
           </TabsPanel>
         </div>

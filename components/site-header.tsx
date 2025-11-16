@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/drawer";
 import { useSession } from "@/lib/supabase/auth";
 import { signOutEverywhere } from "@/lib/supabase/sign-out";
-import { LogOut, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 
@@ -236,13 +236,11 @@ function DesktopActions({
               className="h-10 gap-2.5 rounded-lg px-2.5 transition-all hover:bg-accent/50 data-[state=open]:bg-accent"
             >
               <Avatar className="h-8 w-8">
-                {account.avatarUrl ? (
-                  <AvatarImage
-                    src={account.avatarUrl}
-                    alt={account.displayName}
-                    className="object-cover"
-                  />
-                ) : null}
+                <AvatarImage
+                  src={account.avatarUrl ?? undefined}
+                  alt={account.displayName}
+                  className="object-cover"
+                />
                 <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 text-xs font-semibold text-primary-foreground">
                   {account.initials}
                 </AvatarFallback>
@@ -269,6 +267,20 @@ function DesktopActions({
                 </span>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer rounded-lg px-3 py-2 transition-colors hover:bg-accent/60"
+              asChild
+            >
+              <Link href="/settings" onClick={() => setIsDropdownOpen(false)}>
+                <div className="flex items-center gap-2">
+                  <SettingsIcon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">
+                    Settings
+                  </span>
+                </div>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
   className="cursor-pointer rounded-lg px-3 py-2 text-destructive 
@@ -347,13 +359,11 @@ function MobileDrawer({
         <div className="border-b px-6 py-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
-              {account.avatarUrl ? (
-                <AvatarImage
-                  src={account.avatarUrl}
-                  alt={account.displayName}
-                  className="object-cover"
-                />
-              ) : null}
+              <AvatarImage
+                src={account.avatarUrl ?? undefined}
+                alt={account.displayName}
+                className="object-cover"
+              />
               <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 text-sm font-semibold text-primary-foreground">
                 {account.initials}
               </AvatarFallback>
@@ -392,6 +402,17 @@ function MobileDrawer({
               </DrawerClose>
             );
           },
+        )}
+        {user && (
+          <DrawerClose asChild>
+            <Link
+              href="/settings"
+              className="rounded-lg px-3.5 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              aria-current={pathname === "/settings" ? "page" : undefined}
+            >
+              Settings
+            </Link>
+          </DrawerClose>
         )}
       </nav>
 
