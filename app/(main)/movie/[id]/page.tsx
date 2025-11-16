@@ -18,8 +18,6 @@ import {
   MediaOverview,
   MediaPoster,
 } from "@/components/media-detail";
-import { MediaMenu } from "@/components/media-menu";
-import { isInWatchlist } from "@/lib/supabase/watchlist";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -87,7 +85,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
     ? new Date(movie.releaseDate).getFullYear().toString()
     : undefined;
   const runtime = formatRuntime(movie.runtime);
-  const inWatchlist = await isInWatchlist(movie.id, "movie");
 
   return (
     <div className="flex flex-col gap-8">
@@ -107,16 +104,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
       <MediaDetailLayout
         poster={
-          <div className="relative">
-            <MediaPoster src={movie.posterUrl} title={movie.title} priority />
-            <div className="absolute bottom-3 right-3">
-              <MediaMenu
-                mediaId={movie.id}
-                mediaType="movie"
-                isInWatchlist={inWatchlist}
-              />
-            </div>
-          </div>
+          <MediaPoster src={movie.posterUrl} title={movie.title} priority />
         }
       >
         <MediaHeader

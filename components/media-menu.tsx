@@ -2,17 +2,16 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { MoreVertical, Plus, Check, Loader } from 'lucide-react'
+import { Bookmark, BookmarkMinus, Loader } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import {
   AlertDialog,
-  AlertDialogClose,
   AlertDialogPopup,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -46,9 +45,7 @@ export function MediaMenu({
   const [showAuthDialog, setShowAuthDialog] = React.useState(false)
 
   const handleToggleWatchlist = React.useCallback(
-    async (e: Event) => {
-      e.preventDefault()
-
+    async () => {
       if (!user) {
         setShowAuthDialog(true)
         return
@@ -88,38 +85,53 @@ export function MediaMenu({
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size={size === 'sm' ? 'icon-sm' : 'icon'}
-            className={cn(
-              'rounded-full bg-background/90 backdrop-blur-sm hover:bg-background',
-              className,
-            )}
-            aria-label="More options"
-            onClick={(e) => e.preventDefault()}
-          >
-            <MoreVertical className={size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={handleToggleWatchlist} disabled={loading}>
-            {loading ? (
-              <Loader className="h-4 w-4 animate-spin" />
-            ) : isInWatchlist ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Plus className="h-4 w-4" />
-            )}
-            {loading
-              ? 'Loading...'
-              : isInWatchlist
-                ? 'Remove from watchlist'
-                : 'Add to watchlist'}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size={size === 'sm' ? 'icon-sm' : 'icon'}
+              className={cn(
+                'cursor-pointer rounded-full transition-all',
+                isInWatchlist
+                  ? 'bg-primary/10 text-primary hover:bg-primary/20'
+                  : 'bg-background/90 backdrop-blur-sm hover:bg-background hover:text-foreground',
+                className,
+              )}
+              aria-label={
+                isInWatchlist ? 'Remove from watchlist' : 'Add to watchlist'
+              }
+              onClick={(e) => {
+                e.preventDefault()
+                handleToggleWatchlist()
+              }}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader
+                  className={cn(
+                    'animate-spin',
+                    size === 'sm' ? 'h-4 w-4' : 'h-5 w-5',
+                  )}
+                />
+              ) : isInWatchlist ? (
+                <BookmarkMinus
+                  className={cn(size === 'sm' ? 'h-4 w-4' : 'h-5 w-5')}
+                />
+              ) : (
+                <Bookmark
+                  className={cn(size === 'sm' ? 'h-4 w-4' : 'h-5 w-5')}
+                />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              {isInWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
         <AlertDialogPopup>

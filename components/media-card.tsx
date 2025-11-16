@@ -103,15 +103,15 @@ export function MediaCard({
 
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 space-y-1">
-          <h3 className="line-clamp-1 text-sm font-medium leading-tight">
-            {name}
-          </h3>
+        <h3 className="line-clamp-1 text-sm font-medium leading-tight">
+          {name}
+        </h3>
 
-          {metadata.length > 0 && (
-            <p className="truncate text-xs text-muted-foreground">
-              {metadata.join(" · ")}
-            </p>
-          )}
+        {metadata.length > 0 && (
+          <p className="truncate text-xs text-muted-foreground">
+            {metadata.join(" · ")}
+          </p>
+        )}
         </div>
 
         <div className="flex-shrink-0" onClick={(e) => e.preventDefault()}>

@@ -14,25 +14,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useSession } from "@/lib/supabase/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/search", label: "Search" },
-  { href: "/watchlist", label: "Watchlist" },
+  { href: "/watchlist", label: "Watchlist", authRequired: true },
 ];
 
 export function SiteHeader() {
@@ -56,28 +47,22 @@ export function SiteHeader() {
       );
       toast.error(message);
     } finally {
-    setSigningOut(false);
+      setSigningOut(false);
     }
   }, [supabase, router]);
-
-  const userInitial = React.useMemo(
-    () => user?.email?.charAt(0).toUpperCase() ?? "U",
-    [user?.email],
-  );
 
   return (
     <Drawer shouldScaleBackground setBackgroundColorOnScale={false}>
       <header className={cn("sticky top-0 z-50 bg-background")}>
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <BrandLink />
-          <DesktopNav pathname={pathname} />
+          <DesktopNav pathname={pathname} user={user} />
 
           <div className="flex-1" />
 
           <DesktopActions
             loading={loading}
             user={user}
-            userInitial={userInitial}
             onSignOut={handleSignOut}
             signingOut={signingOut}
           />
@@ -90,7 +75,6 @@ export function SiteHeader() {
         pathname={pathname}
         loading={loading}
         user={user}
-        userInitial={userInitial}
         signingOut={signingOut}
         onSignOut={handleSignOut}
       />
@@ -109,10 +93,10 @@ function BrandLink() {
   );
 }
 
-function DesktopNav({ pathname }: { pathname: string | null }) {
+function DesktopNav({ pathname, user }: { pathname: string | null; user: ReturnType<typeof useSession>["user"] }) {
   return (
           <nav className="hidden md:flex items-center gap-1">
-      {NAV_ITEMS.map(({ href, label }) => {
+      {NAV_ITEMS.filter(item => !item.authRequired || user).map(({ href, label }) => {
               const isActive =
           pathname === href || (href !== "/" && pathname?.startsWith(href));
               return (
@@ -138,7 +122,6 @@ function DesktopNav({ pathname }: { pathname: string | null }) {
 type DesktopActionsProps = {
   loading: boolean;
   user: ReturnType<typeof useSession>["user"];
-  userInitial: string;
   onSignOut: () => void;
   signingOut: boolean;
 };
@@ -146,40 +129,23 @@ type DesktopActionsProps = {
 function DesktopActions({
   loading,
   user,
-  userInitial,
   onSignOut,
   signingOut,
 }: DesktopActionsProps) {
-  const username = user?.user_metadata?.username;
-
   return (
     <div className="hidden md:flex items-center gap-3">
       {!loading && (
         <>
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-2"
-                  aria-label="Open user menu"
-                >
-                  <Avatar className="h-6 w-6">
-                    <AvatarFallback className="text-xs">{userInitial}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">
-                    {username || "Account"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={onSignOut} disabled={signingOut}>
-                  <LogOut className="h-4 w-4" />
-                  {signingOut ? "Signing out..." : "Sign out"}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onSignOut}
+              disabled={signingOut}
+            >
+              <LogOut className="h-4 w-4" />
+              {signingOut ? "Signing out..." : "Sign out"}
+            </Button>
           ) : (
             <Button variant="default" size="sm" asChild>
               <Link href="/login">Sign in</Link>
@@ -187,8 +153,8 @@ function DesktopActions({
           )}
         </>
       )}
-            <ModeToggle />
-          </div>
+      <ModeToggle />
+    </div>
   );
 }
 
@@ -216,7 +182,6 @@ type MobileDrawerProps = {
   pathname: string | null;
   loading: boolean;
   user: ReturnType<typeof useSession>["user"];
-  userInitial: string;
   signingOut: boolean;
   onSignOut: () => void;
 };
@@ -225,22 +190,21 @@ function MobileDrawer({
   pathname,
   loading,
   user,
-  userInitial,
   signingOut,
   onSignOut,
 }: MobileDrawerProps) {
-  const username = user?.user_metadata?.username;
-
   return (
     <DrawerContent className="flex flex-col md:hidden">
-        <VisuallyHidden>
-          <DrawerTitle>Navigation Menu</DrawerTitle>
-        </VisuallyHidden>
+      <VisuallyHidden>
+        <DrawerTitle>Navigation Menu</DrawerTitle>
+      </VisuallyHidden>
 
-        <nav className="flex flex-col gap-1 p-6 pt-4">
-        {NAV_ITEMS.map(({ href, label }) => {
+      <nav className="flex flex-col gap-1 p-6 pt-4">
+        {NAV_ITEMS.filter((item) => !item.authRequired || user).map(
+          ({ href, label }) => {
             const isActive =
-              pathname === href || (href !== "/" && pathname?.startsWith(href));
+              pathname === href ||
+              (href !== "/" && pathname?.startsWith(href));
             return (
               <DrawerClose asChild key={href}>
                 <Link
@@ -257,37 +221,23 @@ function MobileDrawer({
                 </Link>
               </DrawerClose>
             );
-          })}
-        </nav>
+          },
+        )}
+      </nav>
 
       <div className="mt-auto border-t px-6 py-4 space-y-4">
         {!loading && (
           <>
             {user ? (
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback>{userInitial}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {username || "Account"}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={onSignOut}
-                  disabled={signingOut}
-                >
-                  <LogOut className="h-4 w-4" />
-                  {signingOut ? "Signing out..." : "Sign out"}
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={onSignOut}
+                disabled={signingOut}
+              >
+                <LogOut className="h-4 w-4" />
+                {signingOut ? "Signing out..." : "Sign out"}
+              </Button>
             ) : (
               <DrawerClose asChild>
                 <Button variant="default" className="w-full" asChild>
@@ -303,7 +253,7 @@ function MobileDrawer({
           </span>
           <ModeToggle />
         </div>
-        </div>
-      </DrawerContent>
+      </div>
+    </DrawerContent>
   );
 }
