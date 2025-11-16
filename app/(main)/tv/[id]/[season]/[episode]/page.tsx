@@ -19,6 +19,8 @@ import {
   MediaOverview,
   MediaPoster,
 } from "@/components/media-detail";
+import { MediaMenu } from "@/components/media-menu";
+import { isInWatchlist } from "@/lib/supabase/watchlist";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -103,6 +105,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
 
   const currentSeasonEpisodes =
     details.allEpisodes[details.episode.season] || [];
+  const inWatchlist = await isInWatchlist(details.showId, "tv");
 
   return (
     <div className="flex flex-col gap-8">
@@ -130,11 +133,20 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
 
       <MediaDetailLayout
         poster={
-          <MediaPoster
-            src={details.posterUrl}
-            title={details.showName}
-            priority
-          />
+          <div className="relative">
+            <MediaPoster
+              src={details.posterUrl}
+              title={details.showName}
+              priority
+            />
+            <div className="absolute bottom-3 right-3">
+              <MediaMenu
+                mediaId={details.showId}
+                mediaType="tv"
+                isInWatchlist={inWatchlist}
+              />
+            </div>
+          </div>
         }
       >
         <MediaHeader

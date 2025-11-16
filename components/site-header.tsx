@@ -32,6 +32,7 @@ import { getAuthErrorMessage } from "@/lib/supabase/errors";
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/search", label: "Search" },
+  { href: "/watchlist", label: "Watchlist" },
 ];
 
 export function SiteHeader() {
@@ -172,23 +173,7 @@ function DesktopActions({
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {username || "Account"}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>
-                  <User className="h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem onClick={onSignOut} disabled={signingOut}>
                   <LogOut className="h-4 w-4" />
                   {signingOut ? "Signing out..." : "Sign out"}

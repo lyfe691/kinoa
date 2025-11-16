@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Star, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRuntime } from "@/lib/format-runtime";
+import { MediaMenu } from "@/components/media-menu";
 
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -14,12 +15,14 @@ type MediaCardProps = {
     seasonCount?: number;
     episodeCount?: number;
   };
+  isInWatchlist?: boolean;
   className?: string;
   priority?: boolean;
 };
 
 export function MediaCard({
   media,
+  isInWatchlist = false,
   className,
   priority = false,
 }: MediaCardProps) {
@@ -98,16 +101,27 @@ export function MediaCard({
         )}
       </div>
 
-      <div className="space-y-1">
-        <h3 className="line-clamp-1 text-sm font-medium leading-tight">
-          {name}
-        </h3>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 space-y-1">
+          <h3 className="line-clamp-1 text-sm font-medium leading-tight">
+            {name}
+          </h3>
 
-        {metadata.length > 0 && (
-          <p className="truncate text-xs text-muted-foreground">
-            {metadata.join(" · ")}
-          </p>
-        )}
+          {metadata.length > 0 && (
+            <p className="truncate text-xs text-muted-foreground">
+              {metadata.join(" · ")}
+            </p>
+          )}
+        </div>
+
+        <div className="flex-shrink-0" onClick={(e) => e.preventDefault()}>
+          <MediaMenu
+            mediaId={media.id}
+            mediaType={type}
+            isInWatchlist={isInWatchlist}
+            size="sm"
+          />
+        </div>
       </div>
     </Link>
   );

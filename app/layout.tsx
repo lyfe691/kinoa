@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/supabase/auth";
-import { getSession } from "@/lib/supabase/session";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -22,13 +21,11 @@ export const metadata: Metadata = {
   description: "Everything you want to watch, in one place.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialSession = await getSession();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -42,7 +39,7 @@ export default async function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <AuthProvider initialSession={initialSession}>
+          <AuthProvider>
             <div
               data-vaul-drawer-wrapper
               className="flex min-h-screen flex-col"

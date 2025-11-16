@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/auth/register-form";
+import { getSession } from "@/lib/supabase/session";
 
 export const metadata: Metadata = {
   title: "Create account • Kinoa",
   description: "Create a new Kinoa account",
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const session = await getSession();
+
+  if (session) {
+    redirect("/");
+  }
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="space-y-2 text-center">
