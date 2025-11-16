@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Bookmark } from 'lucide-react'
+import { Bookmark, Sparkles } from 'lucide-react'
 import { getSession } from '@/lib/supabase/session'
 import { getWatchlist } from '@/lib/supabase/watchlist'
 import { getMovieDetails, getTvEpisodeDetails } from '@/lib/tmdb'
-import { WatchlistControls } from '@/components/watchlist-controls'
+import { WatchlistControls } from '@/components/watchlist/watchlist-controls'
 import { Button } from '@/components/ui/button'
 import type { MediaSummary } from '@/lib/tmdb'
 
@@ -84,40 +84,43 @@ export default async function WatchlistPage() {
   )
 
   return (
-    <div className="flex flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+    <section className="flex flex-col gap-12">
+      <header className="space-y-3 text-center">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           My Watchlist
         </h1>
         <p className="text-muted-foreground">
-          Keep track of movies and shows you want to watch
+          {validMedia.length > 0 
+            ? `You've saved ${validMedia.length} ${validMedia.length === 1 ? 'title' : 'titles'}`
+            : 'Keep track of movies and shows you want to watch'}
         </p>
       </header>
 
       {validMedia.length === 0 ? (
-        <div className="mx-auto flex max-w-md flex-col items-center gap-6 py-16 text-center">
-          <div className="rounded-full bg-muted p-8">
-            <Bookmark className="h-12 w-12 text-muted-foreground" />
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-xl font-semibold">Your watchlist is empty</h2>
-            <p className="text-sm text-muted-foreground">
-              Start adding movies and shows you want to watch by clicking the
-              bookmark icon on any title.
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild>
-              <Link href="/">Browse Trending</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/search">Search</Link>
-            </Button>
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <div className="flex max-w-md flex-col items-center gap-6 text-center">
+            <div className="rounded-full bg-muted p-6">
+              <Bookmark className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">Your watchlist is empty</h2>
+              <p className="text-sm text-muted-foreground">
+                Start adding movies and shows by clicking the bookmark icon
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button asChild>
+                <Link href="/">Browse Trending</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/search">Search</Link>
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
         <WatchlistControls media={validMedia} />
       )}
-    </div>
+    </section>
   )
 }

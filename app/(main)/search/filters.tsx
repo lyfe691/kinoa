@@ -7,7 +7,6 @@ import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
@@ -208,7 +207,6 @@ export default function SearchFilters({
 
             {/* Desktop: Tooltip */}
             <div className="hidden md:block">
-              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
@@ -224,7 +222,6 @@ export default function SearchFilters({
                     results. Use Popularity for the best experience.
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
             </div>
 
             {/* Mobile: Drawer */}

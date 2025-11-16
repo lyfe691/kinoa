@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, BookmarkMinus, Loader } from "lucide-react";
+import { Bookmark, BookmarkMinus, BookmarkPlus, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
@@ -109,53 +108,50 @@ export function MediaMenu({
 
   return (
     <>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size={size === "sm" ? "icon-sm" : "icon"}
-              className={cn(
-                "cursor-pointer rounded-full transition-all",
-                isInWatchlist
-                  ? "bg-primary/10 text-primary hover:bg-primary/20"
-                  : "bg-background/90 backdrop-blur-sm hover:bg-background hover:text-foreground",
-                className,
-              )}
-              aria-label={
-                isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
-              }
-              onClick={(e) => {
-                e.preventDefault();
-                handleToggleWatchlist();
-              }}
-              disabled={isBusy}
-            >
-              {isBusy ? (
-                <Loader
-                  className={cn(
-                    "animate-spin",
-                    size === "sm" ? "h-4 w-4" : "h-5 w-5",
-                  )}
-                />
-              ) : isInWatchlist ? (
-                <BookmarkMinus
-                  className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-                />
-              ) : (
-                <Bookmark
-                  className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-                />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>
-              {isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size={size === "sm" ? "icon-sm" : "icon"}
+            className={cn(
+              "rounded-full transition-all cursor-pointer",
+              isInWatchlist &&
+                "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary",
+              className,
+            )}
+            aria-label={
+              isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              handleToggleWatchlist();
+            }}
+            disabled={isBusy}
+          >
+            {isBusy ? (
+              <Loader
+                className={cn(
+                  "animate-spin",
+                  size === "sm" ? "h-4 w-4" : "h-5 w-5",
+                )}
+              />
+            ) : isInWatchlist ? (
+              <BookmarkMinus
+                className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
+              />
+            ) : (
+              <BookmarkPlus
+                className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
+              />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            {isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
+          </p>
+        </TooltipContent>
+      </Tooltip>
 
       <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
         <AlertDialogPopup>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/supabase/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,12 +41,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <TooltipProvider>
             <div
               data-vaul-drawer-wrapper
               className="flex min-h-screen flex-col"
             >
               {children}
             </div>
+            </TooltipProvider>
           </AuthProvider>
           <Toaster />
         </ThemeProvider>
