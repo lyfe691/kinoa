@@ -8,8 +8,16 @@ const staticRoutes = [
   { path: "/watchlist", changeFrequency: "weekly" as const, priority: 0.6 },
   { path: "/login", changeFrequency: "yearly" as const, priority: 0.3 },
   { path: "/register", changeFrequency: "yearly" as const, priority: 0.3 },
-  { path: "/forgot-password", changeFrequency: "yearly" as const, priority: 0.2 },
-  { path: "/reset-password", changeFrequency: "yearly" as const, priority: 0.2 },
+  {
+    path: "/forgot-password",
+    changeFrequency: "yearly" as const,
+    priority: 0.2,
+  },
+  {
+    path: "/reset-password",
+    changeFrequency: "yearly" as const,
+    priority: 0.2,
+  },
   { path: "/terms", changeFrequency: "yearly" as const, priority: 0.2 },
   { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.2 },
 ];

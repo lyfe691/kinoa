@@ -126,12 +126,12 @@ export default function RootLayout({
         >
           <AuthProvider>
             <TooltipProvider>
-            <div
-              data-vaul-drawer-wrapper
-              className="flex min-h-screen flex-col"
-            >
-              {children}
-            </div>
+              <div
+                data-vaul-drawer-wrapper
+                className="flex min-h-screen flex-col"
+              >
+                {children}
+              </div>
             </TooltipProvider>
           </AuthProvider>
           <Toaster />
