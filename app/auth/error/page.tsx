@@ -11,8 +11,8 @@ export default function AuthErrorPage() {
           Authentication Error
         </h1>
         <p className="text-sm text-muted-foreground max-w-md">
-          We couldn&apos;t sign you in. The link may have expired or already been
-          used. Please try signing in again.
+          We couldn&apos;t sign you in. The link may have expired or already
+          been used. Please try signing in again.
         </p>
       </div>
       <Button asChild>
@@ -21,4 +21,3 @@ export default function AuthErrorPage() {
     </div>
   );
 }
-

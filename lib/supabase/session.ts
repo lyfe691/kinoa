@@ -5,7 +5,7 @@ export async function getSession() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  
+
   if (!user) {
     return null;
   }
@@ -14,7 +14,7 @@ export async function getSession() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  
+
   return session;
 }
 
@@ -25,4 +25,3 @@ export async function getUser() {
   } = await supabase.auth.getUser();
   return user;
 }
-

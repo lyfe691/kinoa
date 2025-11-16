@@ -1,36 +1,36 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { Bookmark, Film, Tv } from 'lucide-react'
-import { getSession } from '@/lib/supabase/session'
-import { getWatchlist } from '@/lib/supabase/watchlist'
-import { getMovieDetails, getTvEpisodeDetails } from '@/lib/tmdb'
-import { MediaCard } from '@/components/media-card'
-import { Button } from '@/components/ui/button'
-import type { MediaSummary } from '@/lib/tmdb'
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Bookmark, Film, Tv } from "lucide-react";
+import { getSession } from "@/lib/supabase/session";
+import { getWatchlist } from "@/lib/supabase/watchlist";
+import { getMovieDetails, getTvEpisodeDetails } from "@/lib/tmdb";
+import { MediaCard } from "@/components/media-card";
+import { Button } from "@/components/ui/button";
+import type { MediaSummary } from "@/lib/tmdb";
 
 export const metadata: Metadata = {
-  title: 'My Watchlist • Kinoa',
-  description: 'Your saved movies and TV shows',
-}
+  title: "My Watchlist • Kinoa",
+  description: "Your saved movies and TV shows",
+};
 
 export default async function WatchlistPage() {
-  const session = await getSession()
+  const session = await getSession();
 
   if (!session) {
-    redirect('/login')
+    redirect("/login");
   }
 
-  const watchlistItems = await getWatchlist()
+  const watchlistItems = await getWatchlist();
 
   const mediaDetails = await Promise.all(
     watchlistItems.map(async (item): Promise<MediaSummary | null> => {
       try {
-        if (item.media_type === 'movie') {
-          const movie = await getMovieDetails(String(item.media_id))
+        if (item.media_type === "movie") {
+          const movie = await getMovieDetails(String(item.media_id));
           return {
             id: movie.id,
-            type: 'movie' as const,
+            type: "movie" as const,
             name: movie.title,
             overview: movie.overview,
             posterUrl: movie.posterUrl,
@@ -43,16 +43,16 @@ export default async function WatchlistPage() {
             runtime: movie.runtime,
             rating: movie.rating,
             voteCount: movie.voteCount,
-          }
+          };
         } else {
           const show = await getTvEpisodeDetails(
             String(item.media_id),
-            '1',
-            '1',
-          )
+            "1",
+            "1",
+          );
           return {
             id: show.showId,
-            type: 'tv' as const,
+            type: "tv" as const,
             name: show.showName,
             overview: show.overview,
             posterUrl: show.posterUrl,
@@ -67,24 +67,24 @@ export default async function WatchlistPage() {
             ),
             rating: show.rating,
             voteCount: show.voteCount,
-          }
+          };
         }
       } catch (error) {
         console.error(
           `Failed to fetch details for ${item.media_type} ${item.media_id}`,
           error,
-        )
-        return null
+        );
+        return null;
       }
     }),
-  )
+  );
 
   const validMedia = mediaDetails.filter(
     (item): item is NonNullable<typeof item> => item !== null,
-  )
+  );
 
-  const movieCount = validMedia.filter((m) => m.type === 'movie').length
-  const tvCount = validMedia.filter((m) => m.type === 'tv').length
+  const movieCount = validMedia.filter((m) => m.type === "movie").length;
+  const tvCount = validMedia.filter((m) => m.type === "tv").length;
 
   return (
     <section className="flex flex-col gap-12">
@@ -98,14 +98,14 @@ export default async function WatchlistPage() {
             <div className="flex items-center gap-2">
               <Film className="h-4 w-4" />
               <span>
-                {movieCount} {movieCount === 1 ? 'Movie' : 'Movies'}
+                {movieCount} {movieCount === 1 ? "Movie" : "Movies"}
               </span>
             </div>
             <div className="h-4 w-px bg-border" />
             <div className="flex items-center gap-2">
               <Tv className="h-4 w-4" />
               <span>
-                {tvCount} {tvCount === 1 ? 'Show' : 'Shows'}
+                {tvCount} {tvCount === 1 ? "Show" : "Shows"}
               </span>
             </div>
           </div>
@@ -145,6 +145,5 @@ export default async function WatchlistPage() {
         </div>
       )}
     </section>
-  )
+  );
 }
-

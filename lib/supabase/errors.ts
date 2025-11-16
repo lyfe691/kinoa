@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 type ErrorMatcher = {
-  includes: string
-  friendly: string
-}
+  includes: string;
+  friendly: string;
+};
 
 const AUTH_ERROR_MATCHERS: ErrorMatcher[] = [
   {
@@ -30,31 +30,29 @@ const AUTH_ERROR_MATCHERS: ErrorMatcher[] = [
     includes: "signup requires a valid password",
     friendly: "Please choose a stronger password.",
   },
-]
+];
 
 function extractErrorMessage(error: unknown): string | null {
-  if (typeof error === "string") return error
+  if (typeof error === "string") return error;
   if (
     typeof error === "object" &&
     error !== null &&
     "message" in error &&
     typeof (error as { message?: unknown }).message === "string"
   ) {
-    return (error as { message: string }).message
+    return (error as { message: string }).message;
   }
-  return null
+  return null;
 }
 
 export function getAuthErrorMessage(error: unknown, fallback: string) {
-  const message = extractErrorMessage(error)
-  if (!message) return fallback
+  const message = extractErrorMessage(error);
+  if (!message) return fallback;
 
-  const normalized = message.toLowerCase()
+  const normalized = message.toLowerCase();
   const match = AUTH_ERROR_MATCHERS.find(({ includes }) =>
     normalized.includes(includes),
-  )
+  );
 
-  return match?.friendly ?? fallback
+  return match?.friendly ?? fallback;
 }
-
-

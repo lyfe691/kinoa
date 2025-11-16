@@ -205,7 +205,7 @@ export default function SearchFilters({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium">Sort by</h3>
-            
+
             {/* Desktop: Tooltip */}
             <div className="hidden md:block">
               <TooltipProvider>

@@ -19,4 +19,3 @@ function getSupabaseAnonKey() {
 export function createSupabaseBrowserClient() {
   return createBrowserClient(getSupabaseUrl(), getSupabaseAnonKey());
 }
-

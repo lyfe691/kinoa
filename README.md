@@ -31,6 +31,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 > Keep `SUPABASE_SERVICE_ROLE_KEY` for server-side use only (migrations, API routes); never expose it to client bundles.
 
 **Supabase Auth Setup:**
+
 1. In Supabase Dashboard → Authentication → Providers, enable **Email** provider
 2. Under URL Configuration, add redirect URLs:
    - `http://localhost:3000/auth/callback` (dev)

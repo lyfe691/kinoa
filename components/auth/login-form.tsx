@@ -26,8 +26,7 @@ export function LoginForm() {
       setLoading(true);
 
       try {
-        const { error: signInError } =
-          await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password,
         });
@@ -95,4 +94,3 @@ export function LoginForm() {
     </form>
   );
 }
-

@@ -1,48 +1,70 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useSession } from '@/lib/supabase/auth'
-import { createSupabaseBrowserClient } from '@/lib/supabase/client'
+import { useEffect, useState } from "react";
+import { useSession } from "@/lib/supabase/auth";
 
-export function useWatchlistStatus(mediaId: number, mediaType: 'movie' | 'tv') {
-  const { user } = useSession()
-  const [isInWatchlist, setIsInWatchlist] = useState(false)
-  const [loading, setLoading] = useState(true)
+export function useWatchlistStatus(
+  mediaId: number,
+  mediaType: "movie" | "tv",
+  initialState?: boolean,
+) {
+  const { user, supabase } = useSession();
+  const [isInWatchlist, setIsInWatchlist] = useState<boolean>(
+    initialState ?? false,
+  );
+  const [loading, setLoading] = useState<boolean>(initialState === undefined);
 
   useEffect(() => {
-    async function checkWatchlist() {
-      if (!user) {
-        setIsInWatchlist(false)
-        setLoading(false)
-        return
-      }
+    if (initialState !== undefined) {
+      setIsInWatchlist(initialState);
+      setLoading(false);
+    }
+  }, [initialState]);
 
+  useEffect(() => {
+    if (!user) {
+      setIsInWatchlist(false);
+      setLoading(false);
+      return;
+    }
+
+    if (!supabase) {
+      return;
+    }
+
+    const client = supabase;
+    const userId = user.id;
+
+    if (initialState !== undefined) {
+      // When we already know the state we skip the network request.
+      return;
+    }
+
+    async function checkWatchlist() {
       try {
-        const supabase = createSupabaseBrowserClient()
-        const { data, error } = await supabase
-          .from('watchlist')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('media_id', mediaId)
-          .eq('media_type', mediaType)
-          .maybeSingle()
+        const { data, error } = await client
+          .from("watchlist")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("media_id", mediaId)
+          .eq("media_type", mediaType)
+          .maybeSingle();
 
         if (!error && data) {
-          setIsInWatchlist(true)
+          setIsInWatchlist(true);
         } else {
-          setIsInWatchlist(false)
+          setIsInWatchlist(false);
         }
       } catch (error) {
-        console.error('Failed to check watchlist status:', error)
-        setIsInWatchlist(false)
+        console.error("Failed to check watchlist status:", error);
+        setIsInWatchlist(false);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    checkWatchlist()
-  }, [user, mediaId, mediaType])
+    checkWatchlist();
+  }, [user, supabase, mediaId, mediaType, initialState]);
 
-  return { isInWatchlist, loading }
+  return { isInWatchlist, loading };
 }
-

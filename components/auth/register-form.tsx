@@ -60,7 +60,9 @@ export function RegisterForm() {
           data.user.identities &&
           data.user.identities.length === 0
         ) {
-          setError("An account with this email already exists.");
+          setError(
+            "An account with this email already exists. If this is your account, please sign in.",
+          );
           return;
         }
 
@@ -154,11 +156,17 @@ export function RegisterForm() {
 
       <p className="text-xs text-center text-muted-foreground">
         By creating an account, you agree to our{" "}
-        <Link href="/terms" className="underline underline-offset-4 text-foreground">
+        <Link
+          href="/terms"
+          className="underline underline-offset-4 text-foreground"
+        >
           Terms of Service
         </Link>{" "}
         and{" "}
-        <Link href="/privacy" className="underline underline-offset-4 text-foreground">
+        <Link
+          href="/privacy"
+          className="underline underline-offset-4 text-foreground"
+        >
           Privacy Policy
         </Link>
         .
@@ -166,4 +174,3 @@ export function RegisterForm() {
     </form>
   );
 }
-

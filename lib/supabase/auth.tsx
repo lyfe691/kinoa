@@ -1,25 +1,23 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useMemo, useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "./client";
 import type { User, Session } from "@supabase/supabase-js";
+
+type BrowserSupabase = ReturnType<typeof createSupabaseBrowserClient>;
 
 type AuthContextValue = {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  supabase: BrowserSupabase | null;
 };
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   session: null,
   loading: true,
+  supabase: null,
 });
 
 type AuthProviderProps = {
@@ -74,8 +72,8 @@ export function AuthProvider({
   }, [supabase]);
 
   const value = useMemo(
-    () => ({ user, session, loading }),
-    [user, session, loading],
+    () => ({ user, session, loading, supabase }),
+    [user, session, loading, supabase],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -88,4 +86,3 @@ export function useSession() {
   }
   return context;
 }
-
