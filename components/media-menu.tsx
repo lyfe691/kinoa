@@ -20,13 +20,14 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSession } from '@/lib/supabase/auth'
 import { addToWatchlist, removeFromWatchlist } from '@/lib/supabase/watchlist'
+import { useWatchlistStatus } from '@/hooks/use-watchlist-status'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 type MediaMenuProps = {
   mediaId: number
   mediaType: 'movie' | 'tv'
-  isInWatchlist: boolean
+  isInWatchlist?: boolean
   className?: string
   size?: 'sm' | 'default'
 }
@@ -34,15 +35,23 @@ type MediaMenuProps = {
 export function MediaMenu({
   mediaId,
   mediaType,
-  isInWatchlist: initialInWatchlist,
+  isInWatchlist: propIsInWatchlist,
   className,
   size = 'default',
 }: MediaMenuProps) {
   const router = useRouter()
   const { user } = useSession()
-  const [isInWatchlist, setIsInWatchlist] = React.useState(initialInWatchlist)
+  const { isInWatchlist: hookIsInWatchlist, loading: checkingWatchlist } = useWatchlistStatus(mediaId, mediaType)
+  const [isInWatchlist, setIsInWatchlist] = React.useState(propIsInWatchlist ?? false)
   const [loading, setLoading] = React.useState(false)
   const [showAuthDialog, setShowAuthDialog] = React.useState(false)
+
+  // Use hook result as source of truth
+  React.useEffect(() => {
+    if (!checkingWatchlist) {
+      setIsInWatchlist(hookIsInWatchlist)
+    }
+  }, [hookIsInWatchlist, checkingWatchlist])
 
   const handleToggleWatchlist = React.useCallback(
     async () => {
@@ -70,7 +79,13 @@ export function MediaMenu({
             toast.success('Added to watchlist')
             router.refresh()
           } else {
-            toast.error(result.error ?? 'Failed to add to watchlist')
+            // Handle duplicate key error gracefully
+            if (result.error?.includes('duplicate') || result.error?.includes('unique')) {
+              setIsInWatchlist(true)
+              router.refresh()
+            } else {
+              toast.error(result.error ?? 'Failed to add to watchlist')
+            }
           }
         }
       } catch (error) {

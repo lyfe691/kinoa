@@ -47,7 +47,7 @@ export function SiteHeader() {
       );
       toast.error(message);
     } finally {
-      setSigningOut(false);
+    setSigningOut(false);
     }
   }, [supabase, router]);
 
@@ -137,14 +137,14 @@ function DesktopActions({
       {!loading && (
         <>
           {user ? (
-            <Button
-              variant="ghost"
-              size="sm"
+                <Button
+                  variant="ghost"
+                  size="sm"
               onClick={onSignOut}
               disabled={signingOut}
             >
-              <LogOut className="h-4 w-4" />
-              {signingOut ? "Signing out..." : "Sign out"}
+                  <LogOut className="h-4 w-4" />
+                  {signingOut ? "Signing out..." : "Sign out"}
             </Button>
           ) : (
             <Button variant="default" size="sm" asChild>
@@ -153,8 +153,8 @@ function DesktopActions({
           )}
         </>
       )}
-      <ModeToggle />
-    </div>
+            <ModeToggle />
+          </div>
   );
 }
 
@@ -195,11 +195,11 @@ function MobileDrawer({
 }: MobileDrawerProps) {
   return (
     <DrawerContent className="flex flex-col md:hidden">
-      <VisuallyHidden>
-        <DrawerTitle>Navigation Menu</DrawerTitle>
-      </VisuallyHidden>
+        <VisuallyHidden>
+          <DrawerTitle>Navigation Menu</DrawerTitle>
+        </VisuallyHidden>
 
-      <nav className="flex flex-col gap-1 p-6 pt-4">
+        <nav className="flex flex-col gap-1 p-6 pt-4">
         {NAV_ITEMS.filter((item) => !item.authRequired || user).map(
           ({ href, label }) => {
             const isActive =
@@ -223,21 +223,21 @@ function MobileDrawer({
             );
           },
         )}
-      </nav>
+        </nav>
 
       <div className="mt-auto border-t px-6 py-4 space-y-4">
         {!loading && (
           <>
             {user ? (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={onSignOut}
-                disabled={signingOut}
-              >
-                <LogOut className="h-4 w-4" />
-                {signingOut ? "Signing out..." : "Sign out"}
-              </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={onSignOut}
+                  disabled={signingOut}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {signingOut ? "Signing out..." : "Sign out"}
+                </Button>
             ) : (
               <DrawerClose asChild>
                 <Button variant="default" className="w-full" asChild>
@@ -253,7 +253,7 @@ function MobileDrawer({
           </span>
           <ModeToggle />
         </div>
-      </div>
-    </DrawerContent>
+        </div>
+      </DrawerContent>
   );
 }
