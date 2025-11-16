@@ -42,6 +42,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning: var(--warning);
+  --color-success-foreground: var(--success-foreground);
+  --color-success: var(--success);
+  --color-info-foreground: var(--info-foreground);
+  --color-info: var(--info);
 }
 
 /* If we no longer want to use our theme, we can head over to https://github.com/cosscom/coss/blob/main/apps/origin/app/globals.css and grab their theme. */
@@ -80,6 +86,12 @@
   --sidebar-accent-foreground: oklch(32.5% 0 0);
   --sidebar-border: oklch(94.01% 0 0);
   --sidebar-ring: oklch(77.31% 0 0);
+  --info: var(--color-blue-500);
+  --info-foreground: var(--color-blue-700);
+  --success: var(--color-emerald-500);
+  --success-foreground: var(--color-emerald-700);
+  --warning: var(--color-amber-500);
+  --warning-foreground: var(--color-amber-700);
 }
 
 .dark {
@@ -115,6 +127,12 @@
   --sidebar-accent-foreground: oklch(96.74% 0.0013 286.37);
   --sidebar-border: oklch(27.39% 0.0055 286.03);
   --sidebar-ring: oklch(87.11% 0.0055 286.28);
+  --info: var(--color-blue-500);
+  --info-foreground: var(--color-blue-400);
+  --success: var(--color-emerald-500);
+  --success-foreground: var(--color-emerald-400);
+  --warning: var(--color-amber-500);
+  --warning-foreground: var(--color-amber-400);
 }
 
 @layer base {

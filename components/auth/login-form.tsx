@@ -6,8 +6,10 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader } from "lucide-react";
+import { Loader, CircleAlertIcon } from "lucide-react";
+import { toast } from "sonner";
+import { getAuthErrorMessage } from "@/lib/supabase/errors";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function LoginForm() {
   const router = useRouter();
@@ -24,17 +26,23 @@ export function LoginForm() {
       setLoading(true);
 
       try {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { error: signInError } =
+          await supabase.auth.signInWithPassword({
           email: email.trim(),
           password,
         });
 
         if (signInError) throw signInError;
 
+        toast.success("Signed in successfully.");
         router.push("/");
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Sign in failed");
+        const message = getAuthErrorMessage(
+          err,
+          "Unable to sign in. Please try again.",
+        );
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -73,7 +81,9 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="error">
+          <CircleAlertIcon />
+          <AlertTitle>Heads up!</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

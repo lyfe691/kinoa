@@ -22,20 +22,40 @@ const AuthContext = createContext<AuthContextValue>({
   loading: true,
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+type AuthProviderProps = {
+  children: React.ReactNode;
+  initialSession?: Session | null;
+};
+
+export function AuthProvider({
+  children,
+  initialSession = null,
+}: AuthProviderProps) {
+  const [session, setSession] = useState<Session | null>(initialSession);
+  const [user, setUser] = useState<User | null>(initialSession?.user ?? null);
+  const [loading, setLoading] = useState(!initialSession);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   useEffect(() => {
+    let isMounted = true;
+
     const initAuth = async () => {
-      const {
-        data: { session: currentSession },
-      } = await supabase.auth.getSession();
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setLoading(false);
+      try {
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession();
+
+        if (!isMounted) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+      } catch (error) {
+        console.error("Failed to initialize auth", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     };
 
     initAuth();
@@ -48,6 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [supabase]);
