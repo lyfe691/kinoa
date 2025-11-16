@@ -5,7 +5,7 @@ import { RegisterForm } from "@/components/auth/register-form";
 import { getSession } from "@/lib/supabase/session";
 
 export const metadata: Metadata = {
-  title: "Create account • Kinoa",
+  title: "Create an account",
   description: "Create a new Kinoa account",
 };
 

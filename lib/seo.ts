@@ -25,7 +25,7 @@ const resolvedSiteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 export const siteConfig = {
   name: "Kinoa",
   shortName: "Kinoa",
-  tagline: "The cinema experience, at home",
+  tagline: "Kinoa — The cinema experience, at home",
   description:
     "Kinoa lets you stream the latest movies and TV episodes instantly with VidFast embeds, beautiful TMDB metadata, and zero buffering.",
   keywords: [

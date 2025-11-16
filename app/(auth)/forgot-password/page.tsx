@@ -5,7 +5,7 @@ import { getSession } from "@/lib/supabase/session";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Reset password • Kinoa",
+  title: "Reset password",
   description: "Request a password reset link for your Kinoa account",
 };
 

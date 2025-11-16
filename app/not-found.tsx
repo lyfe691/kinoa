@@ -4,8 +4,15 @@ import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import type { Metadata } from "next";
 
-export default function RootNotFound() {
+export const metadata: Metadata = {
+  title: "Page not found",
+  description:
+    "The page you’re looking for doesn’t exist or may have been moved.",
+};
+
+export default function NotFound() {
   return (
     <>
       <SiteHeader />

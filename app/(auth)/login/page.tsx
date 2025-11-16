@@ -5,7 +5,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { getSession } from "@/lib/supabase/session";
 
 export const metadata: Metadata = {
-  title: "Sign in • Kinoa",
+  title: "Sign in",
   description: "Sign in to your Kinoa account",
 };
 

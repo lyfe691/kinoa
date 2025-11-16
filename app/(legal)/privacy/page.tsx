@@ -4,7 +4,7 @@ import Link from "next/link";
 const effectiveDate = "November 9, 2025";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy • Kinoa",
+  title: "Privacy Policy",
   description:
     "How Kinoa collects, uses, and protects information when you use the platform.",
 };

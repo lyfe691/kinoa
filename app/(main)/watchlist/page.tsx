@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import type { MediaSummary } from "@/lib/tmdb";
 
 export const metadata: Metadata = {
-  title: "My Watchlist • Kinoa",
+  title: "My Watchlist",
   description: "Your saved movies and TV shows",
 };
 

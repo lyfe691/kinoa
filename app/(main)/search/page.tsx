@@ -9,7 +9,7 @@ import SearchFilters from "./filters";
 import { getMovieGenres, getTvGenres } from "@/lib/tmdb";
 
 export const metadata: Metadata = {
-  title: "Search • Kinoa",
+  title: "Search",
   description: "Look up films and shows across the entire Kinoa catalog.",
 };
 

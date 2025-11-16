@@ -4,7 +4,7 @@ import Link from "next/link";
 const effectiveDate = "November 9, 2025";
 
 export const metadata: Metadata = {
-  title: "Terms of Service • Kinoa",
+  title: "Terms of Service",
   description:
     "The legal terms that govern access to and use of the Kinoa streaming interface.",
 };
