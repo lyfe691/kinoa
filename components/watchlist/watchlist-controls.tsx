@@ -1,71 +1,69 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { Film, Tv, Search, X } from 'lucide-react'
+import * as React from "react";
+import { Film, Tv, Search, X } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import type { MediaSummary } from '@/lib/tmdb'
-import { MediaCard } from '@/components/media-card'
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import type { MediaSummary } from "@/lib/tmdb";
+import { MediaCard } from "@/components/media-card";
 
 type WatchlistControlsProps = {
-  media: MediaSummary[]
-}
+  media: MediaSummary[];
+};
 
-type FilterType = 'all' | 'movie' | 'tv'
-type SortType = 'recent' | 'title' | 'rating' | 'year'
+type FilterType = "all" | "movie" | "tv";
+type SortType = "recent" | "title" | "rating" | "year";
 
 export function WatchlistControls({ media }: WatchlistControlsProps) {
-  const [filter, setFilter] = React.useState<FilterType>('all')
-  const [sort, setSort] = React.useState<SortType>('recent')
-  const [searchQuery, setSearchQuery] = React.useState('')
+  const [filter, setFilter] = React.useState<FilterType>("all");
+  const [sort, setSort] = React.useState<SortType>("recent");
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const filteredMedia = React.useMemo(() => {
-    let result = [...media]
+    let result = [...media];
 
     // Apply search
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      result = result.filter((item) =>
-        item.name.toLowerCase().includes(query)
-      )
+      const query = searchQuery.toLowerCase();
+      result = result.filter((item) => item.name.toLowerCase().includes(query));
     }
 
     // Apply filter
-    if (filter !== 'all') {
-      result = result.filter((item) => item.type === filter)
+    if (filter !== "all") {
+      result = result.filter((item) => item.type === filter);
     }
 
     // Apply sort
     result.sort((a, b) => {
       switch (sort) {
-        case 'title':
-          return a.name.localeCompare(b.name)
-        case 'rating':
-          return (b.rating ?? 0) - (a.rating ?? 0)
-        case 'year': {
-          const yearA = a.releaseYear ? parseInt(a.releaseYear) : 0
-          const yearB = b.releaseYear ? parseInt(b.releaseYear) : 0
-          return yearB - yearA
+        case "title":
+          return a.name.localeCompare(b.name);
+        case "rating":
+          return (b.rating ?? 0) - (a.rating ?? 0);
+        case "year": {
+          const yearA = a.releaseYear ? parseInt(a.releaseYear) : 0;
+          const yearB = b.releaseYear ? parseInt(b.releaseYear) : 0;
+          return yearB - yearA;
         }
-        case 'recent':
+        case "recent":
         default:
-          return 0
+          return 0;
       }
-    })
+    });
 
-    return result
-  }, [media, filter, sort, searchQuery])
+    return result;
+  }, [media, filter, sort, searchQuery]);
 
-  const movieCount = media.filter((m) => m.type === 'movie').length
-  const tvCount = media.filter((m) => m.type === 'tv').length
+  const movieCount = media.filter((m) => m.type === "movie").length;
+  const tvCount = media.filter((m) => m.type === "tv").length;
 
   return (
     <div className="space-y-6">
@@ -92,9 +90,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
             <TabsTab value="tv" className="gap-1.5">
               <Tv className="h-3.5 w-3.5 sm:hidden" />
               Shows
-              <span className="text-xs text-muted-foreground">
-                {tvCount}
-              </span>
+              <span className="text-xs text-muted-foreground">{tvCount}</span>
             </TabsTab>
           </TabsList>
         </Tabs>
@@ -113,7 +109,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setSearchQuery('')}
+                onClick={() => setSearchQuery("")}
                 className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0"
               >
                 <X className="h-4 w-4" />
@@ -122,7 +118,10 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
             )}
           </div>
 
-          <Select value={sort} onValueChange={(value) => setSort(value as SortType)}>
+          <Select
+            value={sort}
+            onValueChange={(value) => setSort(value as SortType)}
+          >
             <SelectTrigger className="h-10 w-full sm:w-[180px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -139,9 +138,13 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
       {searchQuery && (
         <div className="rounded-lg border bg-muted/30 px-4 py-3">
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{filteredMedia.length}</span>{' '}
-            {filteredMedia.length === 1 ? 'result' : 'results'} for{' '}
-            <span className="font-medium text-foreground">&quot;{searchQuery}&quot;</span>
+            <span className="font-medium text-foreground">
+              {filteredMedia.length}
+            </span>{" "}
+            {filteredMedia.length === 1 ? "result" : "results"} for{" "}
+            <span className="font-medium text-foreground">
+              &quot;{searchQuery}&quot;
+            </span>
           </p>
         </div>
       )}
@@ -166,15 +169,15 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
               <p className="font-medium">No results found</p>
               <p className="text-sm text-muted-foreground">
                 {searchQuery
-                  ? 'Try adjusting your search or filters'
-                  : `No ${filter !== 'all' ? (filter === 'movie' ? 'movies' : 'shows') : 'items'} in your watchlist`}
+                  ? "Try adjusting your search or filters"
+                  : `No ${filter !== "all" ? (filter === "movie" ? "movies" : "shows") : "items"} in your watchlist`}
               </p>
             </div>
             {searchQuery && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSearchQuery('')}
+                onClick={() => setSearchQuery("")}
                 className="mt-2"
               >
                 Clear search
@@ -184,6 +187,5 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
-

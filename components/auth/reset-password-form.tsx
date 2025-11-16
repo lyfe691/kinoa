@@ -223,9 +223,7 @@ export function ResetPasswordForm() {
       </Alert>
 
       <Button type="submit" className="w-full" disabled={loading || signingOut}>
-        {(loading || signingOut) && (
-          <Loader className="h-4 w-4 animate-spin" />
-        )}
+        {(loading || signingOut) && <Loader className="h-4 w-4 animate-spin" />}
         {loading ? "Saving…" : signingOut ? "Signing out…" : "Update password"}
       </Button>
 

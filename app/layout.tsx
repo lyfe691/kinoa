@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -6,6 +6,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/supabase/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { StructuredData } from "@/components/structured-data";
+import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,9 +19,88 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const ogImageUrl = absoluteUrl("/opengraph-image");
+
 export const metadata: Metadata = {
-  title: "Kinoa — The Cinema Experience, at Home",
-  description: "Everything you want to watch, in one place.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.tagline,
+    template: `%s • ${siteConfig.shortName}`,
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.publisher, url: siteConfig.url }],
+  creator: siteConfig.publisher,
+  publisher: siteConfig.publisher,
+  category: "Entertainment",
+  alternates: {
+    canonical: siteConfig.url,
+  },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.tagline,
+    description: siteConfig.description,
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.tagline,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.tagline,
+    description: siteConfig.description,
+    images: [ogImageUrl],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/favicon.ico", sizes: "16x16", type: "image/x-icon" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: "/favicon.ico", sizes: "180x180" }],
+    other: [
+      {
+        rel: "mask-icon",
+        url: "/favicon.ico",
+        color: siteConfig.accentColor,
+      },
+    ],
+  },
+  manifest: "/manifest.webmanifest",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor },
+  ],
 };
 
 export default function RootLayout({
@@ -29,6 +110,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <StructuredData data={siteJsonLd} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
       >

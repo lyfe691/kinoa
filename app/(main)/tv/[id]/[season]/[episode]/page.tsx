@@ -11,6 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { StructuredData } from "@/components/structured-data";
 import { getTvEpisodeDetails } from "@/lib/tmdb";
 import { formatRuntime } from "@/lib/format-runtime";
 import {
@@ -19,6 +20,7 @@ import {
   MediaOverview,
   MediaPoster,
 } from "@/components/media-detail";
+import { absoluteUrl, buildEpisodeJsonLd } from "@/lib/seo";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -41,7 +43,7 @@ export async function generateMetadata({
 
   if (!details) {
     return {
-      title: "Episode unavailable • Kinoa",
+      title: "Episode unavailable",
       description: "We could not load this episode right now.",
     };
   }
@@ -54,32 +56,41 @@ export async function generateMetadata({
       details.overview ||
       "Stream this episode on Kinoa.",
   );
-  const image = details.episode.stillUrl ?? details.posterUrl ?? undefined;
+  const image =
+    details.episode.stillUrl ??
+    details.posterUrl ??
+    details.backdropUrl ??
+    undefined;
+  const canonical = absoluteUrl(
+    `/tv/${details.showId}/${details.episode.season}/${details.episode.number}`,
+  );
 
   return {
-    title: `${episodeTitle} • ${details.showName} • Kinoa`,
+    title: `${episodeTitle} • ${details.showName}`,
     description,
+    alternates: {
+      canonical,
+    },
     openGraph: {
-      title: `${episodeTitle} • ${details.showName} • Kinoa`,
+      title: `${episodeTitle} • ${details.showName}`,
       description,
       type: "video.episode",
       siteName: "Kinoa",
-      images: image
-        ? [
-            {
-              url: image,
-              width: 1280,
-              height: 720,
-              alt: episodeTitle,
-            },
-          ]
-        : undefined,
+      url: canonical,
+      images: [
+        {
+          url: image ?? absoluteUrl("/opengraph-image"),
+          width: image ? 1280 : 1200,
+          height: image ? 720 : 630,
+          alt: episodeTitle,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${episodeTitle} • ${details.showName} • Kinoa`,
+      title: `${episodeTitle} • ${details.showName}`,
       description,
-      images: image ? [image] : undefined,
+      images: [image ?? absoluteUrl("/opengraph-image")],
     },
   };
 }
@@ -103,6 +114,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
 
   const currentSeasonEpisodes =
     details.allEpisodes[details.episode.season] || [];
+  const episodeJsonLd = buildEpisodeJsonLd(details);
 
   return (
     <div className="flex flex-col gap-8">
@@ -172,6 +184,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           />
         )}
       </MediaDetailLayout>
+      <StructuredData data={episodeJsonLd} />
     </div>
   );
 }

@@ -147,9 +147,7 @@ export function MediaMenu({
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>
-            {isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
-          </p>
+          <p>{isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}</p>
         </TooltipContent>
       </Tooltip>
 

@@ -207,21 +207,21 @@ export default function SearchFilters({
 
             {/* Desktop: Tooltip */}
             <div className="hidden md:block">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      className="text-muted-foreground hover:text-foreground"
-                      aria-label="Sort information"
-                    >
-                      <Info className="h-3.5 w-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[232px] text-xs">
-                    Sorting by Rating or Release Date may show less relevant
-                    results. Use Popularity for the best experience.
-                  </TooltipContent>
-                </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label="Sort information"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[232px] text-xs">
+                  Sorting by Rating or Release Date may show less relevant
+                  results. Use Popularity for the best experience.
+                </TooltipContent>
+              </Tooltip>
             </div>
 
             {/* Mobile: Drawer */}

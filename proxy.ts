@@ -7,7 +7,7 @@ const bypassPaths = [
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
-  "/manifest.json",
+  "/manifest.webmanifest",
 ];
 
 export function proxy(request: NextRequest) {
@@ -34,6 +34,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/|maintenance|api/|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.json).*)",
+    "/((?!_next/|maintenance|api/|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest).*)",
   ],
 };

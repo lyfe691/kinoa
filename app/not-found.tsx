@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { SiteHeader } from '@/components/site-header'
-import { SiteFooter } from '@/components/site-footer'
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function RootNotFound() {
   return (
@@ -28,7 +28,8 @@ export default function RootNotFound() {
               Page not found
             </h1>
             <p className="text-sm text-muted-foreground">
-              The page you&apos;re looking for doesn&apos;t exist or may have been moved.
+              The page you&apos;re looking for doesn&apos;t exist or may have
+              been moved.
             </p>
           </div>
           <div className="flex items-center justify-center gap-3">
@@ -43,5 +44,5 @@ export default function RootNotFound() {
       </main>
       <SiteFooter />
     </>
-  )
+  );
 }

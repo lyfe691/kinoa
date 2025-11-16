@@ -53,4 +53,3 @@ export async function signOutEverywhere(supabase?: BrowserSupabase | null) {
     throw new Error(serverMessage);
   }
 }
-
