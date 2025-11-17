@@ -233,9 +233,9 @@ function DesktopActions({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="h-9 gap-2 rounded-full px-2 hover:bg-accent data-[state=open]:bg-accent"
+              className="h-10 gap-2 rounded-lg px-3 hover:bg-accent data-[state=open]:bg-accent"
             >
-              <Avatar className="h-7 w-7">
+              <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={account.avatarUrl ?? undefined}
                   alt={account.displayName}
@@ -245,7 +245,7 @@ function DesktopActions({
                   {account.initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">
+              <span className="text-sm font-semibold">
                 {account.displayName}
               </span>
               <ChevronDown
