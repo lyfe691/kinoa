@@ -233,65 +233,58 @@ function DesktopActions({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="h-10 gap-2.5 rounded-lg px-2.5 transition-all hover:bg-accent/50 data-[state=open]:bg-accent"
+              className="h-9 gap-2 rounded-full px-2 hover:bg-accent data-[state=open]:bg-accent"
             >
-              <Avatar className="h-8 w-8">
+              <Avatar className="h-7 w-7">
                 <AvatarImage
                   src={account.avatarUrl ?? undefined}
                   alt={account.displayName}
                   className="object-cover"
                 />
-                <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 text-xs font-semibold text-primary-foreground">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-xs font-medium text-primary-foreground">
                   {account.initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-semibold text-foreground">
+              <span className="text-sm font-medium">
                 {account.displayName}
               </span>
               <ChevronDown
                 className={cn(
-                  "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                  "h-3.5 w-3.5 text-muted-foreground transition-transform",
                   isDropdownOpen && "rotate-180",
                 )}
               />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 rounded-lg p-2">
-            <DropdownMenuLabel className="px-3 pb-2">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-semibold text-foreground truncate">
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">
                   {account.displayName}
-                </span>
-                <span className="text-xs text-muted-foreground truncate">
+                </p>
+                <p className="text-xs leading-none text-muted-foreground">
                   {account.email}
-                </span>
+                </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="cursor-pointer rounded-lg px-3 py-2 transition-colors hover:bg-accent/60"
+              className="cursor-pointer"
               asChild
             >
               <Link href="/settings" onClick={() => setIsDropdownOpen(false)}>
-                <div className="flex items-center gap-2">
-                  <SettingsIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">
-                    Settings
-                  </span>
-                </div>
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                <span>Settings</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="cursor-pointer rounded-lg px-3 py-2 text-destructive 
-             transition-colors duration-200
-             hover:bg-destructive/10 hover:text-destructive
-             focus:bg-destructive/10 focus:text-destructive"
+              className="cursor-pointer text-destructive focus:text-destructive"
               onClick={onSignOut}
               disabled={signingOut}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              <span className="text-sm font-medium">
+              <span>
                 {signingOut ? "Signing out..." : "Sign out"}
               </span>
             </DropdownMenuItem>
