@@ -133,7 +133,7 @@ export async function upsertAccountProfile(
     avatar_url:
       updates.avatarUrl !== undefined
         ? updates.avatarUrl
-        : existing?.avatar_url ?? null,
+        : (existing?.avatar_url ?? null),
     updated_at: new Date().toISOString(),
   };
 

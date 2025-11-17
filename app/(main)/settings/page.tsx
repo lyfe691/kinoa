@@ -1,6 +1,6 @@
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
 import { getSession } from "@/lib/supabase/session";
 import { type AccountProfile, getAccountProfile } from "@/lib/supabase/profile";
 import { ProfileSettingsPanel } from "./_components/profile-settings-panel";
@@ -15,12 +15,10 @@ const settingsTabs = [
   {
     value: "profile",
     label: "Profile",
-    description: "Personal basics",
   },
   {
     value: "security",
     label: "Security & Data",
-    description: "Account controls",
   },
 ] as const;
 
@@ -46,12 +44,12 @@ export default async function SettingsPage() {
   };
 
   return (
-    <section className="mx-auto flex w-full max-w-5xl flex-col gap-10">
+    <section className="mx-auto flex w-full max-w-5xl flex-col gap-6 sm:gap-10">
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Settings
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm text-muted-foreground sm:text-base">
           Configure your account info, control security, and manage data in one
           place.
         </p>
@@ -60,30 +58,30 @@ export default async function SettingsPage() {
       <Tabs
         defaultValue="profile"
         orientation="vertical"
-        className="flex flex-col gap-12 lg:flex-row lg:items-start"
+        className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10"
       >
-        <aside className="flex w-full shrink-0 flex-col gap-6 lg:w-64 lg:max-w-xs">
+        <aside className="flex w-full shrink-0 flex-col gap-2 lg:w-60 lg:max-w-xs lg:gap-3">
+          <h2 className="hidden text-sm font-semibold uppercase tracking-wide text-muted-foreground lg:block">
+            General
+          </h2>
           <TabsList
             variant="underline"
-            className="flex w-full flex-row gap-4 overflow-x-auto border-b border-border/60 pb-2 lg:flex-col lg:gap-2 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-0"
+            className="flex w-full flex-row gap-2 border-b border-border/60 pb-0 lg:flex-col lg:gap-1.5 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-0"
           >
             {settingsTabs.map((tab) => (
               <TabsTab
                 key={tab.value}
                 value={tab.value}
-                className="group relative flex w-full flex-col gap-1 rounded-md px-2 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[selected=true]:bg-muted/20 data-[selected=true]:text-foreground"
+                className="group relative flex flex-1 items-center justify-center rounded-none border-b-2 border-transparent px-4 py-3 text-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[selected=true]:border-primary data-[selected=true]:text-foreground lg:w-full lg:flex-none lg:items-start lg:justify-start lg:rounded-md lg:border-b-0 lg:px-3 lg:py-2.5 lg:text-left lg:hover:bg-accent/20 lg:data-[selected=true]:border-transparent lg:data-[selected=true]:bg-background"
               >
-                <span className="text-sm font-semibold">{tab.label}</span>
-                <span className="text-xs text-muted-foreground/80">
-                  {tab.description}
-                </span>
-                <span className="absolute inset-y-1 left-0 hidden w-0.5 rounded-full bg-primary group-data-[selected=true]:block lg:-left-1" />
+                <span>{tab.label}</span>
+                <span className="absolute inset-y-1 left-0 hidden w-0.5 rounded-full bg-primary lg:group-data-[selected=true]:block lg:-left-1" />
               </TabsTab>
             ))}
           </TabsList>
         </aside>
 
-        <div className="flex-1 space-y-8">
+        <div className="flex-1 space-y-6 lg:space-y-8">
           <TabsPanel value="profile" className="space-y-6">
             <ProfileSettingsPanel profile={profile} />
           </TabsPanel>

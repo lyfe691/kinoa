@@ -59,9 +59,7 @@ export async function saveProfileAction(input: SaveProfileInput) {
     metadataUpdates.avatar_url = sanitizedAvatarUrl ?? null;
   }
 
-  const userUpdatePayload: Parameters<
-    typeof supabase.auth.updateUser
-  >[0] = {};
+  const userUpdatePayload: Parameters<typeof supabase.auth.updateUser>[0] = {};
 
   if (sanitizedEmail && sanitizedEmail !== currentEmail) {
     userUpdatePayload.email = sanitizedEmail;

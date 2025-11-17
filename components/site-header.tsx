@@ -283,19 +283,18 @@ function DesktopActions({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-  className="cursor-pointer rounded-lg px-3 py-2 text-destructive 
+              className="cursor-pointer rounded-lg px-3 py-2 text-destructive 
              transition-colors duration-200
              hover:bg-destructive/10 hover:text-destructive
              focus:bg-destructive/10 focus:text-destructive"
-  onClick={onSignOut}
-  disabled={signingOut}
->
-  <LogOut className="mr-2 h-4 w-4" />
-  <span className="text-sm font-medium">
-    {signingOut ? "Signing out..." : "Sign out"}
-  </span>
-</DropdownMenuItem>
-
+              onClick={onSignOut}
+              disabled={signingOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span className="text-sm font-medium">
+                {signingOut ? "Signing out..." : "Sign out"}
+              </span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
