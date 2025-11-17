@@ -235,46 +235,45 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-6">
         <Card>
-          <CardHeader className="space-y-1.5 p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl">Profile</CardTitle>
-            <CardDescription className="text-sm">
+          <CardHeader>
+            <CardTitle>Profile</CardTitle>
+            <CardDescription>
               Update your personal details, contact information, and profile
               photo. These details appear across Kinoa.
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-6 p-4 sm:space-y-10 sm:p-6">
-            <section className="flex flex-col gap-4 rounded-xl border border-border/60 bg-card/40 p-4 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
-              <div className="relative flex shrink-0 items-center justify-center sm:items-start sm:justify-start">
-                <Avatar className="size-24 border border-border/60 shadow-sm sm:size-28">
+          <CardContent className="space-y-10">
+            <section className="flex flex-col gap-6 rounded-xl border border-border/60 bg-card/40 p-6 sm:flex-row sm:items-center sm:gap-8">
+              <div className="relative flex shrink-0 items-center justify-center">
+                <Avatar className="size-28 border border-border/60 shadow-sm">
                   <AvatarImage
                     src={avatarUrl ?? undefined}
                     alt="Profile photo"
                   />
-                  <AvatarFallback className="text-base font-semibold uppercase sm:text-lg">
+                  <AvatarFallback className="text-lg font-semibold uppercase">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
               </div>
 
-              <div className="flex-1 space-y-3 sm:space-y-4">
+              <div className="flex-1 space-y-4">
                 <div>
-                  <h3 className="text-center text-sm font-semibold uppercase tracking-wide text-muted-foreground sm:text-left">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground text-left">
                     Profile photo
                   </h3>
-                  <p className="mt-1 text-center text-xs text-muted-foreground sm:text-left sm:text-sm">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     This image appears across Kinoa anywhere your profile shows
                     up.
                   </p>
                 </div>
 
-                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     type="button"
                     size="sm"
                     onClick={handleAvatarButtonClick}
                     disabled={uploading}
-                    className="w-full sm:w-auto"
                   >
                     {uploading ? (
                       <Loader className="mr-2 h-4 w-4 animate-spin" />
@@ -290,7 +289,6 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                       size="sm"
                       onClick={handleRemoveAvatar}
                       disabled={uploading}
-                      className="w-full sm:w-auto"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Remove
@@ -298,7 +296,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                   ) : null}
                 </div>
 
-                <p className="text-center text-xs text-muted-foreground sm:text-left">
+                <p className="text-xs text-muted-foreground">
                   JPG, PNG, or GIF. Max 300 KB.
                 </p>
                 <input
@@ -311,7 +309,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
               </div>
             </section>
 
-            <section className="grid gap-4 sm:gap-6 md:grid-cols-2">
+            <section className="grid gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="displayName"
@@ -325,7 +323,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                         autoComplete="name"
                       />
                     </FormControl>
-                    <FormDescription className="text-xs sm:text-sm">
+                    <FormDescription>
                       This is shown on your profile, watchlist, and shared
                       moments.
                     </FormDescription>
@@ -348,8 +346,8 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                         autoComplete="email"
                       />
                     </FormControl>
-                    <FormDescription className="text-xs sm:text-sm">
-                      We'll use this for account notifications and security
+                    <FormDescription>
+                      We’ll use this for account notifications and security
                       alerts.
                     </FormDescription>
                     <FormMessage />
@@ -359,7 +357,7 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
             </section>
           </CardContent>
 
-          <CardFooter className="flex flex-col-reverse items-stretch gap-2 border-t border-border/60 bg-muted/10 p-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3 sm:p-6">
+          <CardFooter className="flex items-center justify-end gap-3 border-t border-border/60 bg-muted/10 py-6">
             <Button
               type="button"
               variant="ghost"
@@ -376,11 +374,10 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
                 uploading ||
                 (!form.formState.isDirty && !hasAvatarChanged)
               }
-              className="w-full sm:w-auto"
             >
               Reset
             </Button>
-            <Button type="submit" disabled={isSaveDisabled} className="w-full sm:w-auto">
+            <Button type="submit" disabled={isSaveDisabled}>
               {(saving || uploading) && (
                 <Loader className="mr-2 h-4 w-4 animate-spin" />
               )}
