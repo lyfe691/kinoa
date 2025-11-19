@@ -2,24 +2,24 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 
 export function SecuritySettingsPanel() {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Password &amp; Sign-in</CardTitle>
-          <CardDescription>
+      <Frame>
+        <FrameHeader>
+          <FrameTitle>Password & Sign-in</FrameTitle>
+          <FrameDescription>
             Keep your credentials secure and recover access when you need it.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-border/60 bg-muted/30 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">
@@ -47,17 +47,17 @@ export function SecuritySettingsPanel() {
               Coming soon
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </FramePanel>
+      </Frame>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Data &amp; Account</CardTitle>
-          <CardDescription>
+      <Frame>
+        <FrameHeader>
+          <FrameTitle>Data & Account</FrameTitle>
+          <FrameDescription>
             Request your data or close your account when you&apos;re done.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </FrameDescription>
+        </FrameHeader>
+        <FramePanel className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 rounded-lg border border-dashed border-border/60 bg-muted/30 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">
@@ -87,8 +87,8 @@ export function SecuritySettingsPanel() {
               Coming soon
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </FramePanel>
+      </Frame>
     </div>
   );
 }

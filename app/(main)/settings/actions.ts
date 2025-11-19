@@ -5,8 +5,8 @@ import { upsertAccountProfile } from "@/lib/supabase/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type SaveProfileInput = {
-  displayName: string | null;
-  email: string;
+  displayName?: string | null;
+  email?: string;
   avatarUrl?: string | null;
 };
 
@@ -23,16 +23,16 @@ export async function saveProfileAction(input: SaveProfileInput) {
     return { success: false, error: message };
   }
 
-  const sanitizedDisplayName = input.displayName?.trim() || null;
-  const sanitizedEmail = input.email.trim();
-  const sanitizedAvatarUrl =
-    input.avatarUrl === undefined ? undefined : input.avatarUrl;
+  const sanitizedDisplayName = input.displayName === undefined ? undefined : (input.displayName?.trim() || null);
+  const sanitizedEmail = input.email?.trim();
+  const sanitizedAvatarUrl = input.avatarUrl;
+
+  const profileUpdates: { displayName?: string | null; avatarUrl?: string | null } = {};
+  if (sanitizedDisplayName !== undefined) profileUpdates.displayName = sanitizedDisplayName;
+  if (sanitizedAvatarUrl !== undefined) profileUpdates.avatarUrl = sanitizedAvatarUrl;
 
   const profile = await upsertAccountProfile(
-    {
-      displayName: sanitizedDisplayName,
-      avatarUrl: sanitizedAvatarUrl,
-    },
+    profileUpdates,
     { supabase },
   );
 
@@ -49,13 +49,11 @@ export async function saveProfileAction(input: SaveProfileInput) {
   const currentEmail = user.email ?? "";
 
   const metadataUpdates: Record<string, string | null> = {};
-  if (sanitizedDisplayName !== null) {
+  if (sanitizedDisplayName !== undefined) {
     metadataUpdates.display_name = sanitizedDisplayName;
-  } else {
-    metadataUpdates.display_name = null;
   }
 
-  if (input.avatarUrl !== undefined) {
+  if (sanitizedAvatarUrl !== undefined) {
     metadataUpdates.avatar_url = sanitizedAvatarUrl ?? null;
   }
 
