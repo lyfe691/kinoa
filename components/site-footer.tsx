@@ -23,9 +23,15 @@ export function SiteFooter() {
           {/* Disclaimer section */}
           <div className="space-y-2.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">
             <p>
-              Kinoa does not host, upload, or store any video files. All
-              playback is provided via third‑party hosters. Metadata is sourced
-              from public APIs.
+              Kinoa is a discovery interface. We do not host, upload, or store
+              audiovisual files. All playback is delivered directly by
+              independent third-party hosters at your own discretion and risk.
+            </p>
+            <p>
+              Metadata is sourced from public APIs. Kinoa does not control,
+              moderate, or guarantee external streams and assumes no
+              responsibility for their availability, legality, or data
+              practices. Please review our legal policies before use.
             </p>
             <p>
               This product uses the TMDB API but is not endorsed or certified by{" "}
