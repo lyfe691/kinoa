@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +9,6 @@ import { CircleAlertIcon, InfoIcon, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 
 export function RequestPasswordResetForm() {
-  const router = useRouter();
   const { supabase } = useSession();
   const [email, setEmail] = React.useState("");
   const [loading, setLoading] = React.useState(false);

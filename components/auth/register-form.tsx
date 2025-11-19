@@ -21,10 +21,14 @@ export function RegisterForm() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const { supabase } = useSession();
+  const isSubmitting = React.useRef(false);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (isSubmitting.current) return;
+      
+      isSubmitting.current = true;
       setError(null);
       setSuccess(null);
       setLoading(true);
@@ -35,6 +39,7 @@ export function RegisterForm() {
       if (trimmedUsername.length < 3) {
         setError("Display name must be at least 3 characters");
         setLoading(false);
+        isSubmitting.current = false;
         return;
       }
 
@@ -43,6 +48,7 @@ export function RegisterForm() {
           "Unable to reach the authentication service. Please try again.",
         );
         setLoading(false);
+        isSubmitting.current = false;
         return;
       }
 
@@ -90,6 +96,7 @@ export function RegisterForm() {
         setError(message);
       } finally {
         setLoading(false);
+        isSubmitting.current = false;
       }
     },
     [username, email, password, supabase, router],

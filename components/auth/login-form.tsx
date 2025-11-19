@@ -19,10 +19,14 @@ export function LoginForm() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const { supabase } = useSession();
+  const isSubmitting = React.useRef(false);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (isSubmitting.current) return;
+
+      isSubmitting.current = true;
       setError(null);
       setLoading(true);
 
@@ -31,6 +35,7 @@ export function LoginForm() {
           "Unable to reach the authentication service. Please try again.",
         );
         setLoading(false);
+        isSubmitting.current = false;
         return;
       }
 
@@ -53,6 +58,7 @@ export function LoginForm() {
         setError(message);
       } finally {
         setLoading(false);
+        isSubmitting.current = false;
       }
     },
     [email, password, supabase, router],
