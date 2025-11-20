@@ -11,7 +11,7 @@ export default async function Home() {
   const trending = await getTrending();
 
   return (
-    <section className="flex flex-col gap-12">
+    <div className="space-y-24 pb-24">
       <HomeHeader />
 
       <div className="space-y-12">
@@ -50,6 +50,6 @@ export default async function Home() {
           <TopRatedShelf />
         </Suspense>
       </div>
-    </section>
+    </div>
   );
 }

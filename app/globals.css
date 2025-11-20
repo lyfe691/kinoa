@@ -144,17 +144,23 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-weight: 300;
+    letter-spacing: 0.015em;
   }
 
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 5px;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ring);
   }
 
   ::selection {

@@ -1,17 +1,15 @@
 import { MediaCard } from "@/components/media-card";
 import { getLatestMovies } from "@/lib/tmdb";
+import { Section } from "./section";
 
 export async function LatestMoviesShelf() {
   const latestMovies = await getLatestMovies();
 
   return (
-    <section className="space-y-5">
-      <div className="space-y-1.5">
-        <h2 className="text-2xl font-semibold tracking-tight">Latest Movies</h2>
-        <p className="text-sm text-muted-foreground">
-          Fresh in theaters and newly available.
-        </p>
-      </div>
+    <Section
+      title="Latest Movies"
+      description="Fresh in theaters and newly available."
+    >
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {latestMovies.map((item, index) => (
           <MediaCard
@@ -21,6 +19,6 @@ export async function LatestMoviesShelf() {
           />
         ))}
       </div>
-    </section>
+    </Section>
   );
 }

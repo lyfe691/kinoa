@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { TrendingSection } from "@/components/trending-section";
+import { Section } from "./section";
 import type { MediaSummary } from "@/lib/tmdb";
 
 const CONTENT_TABS = [
@@ -19,22 +20,19 @@ export function TrendingFilter({ items }: TrendingFilterProps) {
   const [activeTab, setActiveTab] = useState("all");
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1.5">
-          <h2 className="text-2xl font-semibold tracking-tight">Trending</h2>
-          <p className="text-sm text-muted-foreground">
-            What everyone is watching this week.
-          </p>
-        </div>
+    <Section
+      title="Trending"
+      description="What everyone is watching this week."
+      delay={0.5}
+      action={
         <PillTabs
           tabs={CONTENT_TABS}
           defaultActiveId="all"
           onTabChange={setActiveTab}
         />
-      </div>
-
+      }
+    >
       <TrendingSection items={items} filter={activeTab} />
-    </div>
+    </Section>
   );
 }

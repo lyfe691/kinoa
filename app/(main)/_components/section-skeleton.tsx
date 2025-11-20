@@ -13,7 +13,7 @@ export function SectionSkeleton({
   columns = 5,
 }: SectionSkeletonProps) {
   return (
-    <section className="space-y-4" aria-label={`${title} section loading`}>
+    <section className="space-y-6" aria-label={`${title} section loading`}>
       <div className="space-y-2">
         <Skeleton className="h-6 w-32" aria-hidden="true" />
         {description && <Skeleton className="h-4 w-48" aria-hidden="true" />}
