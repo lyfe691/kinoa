@@ -24,6 +24,11 @@ export async function saveProfileAction(input: SaveProfileInput) {
   }
 
   const sanitizedDisplayName = input.displayName === undefined ? undefined : (input.displayName?.trim() || null);
+
+  if (sanitizedDisplayName && sanitizedDisplayName.length > 25) {
+    return { success: false, error: "Display name must be 25 characters or fewer." };
+  }
+
   const sanitizedEmail = input.email?.trim();
   const sanitizedAvatarUrl = input.avatarUrl;
 

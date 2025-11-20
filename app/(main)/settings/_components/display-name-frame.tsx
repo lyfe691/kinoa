@@ -24,11 +24,7 @@ import {
 const displayNameSchema = z.object({
     displayName: z
         .string()
-        .max(32, "Display name must be 32 characters or fewer")
-        .refine((value) => {
-            const trimmed = value.trim();
-            return trimmed.length === 0 || trimmed.length >= 2;
-        }, "Display name must be at least 2 characters"),
+        .max(25, "Display name must be 25 characters or fewer"),
 });
 
 export function DisplayNameFrame({ profile }: { profile: AccountProfile | null }) {
@@ -104,7 +100,7 @@ export function DisplayNameFrame({ profile }: { profile: AccountProfile | null }
                     </div>
                     <div className="flex items-center justify-between border-t bg-muted/40 px-6 py-4">
                         <p className="text-[13px] text-muted-foreground">
-                            Please use 32 characters at maximum.
+                            Please use 25 characters at maximum.
                         </p>
                         <Button
                             type="submit"

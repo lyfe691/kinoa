@@ -27,7 +27,7 @@ export function RegisterForm() {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (isSubmitting.current) return;
-      
+
       isSubmitting.current = true;
       setError(null);
       setSuccess(null);
@@ -36,8 +36,8 @@ export function RegisterForm() {
       const trimmedUsername = username.trim();
       const trimmedEmail = email.trim();
 
-      if (trimmedUsername.length < 3) {
-        setError("Display name must be at least 3 characters");
+      if (trimmedUsername.length > 25) {
+        setError("Display name must be 25 characters or fewer");
         setLoading(false);
         isSubmitting.current = false;
         return;
@@ -115,7 +115,7 @@ export function RegisterForm() {
           disabled={loading}
           required
           autoComplete="name"
-          minLength={3}
+          maxLength={25}
         />
       </div>
 
