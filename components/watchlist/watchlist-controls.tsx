@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Film, Tv, Search, X } from "lucide-react";
 import {
   Select,
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { MediaSummary } from "@/lib/tmdb";
 import { MediaCard } from "@/components/media-card";
+import { motion, AnimatePresence } from "framer-motion";
 
 type WatchlistControlsProps = {
   media: MediaSummary[];
@@ -67,65 +69,66 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Tabs
           value={filter}
           onValueChange={(value) => setFilter(value as FilterType)}
-          className="w-full"
+          className="w-full sm:w-auto"
         >
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTab value="all" className="gap-1.5">
+          <TabsList className="grid w-full grid-cols-3 sm:w-auto">
+            <TabsTab value="all" className="gap-2 px-4">
               All
-              <span className="text-xs text-muted-foreground">
+              <span className="rounded-full bg-muted-foreground/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                 {media.length}
               </span>
             </TabsTab>
-            <TabsTab value="movie" className="gap-1.5">
-              <Film className="h-3.5 w-3.5 sm:hidden" />
-              Movies
-              <span className="text-xs text-muted-foreground">
+            <TabsTab value="movie" className="gap-2 px-4">
+              <Film className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Movies</span>
+              <span className="rounded-full bg-muted-foreground/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                 {movieCount}
               </span>
             </TabsTab>
-            <TabsTab value="tv" className="gap-1.5">
-              <Tv className="h-3.5 w-3.5 sm:hidden" />
-              Shows
-              <span className="text-xs text-muted-foreground">{tvCount}</span>
+            <TabsTab value="tv" className="gap-2 px-4">
+              <Tv className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Shows</span>
+              <span className="rounded-full bg-muted-foreground/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {tvCount}
+              </span>
             </TabsTab>
           </TabsList>
         </Tabs>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="flex w-full items-center gap-2 sm:w-auto">
+          <div className="relative flex-1 sm:min-w-[200px]">
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search your watchlist..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 pr-9"
+              className="h-9 w-full bg-transparent pl-9"
             />
             {searchQuery && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0"
+                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0 hover:bg-transparent"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                 <span className="sr-only">Clear search</span>
               </Button>
             )}
           </div>
-
           <Select
             value={sort}
             onValueChange={(value) => setSort(value as SortType)}
           >
-            <SelectTrigger className="h-10 w-full sm:w-[180px]">
+            <SelectTrigger className="h-9 w-auto min-w-[140px] bg-transparent">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent align="end">
               <SelectItem value="recent">Recently Added</SelectItem>
               <SelectItem value="title">Title (A-Z)</SelectItem>
               <SelectItem value="rating">Highest Rated</SelectItem>
@@ -136,54 +139,58 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
       </div>
 
       {searchQuery && (
-        <div className="rounded-lg border bg-muted/30 px-4 py-3">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {filteredMedia.length}
-            </span>{" "}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Search className="h-4 w-4" />
+          <p>
+            Found <span className="font-medium text-foreground">{filteredMedia.length}</span>{" "}
             {filteredMedia.length === 1 ? "result" : "results"} for{" "}
-            <span className="font-medium text-foreground">
-              &quot;{searchQuery}&quot;
-            </span>
+            <span className="font-medium text-foreground">&quot;{searchQuery}&quot;</span>
           </p>
         </div>
       )}
 
       {filteredMedia.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {filteredMedia.map((item) => (
-            <MediaCard
-              key={`${item.type}-${item.id}`}
-              media={item}
-              isInWatchlist
-            />
-          ))}
-        </div>
+        <motion.div
+          layout
+          className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredMedia.map((item) => (
+              <motion.div
+                key={`${item.type}-${item.id}`}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+              >
+                <MediaCard
+                  media={item}
+                  isInWatchlist
+                  className="h-full"
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       ) : (
-        <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <div className="rounded-full bg-muted p-3">
-              <Search className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div className="space-y-1">
-              <p className="font-medium">No results found</p>
-              <p className="text-sm text-muted-foreground">
-                {searchQuery
-                  ? "Try adjusting your search or filters"
-                  : `No ${filter !== "all" ? (filter === "movie" ? "movies" : "shows") : "items"} in your watchlist`}
-              </p>
-            </div>
-            {searchQuery && (
+        <div className="flex min-h-[200px] flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-8 text-center">
+          <p className="text-muted-foreground">No results found</p>
+          {searchQuery && (
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() => setSearchQuery("")}
-                className="mt-2"
               >
                 Clear search
               </Button>
-            )}
-          </div>
+              <Button asChild>
+                <Link href={`/search?q=${encodeURIComponent(searchQuery)}`}>
+                  Search Kinoa library
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>
