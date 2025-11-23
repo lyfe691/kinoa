@@ -32,6 +32,20 @@ export async function saveProfileAction(input: SaveProfileInput) {
   const sanitizedEmail = input.email?.trim();
   const sanitizedAvatarUrl = input.avatarUrl;
 
+  // Validate avatar URL is from our Supabase storage
+  if (sanitizedAvatarUrl) {
+    try {
+      const url = new URL(sanitizedAvatarUrl);
+      const supabaseUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
+      // Allow storage URLs from the same Supabase project
+      if (url.origin !== supabaseUrl.origin || !url.pathname.startsWith("/storage/v1/object/public/avatars/")) {
+        return { success: false, error: "Invalid avatar URL." };
+      }
+    } catch {
+      return { success: false, error: "Invalid avatar URL format." };
+    }
+  }
+
   const profileUpdates: { displayName?: string | null; avatarUrl?: string | null } = {};
   if (sanitizedDisplayName !== undefined) profileUpdates.displayName = sanitizedDisplayName;
   if (sanitizedAvatarUrl !== undefined) profileUpdates.avatarUrl = sanitizedAvatarUrl;

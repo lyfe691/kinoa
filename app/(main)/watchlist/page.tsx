@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bookmark, Sparkles } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { getSession } from "@/lib/supabase/session";
-import { getWatchlist } from "@/lib/supabase/watchlist";
-import { getMovieDetails, getTvEpisodeDetails } from "@/lib/tmdb";
+import { getWatchlist, type WatchlistItem } from "@/lib/supabase/watchlist";
+import { getMovieDetails, getTvShow } from "@/lib/tmdb";
 import { WatchlistControls } from "@/components/watchlist/watchlist-controls";
 import { Button } from "@/components/ui/button";
 import type { MediaSummary } from "@/lib/tmdb";
@@ -13,6 +13,53 @@ export const metadata: Metadata = {
   title: "My Watchlist",
   description: "Your saved movies and TV shows",
 };
+
+async function fetchMediaItem(item: WatchlistItem): Promise<MediaSummary | null> {
+  try {
+    if (item.media_type === "movie") {
+      const movie = await getMovieDetails(String(item.media_id));
+      return {
+        id: movie.id,
+        type: "movie" as const,
+        name: movie.title,
+        overview: movie.overview,
+        posterUrl: movie.posterUrl,
+        backdropUrl: movie.backdropUrl,
+        releaseYear: movie.releaseDate
+          ? new Date(movie.releaseDate).getFullYear().toString()
+          : undefined,
+        href: `/movie/${movie.id}`,
+        imdbId: movie.imdbId,
+        runtime: movie.runtime,
+        rating: movie.rating,
+        voteCount: movie.voteCount,
+      };
+    } else {
+      const show = await getTvShow(String(item.media_id));
+      return {
+        id: show.id,
+        type: "tv" as const,
+        name: show.name,
+        overview: show.overview,
+        posterUrl: show.posterUrl,
+        backdropUrl: show.backdropUrl,
+        releaseYear: undefined,
+        href: `/tv/${show.id}/1/1`,
+        imdbId: show.imdbId ?? null,
+        seasonCount: show.seasonCount,
+        episodeCount: show.episodeCount,
+        rating: show.rating,
+        voteCount: show.voteCount,
+      };
+    }
+  } catch (error) {
+    console.error(
+      `Failed to fetch details for ${item.media_type} ${item.media_id}`,
+      error,
+    );
+    return null;
+  }
+}
 
 export default async function WatchlistPage() {
   const session = await getSession();
@@ -23,61 +70,15 @@ export default async function WatchlistPage() {
 
   const watchlistItems = await getWatchlist();
 
-  const mediaDetails = await Promise.all(
-    watchlistItems.map(async (item): Promise<MediaSummary | null> => {
-      try {
-        if (item.media_type === "movie") {
-          const movie = await getMovieDetails(String(item.media_id));
-          return {
-            id: movie.id,
-            type: "movie" as const,
-            name: movie.title,
-            overview: movie.overview,
-            posterUrl: movie.posterUrl,
-            backdropUrl: movie.backdropUrl,
-            releaseYear: movie.releaseDate
-              ? new Date(movie.releaseDate).getFullYear().toString()
-              : undefined,
-            href: `/movie/${movie.id}`,
-            imdbId: movie.imdbId,
-            runtime: movie.runtime,
-            rating: movie.rating,
-            voteCount: movie.voteCount,
-          };
-        } else {
-          const show = await getTvEpisodeDetails(
-            String(item.media_id),
-            "1",
-            "1",
-          );
-          return {
-            id: show.showId,
-            type: "tv" as const,
-            name: show.showName,
-            overview: show.overview,
-            posterUrl: show.posterUrl,
-            backdropUrl: show.backdropUrl,
-            releaseYear: undefined,
-            href: `/tv/${show.showId}/1/1`,
-            imdbId: show.imdbId ?? null,
-            seasonCount: show.seasons.length,
-            episodeCount: show.seasons.reduce(
-              (acc, s) => acc + s.episodeCount,
-              0,
-            ),
-            rating: show.rating,
-            voteCount: show.voteCount,
-          };
-        }
-      } catch (error) {
-        console.error(
-          `Failed to fetch details for ${item.media_type} ${item.media_id}`,
-          error,
-        );
-        return null;
-      }
-    }),
-  );
+  // Process items in batches to avoid hitting TMDB rate limits
+  const BATCH_SIZE = 5;
+  const mediaDetails: (MediaSummary | null)[] = [];
+
+  for (let i = 0; i < watchlistItems.length; i += BATCH_SIZE) {
+    const batch = watchlistItems.slice(i, i + BATCH_SIZE);
+    const results = await Promise.all(batch.map(fetchMediaItem));
+    mediaDetails.push(...results);
+  }
 
   const validMedia = mediaDetails.filter(
     (item): item is NonNullable<typeof item> => item !== null,

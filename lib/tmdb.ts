@@ -579,6 +579,49 @@ export type TvEpisodeDetails = {
   };
 };
 
+export type TvShowDetails = {
+  id: number;
+  name: string;
+  overview: string;
+  posterUrl: string | null;
+  backdropUrl: string | null;
+  genres: string[];
+  seasonCount: number;
+  episodeCount: number;
+  rating?: number;
+  voteCount?: number;
+  imdbId: string | null;
+};
+
+export async function getTvShow(id: string): Promise<TvShowDetails> {
+  const show = await getTvShowCached(id);
+
+  const firstAirYear = show.first_air_date
+    ? new Date(show.first_air_date).getFullYear().toString()
+    : undefined;
+
+  const imdbId = await ensureImdbId({
+    imdbId: undefined,
+    title: show.name,
+    year: firstAirYear,
+    type: "series",
+  });
+
+  return {
+    id: show.id,
+    name: show.name,
+    overview: show.overview,
+    posterUrl: buildImage(show.poster_path, POSTER_SIZE),
+    backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
+    genres: show.genres.map((genre) => genre.name),
+    seasonCount: show.number_of_seasons,
+    episodeCount: show.number_of_episodes,
+    rating: show.vote_average,
+    voteCount: show.vote_count,
+    imdbId,
+  };
+}
+
 export async function getTvEpisodeDetails(
   id: string,
   season: string,
