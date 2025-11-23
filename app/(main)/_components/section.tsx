@@ -5,21 +5,6 @@ import { cn } from "@/lib/utils";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
-const FADE_UP: Variants = {
-    hidden: {
-        opacity: 0,
-        y: 20,
-    },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.8,
-            ease: EASE,
-        },
-    },
-};
-
 interface SectionProps extends HTMLMotionProps<"section"> {
     title: string;
     description?: string;

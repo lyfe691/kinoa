@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, BookmarkMinus, BookmarkPlus, Loader } from "lucide-react";
+import { BookmarkMinus, BookmarkPlus, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,

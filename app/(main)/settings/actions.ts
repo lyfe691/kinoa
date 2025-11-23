@@ -87,8 +87,10 @@ export async function saveProfileAction(input: SaveProfileInput) {
   }
 
   if (Object.keys(userUpdatePayload).length > 0) {
-    const { data, error: updateError } =
-      await supabase.auth.updateUser(userUpdatePayload);
+    const { data, error: updateError } = await supabase.auth.updateUser(
+      userUpdatePayload,
+      { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings` }
+    );
 
     if (updateError) {
       return {

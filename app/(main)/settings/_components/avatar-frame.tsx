@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader, UploadCloud } from "lucide-react";
+import { Loader } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useSession } from "@/lib/supabase/auth";
@@ -109,10 +109,6 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
         } finally {
             setUploading(false);
         }
-    };
-
-    const handleRemoveAvatar = () => {
-        setAvatarUrl(null);
     };
 
     const hasChanged = avatarUrl !== propAvatarUrlRef.current;
