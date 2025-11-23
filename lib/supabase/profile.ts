@@ -39,6 +39,9 @@ function mapRowToProfile(
     metadata?.display_name,
     metadata?.full_name,
     metadata?.name,
+    metadata?.username,
+    metadata?.preferred_username,
+    metadata?.nickname,
   ];
   const displayNameFromMetadata =
     displayNameFromMetadataCandidates
