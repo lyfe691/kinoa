@@ -37,7 +37,7 @@ export function MediaCard({
     rating,
   } = media
 
-  const metadata = []
+  const metadata: string[] = []
 
   if (releaseYear) metadata.push(releaseYear)
   if (type === 'movie' && runtime) metadata.push(formatRuntime(runtime))
