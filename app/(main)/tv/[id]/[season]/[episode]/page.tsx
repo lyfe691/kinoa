@@ -169,6 +169,17 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             mediaType="tv"
             layout="button"
             className="w-full justify-center sm:w-auto"
+            authContext={{
+              title: details.showName,
+              subtitle: details.episode.name || undefined,
+              badge: "Series",
+              image: details.posterUrl,
+              meta: [
+                `S${details.episode.season}:E${details.episode.number}`,
+                runtime,
+                airDate,
+              ].filter(Boolean) as string[],
+            }}
           />
           <p className="text-sm text-muted-foreground">
             Save this series to keep it on your watchlist.

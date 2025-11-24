@@ -140,6 +140,13 @@ export default async function MoviePage({ params }: MoviePageProps) {
             mediaType="movie"
             layout="button"
             className="w-full justify-center sm:w-auto"
+            authContext={{
+              title: movie.title,
+              subtitle: movie.tagline || undefined,
+              badge: "Movie",
+              image: movie.posterUrl,
+              meta: [releaseYear, runtime].filter(Boolean) as string[],
+            }}
           />
           <p className="text-sm text-muted-foreground">
             Save this movie to revisit it anytime.

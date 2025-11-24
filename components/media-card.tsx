@@ -120,6 +120,13 @@ export function MediaCard({
             mediaType={type}
             isInWatchlist={isInWatchlist}
             size="sm"
+            authContext={{
+              title: name,
+              subtitle: metadata.join(" · "),
+              badge: type === "movie" ? "Movie" : "Series",
+              image: posterUrl,
+              meta: metadata,
+            }}
           />
         </div>
       </div>
