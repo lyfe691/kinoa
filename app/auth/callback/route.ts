@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/ssr";
+
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,7 @@ export async function GET(request: NextRequest) {
   const redirectUrl = new URL(next, requestUrl.origin);
 
   if (code) {
-    const supabase = createRouteHandlerClient({
-      cookies,
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    });
+    const supabase = await createSupabaseServerClient();
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
