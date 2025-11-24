@@ -22,6 +22,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { useSession } from "@/lib/supabase/auth"
+import { cn } from "@/lib/utils"
 
 export type AuthPromptMedia = {
   title: string
@@ -105,71 +106,86 @@ export function useAuthPrompt(): UseAuthPromptReturn {
     const { image, subtitle, tag, title } = config.media
 
     return (
-      <div className="flex items-center gap-3 rounded-lg border bg-muted/40 p-3">
-        <div className="relative h-16 w-12 overflow-hidden rounded-md bg-muted shadow-sm">
-          {image ? (
-            <Image
-              src={image}
-              alt={title}
-              fill
-              unoptimized
-              sizes="64px"
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-              No image
-            </div>
-          )}
+      <div className="relative mx-auto w-full max-w-md pt-10">
+        <div className="absolute inset-x-0 -top-12 flex justify-center">
+          <div className="relative h-24 w-16 overflow-hidden rounded-xl border bg-muted shadow-lg">
+            {image ? (
+              <Image
+                src={image}
+                alt={title}
+                fill
+                unoptimized
+                sizes="64px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                No image
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="min-w-0 space-y-1">
+        <div className="rounded-2xl border bg-muted/40 p-4 pt-12 shadow-sm">
           {tag && (
-            <span className="text-[11px] font-medium uppercase tracking-wide text-primary/80">
+            <span className="mb-2 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
               {tag}
             </span>
           )}
-          <p className="line-clamp-1 text-sm font-semibold leading-tight">
+          <p className="line-clamp-2 text-base font-semibold leading-tight text-foreground">
             {title}
           </p>
           {subtitle && (
-            <p className="line-clamp-1 text-xs text-muted-foreground">{subtitle}</p>
+            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{subtitle}</p>
           )}
         </div>
       </div>
     )
   }, [config])
 
+  const renderActions = React.useCallback(
+    (stacked?: boolean) => (
+      <div
+        className={cn(
+          "flex w-full gap-3",
+          stacked ? "flex-col" : "flex-row-reverse sm:flex-row",
+        )}
+      >
+        <Button className="w-full justify-center" onClick={handleSignIn}>
+          {config?.actionLabel ?? "Sign in"}
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-center"
+          onClick={closePrompt}
+        >
+          {config?.cancelLabel ?? "Cancel"}
+        </Button>
+      </div>
+    ),
+    [closePrompt, config?.actionLabel, config?.cancelLabel, handleSignIn],
+  )
+
   const renderContent = React.useCallback(() => {
     if (!config) return null
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <DialogHeader className="space-y-2 text-left">
-          <DialogTitle>{config.title}</DialogTitle>
-          <DialogDescription>{config.description}</DialogDescription>
+          <DialogTitle className="text-xl">{config.title}</DialogTitle>
+          <DialogDescription className="text-base text-muted-foreground">
+            {config.description}
+          </DialogDescription>
         </DialogHeader>
 
         {renderMediaPreview()}
 
         <DialogFooter className="sm:justify-between">
-          <Button
-            variant="ghost"
-            className="w-full justify-center sm:w-auto"
-            onClick={closePrompt}
-          >
-            {config.cancelLabel ?? "Cancel"}
-          </Button>
-          <Button
-            className="w-full justify-center sm:w-auto"
-            onClick={handleSignIn}
-          >
-            {config.actionLabel ?? "Sign in"}
-          </Button>
+          {renderActions()}
         </DialogFooter>
       </div>
     )
-  }, [closePrompt, config, handleSignIn, renderMediaPreview])
+  }, [config, renderActions, renderMediaPreview])
 
   const AuthPrompt = React.useCallback(() => {
     const open = Boolean(config)
@@ -191,24 +207,20 @@ export function useAuthPrompt(): UseAuthPromptReturn {
     return (
       <Drawer open={open} onOpenChange={(next) => !next && closePrompt()}>
         <DrawerContent>
-          <DrawerHeader className="text-left">
-            <DrawerTitle>{config?.title}</DrawerTitle>
-            <DrawerDescription>{config?.description}</DrawerDescription>
-          </DrawerHeader>
+          <div className="space-y-6 px-4 pb-6 pt-2">
+            <DrawerHeader className="text-left px-0">
+              <DrawerTitle className="text-lg leading-6">
+                {config?.title}
+              </DrawerTitle>
+              <DrawerDescription className="text-base text-muted-foreground">
+                {config?.description}
+              </DrawerDescription>
+            </DrawerHeader>
 
-          <div className="space-y-4 px-4">
             {renderMediaPreview()}
+
             <DrawerFooter className="gap-2 px-0">
-              <Button
-                variant="ghost"
-                className="w-full justify-center"
-                onClick={closePrompt}
-              >
-                {config?.cancelLabel ?? "Cancel"}
-              </Button>
-              <Button className="w-full justify-center" onClick={handleSignIn}>
-                {config?.actionLabel ?? "Sign in"}
-              </Button>
+              {renderActions(true)}
             </DrawerFooter>
           </div>
         </DrawerContent>
@@ -217,9 +229,9 @@ export function useAuthPrompt(): UseAuthPromptReturn {
   }, [
     closePrompt,
     config,
-    handleSignIn,
     isDesktop,
     renderContent,
+    renderActions,
     renderMediaPreview,
   ])
 
