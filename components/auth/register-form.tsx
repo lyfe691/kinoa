@@ -107,6 +107,14 @@ export function RegisterForm() {
         onLoadingChange={setOauthLoading}
       />
 
+      {oauthLoading && (
+        <Alert variant="info" aria-live="polite">
+          <Loader className="h-4 w-4 animate-spin" />
+          <AlertTitle>Redirecting to Google</AlertTitle>
+          <AlertDescription>Continue in the new window to finish creating your account.</AlertDescription>
+        </Alert>
+      )}
+
       <AuthDivider />
 
       <form onSubmit={handleSubmit} className="space-y-4">
