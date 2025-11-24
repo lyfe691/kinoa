@@ -12,7 +12,11 @@ import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useSession } from "@/lib/supabase/auth";
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  showSignInHint?: boolean;
+};
+
+export function RegisterForm({ showSignInHint = true }: RegisterFormProps) {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -186,6 +190,18 @@ export function RegisterForm() {
         </Link>
         .
       </p>
+
+      {showSignInHint && (
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-foreground underline underline-offset-4"
+          >
+            Sign in
+          </Link>
+        </p>
+      )}
     </form>
   );
 }

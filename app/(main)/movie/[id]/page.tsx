@@ -20,6 +20,7 @@ import {
   MediaPoster,
 } from "@/components/media-detail";
 import { absoluteUrl, buildMovieJsonLd } from "@/lib/seo";
+import { MediaMenu } from "@/components/media-menu";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -132,6 +133,18 @@ export default async function MoviePage({ params }: MoviePageProps) {
           rating={movie.rating}
           voteCount={movie.voteCount}
         />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <MediaMenu
+            mediaId={movie.id}
+            mediaType="movie"
+            layout="button"
+            className="w-full justify-center sm:w-auto"
+          />
+          <p className="text-sm text-muted-foreground">
+            Save this movie to revisit it anytime.
+          </p>
+        </div>
 
         <MediaOverview>{movie.overview}</MediaOverview>
 

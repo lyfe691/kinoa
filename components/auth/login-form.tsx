@@ -12,7 +12,11 @@ import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useSession } from "@/lib/supabase/auth";
 
-export function LoginForm() {
+type LoginFormProps = {
+  showSignUpHint?: boolean;
+};
+
+export function LoginForm({ showSignUpHint = true }: LoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -65,7 +69,7 @@ export function LoginForm() {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -81,7 +85,15 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+          <Link
+            href="/forgot-password"
+            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <Input
           id="password"
           type="password"
@@ -107,16 +119,17 @@ export function LoginForm() {
         {loading ? "Signing in..." : "Sign in"}
       </Button>
 
-      <p className="text-xs text-center text-muted-foreground">
-        Forgot your password?{" "}
-        <Link
-          href="/forgot-password"
-          className="underline underline-offset-4 text-foreground"
-        >
-          Reset it
-        </Link>
-        .
-      </p>
+      {showSignUpHint && (
+        <p className="text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-foreground underline underline-offset-4"
+          >
+            Create one
+          </Link>
+        </p>
+      )}
     </form>
   );
 }
