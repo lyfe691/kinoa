@@ -44,7 +44,6 @@ export function GoogleAuthButton({ disabled, onError, onLoadingChange }: GoogleA
     } catch (err) {
       const message = getAuthErrorMessage(err, 'Unable to sign in with Google. Please try again.')
       onError?.(message)
-    } finally {
       setLoading(false)
     }
   }, [disabled, loading, onError, supabase])
