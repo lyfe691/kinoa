@@ -1,61 +1,61 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import * as React from "react";
+import Image from 'next/image'
+import * as React from 'react'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { cn } from '@/lib/utils'
 
 export type AuthPromptMedia = {
-  title: string;
-  subtitle?: string;
-  badge?: string;
-  image?: string | null;
-  meta?: string[];
-};
+  title: string
+  subtitle?: string
+  badge?: string
+  image?: string | null
+  meta?: string[]
+}
 
 type AuthPromptOptions = {
-  title: string;
-  description?: string;
-  media?: AuthPromptMedia;
-  continueLabel?: string;
-  cancelLabel?: string;
-  onContinue?: () => void;
-  onClose?: () => void;
-};
+  title: string
+  description?: string
+  media?: AuthPromptMedia
+  continueLabel?: string
+  cancelLabel?: string
+  onContinue?: () => void
+  onClose?: () => void
+}
 
 export function useAuthPrompt() {
-  const [options, setOptions] = React.useState<AuthPromptOptions | null>(null);
+  const [options, setOptions] = React.useState<AuthPromptOptions | null>(null)
 
   const closePrompt = React.useCallback(() => {
-    setOptions(null);
-    options?.onClose?.();
-  }, [options]);
+    setOptions(null)
+    options?.onClose?.()
+  }, [options])
 
   const openAuthPrompt = React.useCallback((config: AuthPromptOptions) => {
-    setOptions(config);
-  }, []);
+    setOptions(config)
+  }, [])
 
   const AuthPrompt = React.useCallback(() => {
-    if (!options) return null;
+    if (!options) return null
 
     const {
       title,
       description,
       media,
-      continueLabel = "Sign in",
-      cancelLabel = "Maybe later",
+      continueLabel = 'Sign in',
+      cancelLabel = 'Maybe later',
       onContinue,
-    } = options;
+    } = options
 
     return (
       <Dialog open onOpenChange={(open) => !open && closePrompt()}>
@@ -128,10 +128,10 @@ export function useAuthPrompt() {
               {cancelLabel}
             </Button>
             <Button
-              className={cn("w-full sm:w-auto")}
+              className={cn('w-full sm:w-auto')}
               onClick={() => {
-                closePrompt();
-                onContinue?.();
+                closePrompt()
+                onContinue?.()
               }}
             >
               {continueLabel}
@@ -139,8 +139,8 @@ export function useAuthPrompt() {
           </div>
         </DialogContent>
       </Dialog>
-    );
-  }, [options, closePrompt]);
+    )
+  }, [options, closePrompt])
 
-  return { openAuthPrompt, AuthPrompt };
+  return { openAuthPrompt, AuthPrompt }
 }

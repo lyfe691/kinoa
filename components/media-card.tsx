@@ -1,24 +1,24 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { Star, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatRuntime } from "@/lib/format-runtime";
-import { MediaMenu } from "@/components/media-menu";
+import Image from 'next/image'
+import Link from 'next/link'
+import { Star, Play } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { formatRuntime } from '@/lib/format-runtime'
+import { MediaMenu } from '@/components/media-menu'
 
-import type { MediaSummary } from "@/lib/tmdb";
+import type { MediaSummary } from '@/lib/tmdb'
 
 type MediaCardProps = {
   media: MediaSummary & {
-    runtime?: number | null;
-    seasonCount?: number;
-    episodeCount?: number;
-  };
-  isInWatchlist?: boolean;
-  className?: string;
-  priority?: boolean;
-};
+    runtime?: number | null
+    seasonCount?: number
+    episodeCount?: number
+  }
+  isInWatchlist?: boolean
+  className?: string
+  priority?: boolean
+}
 
 export function MediaCard({
   media,
@@ -35,22 +35,22 @@ export function MediaCard({
     runtime,
     seasonCount,
     rating,
-  } = media;
+  } = media
 
-  const metadata = [];
+  const metadata = []
 
-  if (releaseYear) metadata.push(releaseYear);
-  if (type === "movie" && runtime) metadata.push(formatRuntime(runtime));
-  if (type === "tv" && seasonCount)
-    metadata.push(`${seasonCount} Season${seasonCount > 1 ? "s" : ""}`);
+  if (releaseYear) metadata.push(releaseYear)
+  if (type === 'movie' && runtime) metadata.push(formatRuntime(runtime))
+  if (type === 'tv' && seasonCount)
+    metadata.push(`${seasonCount} Season${seasonCount > 1 ? 's' : ''}`)
 
-  const formattedRating = rating ? rating.toFixed(1) : null;
+  const formattedRating = rating ? rating.toFixed(1) : null
 
   return (
     <Link
       href={href}
-      className={cn("group block space-y-3", className)}
-      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
+      className={cn('group block space-y-3', className)}
+      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ''}`}
     >
       <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">
         {posterUrl ? (
@@ -109,7 +109,7 @@ export function MediaCard({
 
           {metadata.length > 0 && (
             <p className="truncate text-xs text-muted-foreground">
-              {metadata.join(" · ")}
+              {metadata.join(' · ')}
             </p>
           )}
         </div>
@@ -122,8 +122,8 @@ export function MediaCard({
             size="sm"
             authContext={{
               title: name,
-              subtitle: metadata.join(" · "),
-              badge: type === "movie" ? "Movie" : "Series",
+              subtitle: metadata.join(' · '),
+              badge: type === 'movie' ? 'Movie' : 'Series',
               image: posterUrl,
               meta: metadata,
             }}
@@ -131,5 +131,5 @@ export function MediaCard({
         </div>
       </div>
     </Link>
-  );
+  )
 }
