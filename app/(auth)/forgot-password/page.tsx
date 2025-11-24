@@ -17,11 +17,14 @@ export default async function ForgotPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Forgot password</h1>
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+          Forgot password
+        </p>
+        <h1 className="text-3xl font-bold tracking-tight">Reset access</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email address and we&apos;ll send you a reset link.
+          Enter the email tied to your account and we&apos;ll send a code to help you get back in.
         </p>
       </div>
 
@@ -31,7 +34,7 @@ export default async function ForgotPasswordPage() {
         Remembered your password?{" "}
         <Link
           href="/login"
-          className="underline underline-offset-4 text-primary"
+          className="font-semibold text-primary underline-offset-4 hover:underline"
         >
           Sign in
         </Link>

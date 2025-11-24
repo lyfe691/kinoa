@@ -21,6 +21,7 @@ import {
   MediaPoster,
 } from "@/components/media-detail";
 import { absoluteUrl, buildEpisodeJsonLd } from "@/lib/seo";
+import { MediaMenu } from "@/components/media-menu";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -161,6 +162,18 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           rating={details.rating}
           voteCount={details.voteCount}
         />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <MediaMenu
+            mediaId={details.showId}
+            mediaType="tv"
+            layout="button"
+            className="w-full justify-center sm:w-auto"
+          />
+          <p className="text-sm text-muted-foreground">
+            Save this series to keep it on your watchlist.
+          </p>
+        </div>
 
         <MediaOverview>
           {details.episode.overview || details.overview}
