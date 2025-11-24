@@ -436,6 +436,7 @@ type TmdbMovieResponse = {
   runtime: number | null;
   genres: { id: number; name: string }[];
   imdb_id: string | null;
+  tagline?: string | null;
   vote_average?: number;
   vote_count?: number;
 };
@@ -446,6 +447,7 @@ export type MovieDetails = {
   overview: string;
   posterUrl: string | null;
   backdropUrl: string | null;
+  tagline?: string | null;
   releaseDate?: string;
   runtime?: number | null;
   genres: string[];
@@ -480,6 +482,7 @@ export async function getMovieDetails(id: string): Promise<MovieDetails> {
     overview: movie.overview,
     posterUrl: buildImage(movie.poster_path, POSTER_SIZE),
     backdropUrl: buildImage(movie.backdrop_path, BACKDROP_SIZE),
+    tagline: movie.tagline,
     releaseDate: movie.release_date ?? undefined,
     runtime: movie.runtime,
     genres: movie.genres.map((genre) => genre.name),
