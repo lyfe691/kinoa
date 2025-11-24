@@ -100,15 +100,22 @@ export function useAuthPrompt(): UseAuthPromptReturn {
     router.push(destination)
   }, [closePrompt, config, router])
 
-  const renderMediaPreview = React.useCallback(() => {
-    if (!config?.media) return null
+  const renderMediaPreview = React.useCallback(
+    (placement: "dialog" | "drawer") => {
+      if (!config?.media) return null
 
-    const { image, subtitle, tag, title } = config.media
+      const { image, subtitle, tag, title } = config.media
 
-    return (
-      <div className="relative mx-auto w-full max-w-md pt-10">
-        <div className="absolute inset-x-0 -top-12 flex justify-center">
-          <div className="relative h-24 w-16 overflow-hidden rounded-xl border bg-muted shadow-lg">
+      return (
+        <div
+          className={cn(
+            "pointer-events-none absolute",
+            placement === "dialog"
+              ? "-top-16 right-8 sm:right-10"
+              : "left-1/2 -top-16 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0",
+          )}
+        >
+          <div className="relative h-24 w-16 overflow-hidden rounded-xl border bg-background shadow-xl ring-1 ring-border">
             {image ? (
               <Image
                 src={image}
@@ -124,24 +131,25 @@ export function useAuthPrompt(): UseAuthPromptReturn {
               </div>
             )}
           </div>
-        </div>
 
-        <div className="rounded-2xl border bg-muted/40 p-4 pt-12 shadow-sm">
-          {tag && (
-            <span className="mb-2 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
-              {tag}
-            </span>
-          )}
-          <p className="line-clamp-2 text-base font-semibold leading-tight text-foreground">
-            {title}
-          </p>
-          {subtitle && (
-            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{subtitle}</p>
-          )}
+          <div className="pointer-events-auto mt-3 w-44 rounded-2xl border bg-background/95 p-4 shadow-lg backdrop-blur">
+            {tag && (
+              <span className="mb-2 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-primary">
+                {tag}
+              </span>
+            )}
+            <p className="line-clamp-2 text-sm font-semibold leading-tight text-foreground">
+              {title}
+            </p>
+            {subtitle && (
+              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{subtitle}</p>
+            )}
+          </div>
         </div>
-      </div>
-    )
-  }, [config])
+      )
+    },
+    [config],
+  )
 
   const renderActions = React.useCallback(
     (stacked?: boolean) => (
@@ -170,15 +178,15 @@ export function useAuthPrompt(): UseAuthPromptReturn {
     if (!config) return null
 
     return (
-      <div className="space-y-6">
+      <div className="relative space-y-6 overflow-visible pt-2 sm:pt-4">
+        {renderMediaPreview("dialog")}
+
         <DialogHeader className="space-y-2 text-left">
           <DialogTitle className="text-xl">{config.title}</DialogTitle>
           <DialogDescription className="text-base text-muted-foreground">
             {config.description}
           </DialogDescription>
         </DialogHeader>
-
-        {renderMediaPreview()}
 
         <DialogFooter className="sm:justify-between">
           {renderActions()}
@@ -199,16 +207,20 @@ export function useAuthPrompt(): UseAuthPromptReturn {
 
       return (
         <Dialog open={open} onOpenChange={(next) => !next && closePrompt()}>
-          <DialogContent showCloseButton>{content}</DialogContent>
+          <DialogContent showCloseButton className="overflow-visible">
+            {content}
+          </DialogContent>
         </Dialog>
       )
     }
 
     return (
       <Drawer open={open} onOpenChange={(next) => !next && closePrompt()}>
-        <DrawerContent>
-          <div className="space-y-6 px-4 pb-6 pt-2">
-            <DrawerHeader className="text-left px-0">
+        <DrawerContent className="overflow-visible pb-8">
+          <div className="relative space-y-6 px-4 pb-2 pt-6 sm:pt-8">
+            {renderMediaPreview("drawer")}
+
+            <DrawerHeader className="text-left px-0 pt-0">
               <DrawerTitle className="text-lg leading-6">
                 {config?.title}
               </DrawerTitle>
@@ -217,9 +229,7 @@ export function useAuthPrompt(): UseAuthPromptReturn {
               </DrawerDescription>
             </DrawerHeader>
 
-            {renderMediaPreview()}
-
-            <DrawerFooter className="gap-2 px-0">
+            <DrawerFooter className="gap-2 px-0 pt-0">
               {renderActions(true)}
             </DrawerFooter>
           </div>
