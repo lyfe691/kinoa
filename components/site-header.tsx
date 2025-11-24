@@ -24,14 +24,14 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSession } from "@/lib/supabase/auth";
+import { useSession, type AuthProfile } from "@/lib/supabase/auth";
 import { signOutEverywhere } from "@/lib/supabase/sign-out";
 import { LogOut, ChevronDown, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { motion, AnimatePresence } from "framer-motion";
 
-type AccountProfile = {
+type DisplayProfile = {
   displayName: string;
   email: string;
   initials: string;
@@ -44,35 +44,34 @@ const NAV_ITEMS = [
   { href: "/watchlist", label: "Watchlist", authRequired: true },
 ];
 
-
-
 export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading, supabase, refreshSession } = useSession();
+  const { user, profile, loading, supabase, refreshSession } = useSession();
   const [signingOut, setSigningOut] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-  const account = React.useMemo<AccountProfile | null>(() => {
+  const displayProfile = React.useMemo<DisplayProfile | null>(() => {
     if (!user) return null;
 
     const metadata = (user.user_metadata ?? {}) as Record<string, unknown>;
-    const email = (user.email || "").trim();
+    const email = (profile?.email || user.email || "").trim();
 
-    const candidateNames = [
-      metadata.display_name,
-      metadata.full_name,
-      metadata.name,
-      metadata.username,
-      metadata.preferred_username,
-      metadata.nickname,
-      email.split("@")[0],
-    ];
-
+    // Priority: Profile Table -> Metadata -> Email fallback
     const displayName =
-      candidateNames
+      profile?.display_name ||
+      [
+        metadata.display_name,
+        metadata.full_name,
+        metadata.name,
+        metadata.username,
+        metadata.preferred_username,
+        metadata.nickname,
+      ]
         .map((value) => (typeof value === "string" ? value.trim() : ""))
-        .find((value) => value.length > 0) || "Account";
+        .find((value) => value.length > 0) ||
+      email.split("@")[0] ||
+      "Account";
 
     const normalizedName = displayName.replace(/\s+/g, " ");
 
@@ -86,10 +85,13 @@ export function SiteHeader() {
       normalizedName.slice(0, 2).toUpperCase() ||
       "U";
 
+    // Priority: Profile Table -> Metadata
     const avatarUrl =
+      profile?.avatar_url ||
       [metadata.avatar_url, metadata.picture, metadata.avatar, metadata.image]
         .map((value) => (typeof value === "string" ? value.trim() : ""))
-        .find((value) => value.length > 0) || null;
+        .find((value) => value.length > 0) ||
+      null;
 
     return {
       displayName: normalizedName,
@@ -97,7 +99,7 @@ export function SiteHeader() {
       initials,
       avatarUrl,
     };
-  }, [user]);
+  }, [user, profile]);
 
   React.useEffect(() => {
     if (!user) {
@@ -136,7 +138,7 @@ export function SiteHeader() {
           <DesktopActions
             loading={loading}
             user={user}
-            account={account}
+            account={displayProfile}
             onSignOut={handleSignOut}
             signingOut={signingOut}
             isDropdownOpen={isDropdownOpen}
@@ -151,7 +153,7 @@ export function SiteHeader() {
         pathname={pathname}
         loading={loading}
         user={user}
-        account={account}
+        account={displayProfile}
         signingOut={signingOut}
         onSignOut={handleSignOut}
       />
@@ -228,7 +230,7 @@ function DesktopNav({
 type DesktopActionsProps = {
   loading: boolean;
   user: ReturnType<typeof useSession>["user"];
-  account: AccountProfile | null;
+  account: DisplayProfile | null;
   onSignOut: () => void;
   signingOut: boolean;
   isDropdownOpen: boolean;
@@ -350,7 +352,7 @@ type MobileDrawerProps = {
   pathname: string | null;
   loading: boolean;
   user: ReturnType<typeof useSession>["user"];
-  account: AccountProfile | null;
+  account: DisplayProfile | null;
   signingOut: boolean;
   onSignOut: () => void;
 };

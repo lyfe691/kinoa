@@ -1,10 +1,12 @@
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 import { getSession } from "@/lib/supabase/session"
 import { type AccountProfile, getAccountProfile } from "@/lib/supabase/profile"
 import { ProfileSettingsPanel } from "./_components/profile-settings-panel"
 import { SecuritySettingsPanel } from "./_components/security-settings-panel"
+import { SettingsMessageHandler } from "./_components/settings-message-handler"
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -45,6 +47,9 @@ export default async function SettingsPage() {
 
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-10">
+      <Suspense fallback={null}>
+        <SettingsMessageHandler />
+      </Suspense>
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Settings

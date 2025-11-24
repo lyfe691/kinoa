@@ -141,7 +141,7 @@ export function ImageCropperDialog({
             {isLoading ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              "Apply"
+              "Done"
             )}
           </Button>
         </DialogFooter>
