@@ -3,24 +3,9 @@
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import * as React from "react"
+import { createPortal } from "react-dom"
 
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer"
 import { useSession } from "@/lib/supabase/auth"
 import { cn } from "@/lib/utils"
 
@@ -53,6 +38,11 @@ export function useAuthPrompt(): UseAuthPromptReturn {
   const { user } = useSession()
   const [config, setConfig] = React.useState<AuthPromptConfig | null>(null)
   const [isDesktop, setIsDesktop] = React.useState(false)
+  const [isMounted, setIsMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 640px)")
@@ -101,7 +91,7 @@ export function useAuthPrompt(): UseAuthPromptReturn {
   }, [closePrompt, config, router])
 
   const renderMediaPreview = React.useCallback(
-    (placement: "dialog" | "drawer") => {
+    (placement: "desktop" | "mobile") => {
       if (!config?.media) return null
 
       const { image, subtitle, tag, title } = config.media
@@ -110,8 +100,8 @@ export function useAuthPrompt(): UseAuthPromptReturn {
         <div
           className={cn(
             "pointer-events-none absolute",
-            placement === "dialog"
-              ? "-top-16 right-8 sm:right-10"
+            placement === "desktop"
+              ? "-top-16 right-6 sm:-top-20 sm:right-10"
               : "left-1/2 -top-16 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0",
           )}
         >
@@ -179,18 +169,14 @@ export function useAuthPrompt(): UseAuthPromptReturn {
 
     return (
       <div className="relative space-y-6 overflow-visible pt-2 sm:pt-4">
-        {renderMediaPreview("dialog")}
+        {renderMediaPreview("desktop")}
 
-        <DialogHeader className="space-y-2 text-left">
-          <DialogTitle className="text-xl">{config.title}</DialogTitle>
-          <DialogDescription className="text-base text-muted-foreground">
-            {config.description}
-          </DialogDescription>
-        </DialogHeader>
+        <div className="space-y-2 text-left">
+          <p className="text-xl font-semibold text-foreground">{config.title}</p>
+          <p className="text-base text-muted-foreground">{config.description}</p>
+        </div>
 
-        <DialogFooter className="sm:justify-between">
-          {renderActions()}
-        </DialogFooter>
+        <div className="sm:justify-between">{renderActions()}</div>
       </div>
     )
   }, [config, renderActions, renderMediaPreview])
@@ -200,46 +186,53 @@ export function useAuthPrompt(): UseAuthPromptReturn {
 
     if (!open) return null
 
-    if (isDesktop) {
-      const content = renderContent()
+    const portal = isDesktop ? (
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={closePrompt}
+        />
 
-      if (!content) return null
+        <div className="relative w-full max-w-md overflow-visible">
+          {renderMediaPreview("desktop")}
 
-      return (
-        <Dialog open={open} onOpenChange={(next) => !next && closePrompt()}>
-          <DialogContent showCloseButton className="overflow-visible">
-            {content}
-          </DialogContent>
-        </Dialog>
-      )
-    }
-
-    return (
-      <Drawer open={open} onOpenChange={(next) => !next && closePrompt()}>
-        <DrawerContent className="overflow-visible pb-8">
-          <div className="relative space-y-6 px-4 pb-2 pt-6 sm:pt-8">
-            {renderMediaPreview("drawer")}
-
-            <DrawerHeader className="text-left px-0 pt-0">
-              <DrawerTitle className="text-lg leading-6">
-                {config?.title}
-              </DrawerTitle>
-              <DrawerDescription className="text-base text-muted-foreground">
-                {config?.description}
-              </DrawerDescription>
-            </DrawerHeader>
-
-            <DrawerFooter className="gap-2 px-0 pt-0">
-              {renderActions(true)}
-            </DrawerFooter>
+          <div className="relative w-full overflow-visible rounded-2xl border bg-background p-6 shadow-2xl ring-1 ring-border">
+            {renderContent()}
           </div>
-        </DrawerContent>
-      </Drawer>
+        </div>
+      </div>
+    ) : (
+      <div className="fixed inset-0 z-50 flex flex-col justify-end">
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={closePrompt}
+        />
+
+        <div className="relative w-full overflow-visible rounded-t-3xl border bg-background px-4 pb-6 pt-8 shadow-2xl ring-1 ring-border sm:px-6">
+          <span className="absolute left-1/2 top-3 h-1.5 w-12 -translate-x-1/2 rounded-full bg-muted" />
+
+          {renderMediaPreview("mobile")}
+
+          <div className="space-y-5 pt-2">
+            <div className="space-y-2 text-left">
+              <p className="text-lg font-semibold text-foreground">{config?.title}</p>
+              <p className="text-base text-muted-foreground">{config?.description}</p>
+            </div>
+
+            <div className="gap-2">{renderActions(true)}</div>
+          </div>
+        </div>
+      </div>
     )
+
+    if (!isMounted) return null
+
+    return createPortal(portal, document.body)
   }, [
     closePrompt,
     config,
     isDesktop,
+    isMounted,
     renderContent,
     renderActions,
     renderMediaPreview,
