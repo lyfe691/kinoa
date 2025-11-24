@@ -140,6 +140,9 @@ export default async function MoviePage({ params }: MoviePageProps) {
             mediaType="movie"
             layout="button"
             className="w-full justify-center sm:w-auto"
+            mediaTitle={movie.title}
+            mediaSubtitle={[releaseYear, runtime].filter(Boolean).join(" · ")}
+            mediaPoster={movie.posterUrl}
           />
           <p className="text-sm text-muted-foreground">
             Save this movie to revisit it anytime.

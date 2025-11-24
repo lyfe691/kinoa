@@ -9,17 +9,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  AlertDialog,
-  AlertDialogPopup,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
+import { useAuthPrompt } from "@/hooks/use-auth-prompt";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +23,9 @@ type MediaMenuProps = {
   className?: string;
   size?: "sm" | "default";
   layout?: "icon" | "button";
+  mediaTitle?: string;
+  mediaSubtitle?: string;
+  mediaPoster?: string | null;
 };
 
 export function MediaMenu({
@@ -39,6 +35,9 @@ export function MediaMenu({
   className,
   size = "default",
   layout = "icon",
+  mediaTitle,
+  mediaSubtitle,
+  mediaPoster,
 }: MediaMenuProps) {
   const router = useRouter();
   const { user } = useSession();
@@ -48,7 +47,7 @@ export function MediaMenu({
     propIsInWatchlist ?? false,
   );
   const [loading, setLoading] = React.useState(false);
-  const [showAuthDialog, setShowAuthDialog] = React.useState(false);
+  const { requireAuth, AuthPrompt } = useAuthPrompt();
 
   // Use hook result as source of truth
   React.useEffect(() => {
@@ -57,9 +56,27 @@ export function MediaMenu({
     }
   }, [hookIsInWatchlist, checkingWatchlist]);
 
+  const authPromptConfig = React.useMemo(
+    () => ({
+      title: "Sign in to save this",
+      description: "Create a free account to keep your watchlist in sync.",
+      actionLabel: "Sign in to save",
+      media:
+        mediaTitle
+          ? {
+              title: mediaTitle,
+              subtitle: mediaSubtitle,
+              image: mediaPoster,
+              tag: mediaType === "movie" ? "Movie" : "Series",
+            }
+          : undefined,
+    }),
+    [mediaPoster, mediaSubtitle, mediaTitle, mediaType],
+  );
+
   const handleToggleWatchlist = React.useCallback(async () => {
     if (!user) {
-      setShowAuthDialog(true);
+      requireAuth(authPromptConfig);
       return;
     }
 
@@ -104,7 +121,16 @@ export function MediaMenu({
     } finally {
       setLoading(false);
     }
-  }, [user, isInWatchlist, mediaId, mediaType, router, checkingWatchlist]);
+  }, [
+    user,
+    isInWatchlist,
+    mediaId,
+    mediaType,
+    router,
+    checkingWatchlist,
+    requireAuth,
+    authPromptConfig,
+  ]);
 
   const isBusy = loading || checkingWatchlist;
   const buttonLabel = isInWatchlist ? "Saved" : "Save";
@@ -177,34 +203,7 @@ export function MediaMenu({
         renderButton()
       )}
 
-      <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-        <AlertDialogPopup>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign in required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be signed in to add items to your watchlist.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-            <Button
-              variant="outline"
-              onClick={() => setShowAuthDialog(false)}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                setShowAuthDialog(false);
-                router.push("/login");
-              }}
-              className="w-full sm:w-auto"
-            >
-              Sign in
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogPopup>
-      </AlertDialog>
+      <AuthPrompt />
     </>
   );
 }

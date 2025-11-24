@@ -120,6 +120,9 @@ export function MediaCard({
             mediaType={type}
             isInWatchlist={isInWatchlist}
             size="sm"
+            mediaTitle={name}
+            mediaSubtitle={metadata.join(" · ")}
+            mediaPoster={posterUrl}
           />
         </div>
       </div>

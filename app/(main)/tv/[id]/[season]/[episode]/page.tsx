@@ -169,6 +169,15 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
             mediaType="tv"
             layout="button"
             className="w-full justify-center sm:w-auto"
+            mediaTitle={details.showName}
+            mediaSubtitle={[
+              `S${details.episode.season}:E${details.episode.number}`,
+              runtime,
+              airDate,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+            mediaPoster={details.posterUrl}
           />
           <p className="text-sm text-muted-foreground">
             Save this series to keep it on your watchlist.
