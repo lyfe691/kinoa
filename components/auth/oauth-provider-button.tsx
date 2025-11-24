@@ -57,7 +57,7 @@ export function GoogleAuthButton({ disabled, onError, onLoadingChange }: GoogleA
       disabled={disabled || loading}
     >
       {loading ? <Loader className="h-4 w-4 animate-spin" /> : <GoogleIcon className="h-4 w-4" />}
-      {loading ? 'Redirecting...' : 'Continue with Google'}
+      Continue with Google
     </Button>
   )
 }
