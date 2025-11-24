@@ -29,6 +29,7 @@ type MediaMenuProps = {
   isInWatchlist?: boolean;
   className?: string;
   size?: "sm" | "default";
+  layout?: "icon" | "button";
 };
 
 export function MediaMenu({
@@ -37,6 +38,7 @@ export function MediaMenu({
   isInWatchlist: propIsInWatchlist,
   className,
   size = "default",
+  layout = "icon",
 }: MediaMenuProps) {
   const router = useRouter();
   const { user } = useSession();
@@ -105,51 +107,75 @@ export function MediaMenu({
   }, [user, isInWatchlist, mediaId, mediaType, router, checkingWatchlist]);
 
   const isBusy = loading || checkingWatchlist;
+  const buttonLabel = isInWatchlist ? "Saved" : "Save";
+  const buttonAriaLabel =
+    layout === "button"
+      ? buttonLabel
+      : isInWatchlist
+        ? "Remove from watchlist"
+        : "Add to watchlist";
+
+  const renderButton = () => (
+    <Button
+      variant={layout === "button" ? "outline" : "ghost"}
+      size={
+        layout === "button"
+          ? size === "sm"
+            ? "sm"
+            : "default"
+          : size === "sm"
+            ? "icon-sm"
+            : "icon"
+      }
+      className={cn(
+        "rounded-full transition-all cursor-pointer",
+        layout === "button" &&
+          "gap-2 px-4 text-sm font-semibold hover:-translate-y-0.5",
+        isInWatchlist &&
+          (layout === "button"
+            ? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/20"
+            : "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"),
+        className,
+      )}
+      aria-label={buttonAriaLabel}
+      onClick={(e) => {
+        e.preventDefault();
+        handleToggleWatchlist();
+      }}
+      disabled={isBusy}
+    >
+      {isBusy ? (
+        <Loader
+          className={cn(
+            "animate-spin",
+            size === "sm" ? "h-4 w-4" : "h-5 w-5",
+          )}
+        />
+      ) : isInWatchlist ? (
+        <BookmarkMinus
+          className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
+        />
+      ) : (
+        <BookmarkPlus
+          className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
+        />
+      )}
+      {layout === "button" && <span>{buttonLabel}</span>}
+    </Button>
+  );
 
   return (
     <>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size={size === "sm" ? "icon-sm" : "icon"}
-            className={cn(
-              "rounded-full transition-all cursor-pointer",
-              isInWatchlist &&
-                "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary",
-              className,
-            )}
-            aria-label={
-              isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
-            }
-            onClick={(e) => {
-              e.preventDefault();
-              handleToggleWatchlist();
-            }}
-            disabled={isBusy}
-          >
-            {isBusy ? (
-              <Loader
-                className={cn(
-                  "animate-spin",
-                  size === "sm" ? "h-4 w-4" : "h-5 w-5",
-                )}
-              />
-            ) : isInWatchlist ? (
-              <BookmarkMinus
-                className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-              />
-            ) : (
-              <BookmarkPlus
-                className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-              />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}</p>
-        </TooltipContent>
-      </Tooltip>
+      {layout === "icon" ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{renderButton()}</TooltipTrigger>
+          <TooltipContent>
+            <p>{buttonAriaLabel}</p>
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        renderButton()
+      )}
 
       <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
         <AlertDialogPopup>
