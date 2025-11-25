@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AuthMarquee } from "@/components/auth/auth-marquee";
+import { getPopularBackdrops } from "@/lib/tmdb";
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const backdrops = await getPopularBackdrops();
+
   return (
     <div className="flex min-h-screen">
       {/* Left panel - Form */}
@@ -27,22 +31,17 @@ export default function AuthLayout({
         </main>
       </div>
 
-      {/* Right panel - Branding (hidden on mobile) */}
-      <div className="relative hidden w-1/2 flex-col justify-end overflow-hidden bg-zinc-950 p-10 lg:flex">
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-bl from-primary/20 via-transparent to-transparent" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -left-32 top-32 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+      {/* Right panel - 3D Poster Marquee (hidden on mobile) */}
+      <div className="relative hidden w-1/2 overflow-hidden bg-zinc-950 lg:block">
+        <AuthMarquee images={backdrops} />
 
-        {/* Tagline */}
-        <div className="relative z-10 space-y-4">
-          <blockquote className="space-y-2">
-            <p className="text-2xl font-medium leading-relaxed text-white/90">
-              Your personal streaming companion.
-              <br />
-              <span className="text-white/60">Discover, track, and enjoy.</span>
-            </p>
-          </blockquote>
+        {/* Tagline overlay */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-10">
+          <p className="text-2xl font-medium leading-relaxed text-white/90">
+            Your personal streaming companion.
+            <br />
+            <span className="text-white/60">Discover, track, and enjoy.</span>
+          </p>
         </div>
       </div>
     </div>

@@ -269,6 +269,43 @@ export async function getTopRatedMovies(): Promise<MediaSummary[]> {
   return enrichMediaSummaries(mapMovieList(data.results));
 }
 
+/**
+ * Fetches popular movie/TV backdrop URLs for decorative use (e.g., auth pages).
+ * Returns 32 landscape backdrops for the 3D marquee effect.
+ */
+export async function getPopularBackdrops(): Promise<string[]> {
+  const [movies, tv] = await Promise.all([
+    tmdbFetch<TmdbListResponse<TmdbMovieListItem>>(
+      "/movie/popular",
+      { language: "en-US" },
+      CACHE_REVALIDATE.day,
+    ),
+    tmdbFetch<TmdbListResponse<TmdbTvListItem>>(
+      "/tv/popular",
+      { language: "en-US" },
+      CACHE_REVALIDATE.day,
+    ),
+  ]);
+
+  const movieBackdrops = movies.results
+    .filter((m) => m.backdrop_path)
+    .map((m) => buildImage(m.backdrop_path, BACKDROP_SIZE)!);
+
+  const tvBackdrops = tv.results
+    .filter((t) => t.backdrop_path)
+    .map((t) => buildImage(t.backdrop_path, BACKDROP_SIZE)!);
+
+  // Interleave movies and TV shows for variety
+  const combined: string[] = [];
+  const maxLen = Math.max(movieBackdrops.length, tvBackdrops.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (movieBackdrops[i]) combined.push(movieBackdrops[i]);
+    if (tvBackdrops[i]) combined.push(tvBackdrops[i]);
+  }
+
+  return combined.slice(0, 32);
+}
+
 // Genres
 type TmdbGenresResponse = {
   genres: { id: number; name: string }[];
