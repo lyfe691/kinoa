@@ -22,8 +22,8 @@ export default function PrivacyPage() {
         <p className="text-sm text-muted-foreground">
           Your privacy matters to us. This policy explains how Kinoa (“Kinoa”,
           “we”, “us”, or “our”), a service operated from Switzerland, collects
-          and processes information when you use the Kinoa website, applications,
-          and related services (collectively, the “Service”).
+          and processes information when you use the Kinoa website,
+          applications, and related services (collectively, the “Service”).
         </p>
       </header>
 
@@ -34,9 +34,9 @@ export default function PrivacyPage() {
         <p>
           Kinoa provides and controls the Service as a digital platform governed
           by Swiss law. For the purposes of the Swiss Federal Act on Data
-          Protection (FADP) and, where applicable, the EU General Data Protection
-          Regulation (GDPR), Kinoa acts as the data controller for processing
-          described in this policy. You can contact us at{" "}
+          Protection (FADP) and, where applicable, the EU General Data
+          Protection Regulation (GDPR), Kinoa acts as the data controller for
+          processing described in this policy. You can contact us at{" "}
           <Link
             href="mailto:privacy@kinoa.lol"
             className="text-foreground underline underline-offset-4"
@@ -83,7 +83,9 @@ export default function PrivacyPage() {
         </h2>
         <ul className="list-disc space-y-2 pl-5">
           <li>Operate, maintain, and improve the Service and its features.</li>
-          <li>Provide customer support and respond to enquiries or legal notices.</li>
+          <li>
+            Provide customer support and respond to enquiries or legal notices.
+          </li>
           <li>
             Monitor usage patterns, detect fraud or abuse, and ensure security
             and stability.
@@ -109,9 +111,9 @@ export default function PrivacyPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong>Legitimate interests</strong> (FADP Art. 31, GDPR Art. 6(1)(f)):
-            to operate, secure, and improve the Service, prevent abuse, and
-            maintain accurate records.
+            <strong>Legitimate interests</strong> (FADP Art. 31, GDPR Art.
+            6(1)(f)): to operate, secure, and improve the Service, prevent
+            abuse, and maintain accurate records.
           </li>
           <li>
             <strong>Consent</strong> (GDPR Art. 6(1)(a)): for optional features
@@ -222,9 +224,9 @@ export default function PrivacyPage() {
         <p>
           We implement technical and organisational measures designed to protect
           information against unauthorised access, loss, or misuse, including
-          HTTPS encryption, strict access controls, and continuous monitoring. No
-          online service can guarantee absolute security, so we encourage you to
-          notify us promptly at{" "}
+          HTTPS encryption, strict access controls, and continuous monitoring.
+          No online service can guarantee absolute security, so we encourage you
+          to notify us promptly at{" "}
           <Link
             href="mailto:security@kinoa.lol"
             className="text-foreground underline underline-offset-4"
@@ -278,15 +280,13 @@ export default function PrivacyPage() {
           We may update this Privacy Policy to reflect changes in our practices,
           technologies, or legal obligations. When we make material changes, we
           will post the updated policy on this page and update the “Effective
-          date” below. Your continued use of the Service after the effective date
-          signifies acceptance of the updated policy.
+          date” below. Your continued use of the Service after the effective
+          date signifies acceptance of the updated policy.
         </p>
       </section>
 
       <section className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-        <h2 className="text-base font-semibold text-foreground">
-          14. Contact
-        </h2>
+        <h2 className="text-base font-semibold text-foreground">14. Contact</h2>
         <p>
           For questions about this Privacy Policy or to exercise your data
           protection rights, email{" "}

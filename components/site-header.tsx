@@ -30,13 +30,8 @@ import { LogOut, ChevronDown, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { motion, AnimatePresence } from "framer-motion";
-
-type AccountProfile = {
-  displayName: string;
-  email: string;
-  initials: string;
-  avatarUrl: string | null;
-};
+import { useProfile } from "@/hooks/use-profile";
+import type { AccountProfile } from "@/lib/profile-utils";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -44,60 +39,20 @@ const NAV_ITEMS = [
   { href: "/watchlist", label: "Watchlist", authRequired: true },
 ];
 
-
-
 export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading, supabase, refreshSession } = useSession();
+  const {
+    user,
+    loading: sessionLoading,
+    supabase,
+    refreshSession,
+  } = useSession();
+  const { profile: account, loading: profileLoading } = useProfile();
   const [signingOut, setSigningOut] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-  const account = React.useMemo<AccountProfile | null>(() => {
-    if (!user) return null;
-
-    const metadata = (user.user_metadata ?? {}) as Record<string, unknown>;
-    const email = (user.email || "").trim();
-
-    const candidateNames = [
-      metadata.display_name,
-      metadata.full_name,
-      metadata.name,
-      metadata.username,
-      metadata.preferred_username,
-      metadata.nickname,
-      email.split("@")[0],
-    ];
-
-    const displayName =
-      candidateNames
-        .map((value) => (typeof value === "string" ? value.trim() : ""))
-        .find((value) => value.length > 0) || "Account";
-
-    const normalizedName = displayName.replace(/\s+/g, " ");
-
-    const initials =
-      normalizedName
-        .split(/[\s._-]+/)
-        .filter(Boolean)
-        .map((part) => part[0].toUpperCase())
-        .slice(0, 2)
-        .join("") ||
-      normalizedName.slice(0, 2).toUpperCase() ||
-      "U";
-
-    const avatarUrl =
-      [metadata.avatar_url, metadata.picture, metadata.avatar, metadata.image]
-        .map((value) => (typeof value === "string" ? value.trim() : ""))
-        .find((value) => value.length > 0) || null;
-
-    return {
-      displayName: normalizedName,
-      email,
-      initials,
-      avatarUrl,
-    };
-  }, [user]);
+  const loading = sessionLoading || (!!user && profileLoading);
 
   React.useEffect(() => {
     if (!user) {
@@ -260,7 +215,7 @@ function DesktopActions({
               <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={account.avatarUrl ?? undefined}
-                  alt={account.displayName}
+                  alt={account.displayName ?? "User"}
                   className="object-cover"
                 />
                 <AvatarFallback className="bg-linear-to-br from-primary to-primary/70 text-xs font-medium text-primary-foreground">
@@ -290,10 +245,7 @@ function DesktopActions({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="cursor-pointer"
-              asChild
-            >
+            <DropdownMenuItem className="cursor-pointer" asChild>
               <Link href="/settings" onClick={() => setIsDropdownOpen(false)}>
                 <SettingsIcon className="mr-2 h-4 w-4" />
                 <span>Settings</span>
@@ -306,9 +258,7 @@ function DesktopActions({
               disabled={signingOut}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              <span>
-                {signingOut ? "Signing out..." : "Sign out"}
-              </span>
+              <span>{signingOut ? "Signing out..." : "Sign out"}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -375,7 +325,7 @@ function MobileDrawer({
             <Avatar className="h-12 w-12">
               <AvatarImage
                 src={account.avatarUrl ?? undefined}
-                alt={account.displayName}
+                alt={account.displayName ?? "User"}
                 className="object-cover"
               />
               <AvatarFallback className="bg-linear-to-br from-primary to-primary/80 text-sm font-semibold text-primary-foreground">

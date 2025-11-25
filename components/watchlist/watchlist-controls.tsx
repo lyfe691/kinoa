@@ -142,9 +142,14 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Search className="h-4 w-4" />
           <p>
-            Found <span className="font-medium text-foreground">{filteredMedia.length}</span>{" "}
+            Found{" "}
+            <span className="font-medium text-foreground">
+              {filteredMedia.length}
+            </span>{" "}
             {filteredMedia.length === 1 ? "result" : "results"} for{" "}
-            <span className="font-medium text-foreground">&quot;{searchQuery}&quot;</span>
+            <span className="font-medium text-foreground">
+              &quot;{searchQuery}&quot;
+            </span>
           </p>
         </div>
       )}
@@ -164,11 +169,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
               >
-                <MediaCard
-                  media={item}
-                  isInWatchlist
-                  className="h-full"
-                />
+                <MediaCard media={item} isInWatchlist className="h-full" />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -178,10 +179,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
           <p className="text-muted-foreground">No results found</p>
           {searchQuery && (
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <Button
-                variant="outline"
-                onClick={() => setSearchQuery("")}
-              >
+              <Button variant="outline" onClick={() => setSearchQuery("")}>
                 Clear search
               </Button>
               <Button asChild>

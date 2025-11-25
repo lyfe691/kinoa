@@ -92,12 +92,13 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
     setAvatarUrl(objectUrl);
     setPendingBlob(croppedBlob);
     setIsCropperOpen(false);
-    
+
     // Note: We do NOT revoke this immediately, we need it for display.
     // We'll trust browser/react cleanup or handle it in useEffect if strictness is needed.
   };
 
-  const hasChanged = avatarUrl !== propAvatarUrlRef.current || pendingBlob !== null;
+  const hasChanged =
+    avatarUrl !== propAvatarUrlRef.current || pendingBlob !== null;
 
   const handleSave = async () => {
     setSaving(true);
@@ -106,7 +107,8 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
 
       // 1. Upload if there is a pending blob
       if (pendingBlob) {
-        const extension = selectedFile?.name.split(".").pop()?.toLowerCase() ?? "png";
+        const extension =
+          selectedFile?.name.split(".").pop()?.toLowerCase() ?? "png";
         const path = `${profileId}/${crypto.randomUUID()}.${extension}`;
 
         const { error: uploadError } = await supabase.storage
@@ -125,8 +127,8 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
 
         const { data } = supabase.storage.from("avatars").getPublicUrl(path);
         if (!data?.publicUrl) {
-           toast.error("We couldn’t generate a link for your avatar.");
-           return;
+          toast.error("We couldn’t generate a link for your avatar.");
+          return;
         }
         finalAvatarUrl = data.publicUrl;
       }
@@ -142,15 +144,15 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
       }
 
       toast.success("Profile updated successfully");
-      
+
       // Update refs and state
       propAvatarUrlRef.current = result.profile?.avatarUrl ?? null;
       setPendingBlob(null);
-      
-      // If we used a blob URL, it's technically stale now compared to the remote URL, 
+
+      // If we used a blob URL, it's technically stale now compared to the remote URL,
       // but visually identical. We can switch to the remote URL.
       setAvatarUrl(result.profile?.avatarUrl ?? null);
-      
+
       await refreshSession();
       router.refresh();
     } catch (error) {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { upsertAccountProfile } from "@/lib/supabase/profile";
+import type { AccountProfile } from "@/lib/profile-utils";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type SaveProfileInput = {
@@ -23,10 +24,16 @@ export async function saveProfileAction(input: SaveProfileInput) {
     return { success: false, error: message };
   }
 
-  const sanitizedDisplayName = input.displayName === undefined ? undefined : (input.displayName?.trim() || null);
+  const sanitizedDisplayName =
+    input.displayName === undefined
+      ? undefined
+      : input.displayName?.trim() || null;
 
   if (sanitizedDisplayName && sanitizedDisplayName.length > 25) {
-    return { success: false, error: "Display name must be 25 characters or fewer." };
+    return {
+      success: false,
+      error: "Display name must be 25 characters or fewer.",
+    };
   }
 
   const sanitizedEmail = input.email?.trim();
@@ -38,7 +45,10 @@ export async function saveProfileAction(input: SaveProfileInput) {
       const url = new URL(sanitizedAvatarUrl);
       const supabaseUrl = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
       // Allow storage URLs from the same Supabase project
-      if (url.origin !== supabaseUrl.origin || !url.pathname.startsWith("/storage/v1/object/public/avatars/")) {
+      if (
+        url.origin !== supabaseUrl.origin ||
+        !url.pathname.startsWith("/storage/v1/object/public/avatars/")
+      ) {
         return { success: false, error: "Invalid avatar URL." };
       }
     } catch {
@@ -46,14 +56,16 @@ export async function saveProfileAction(input: SaveProfileInput) {
     }
   }
 
-  const profileUpdates: { displayName?: string | null; avatarUrl?: string | null } = {};
-  if (sanitizedDisplayName !== undefined) profileUpdates.displayName = sanitizedDisplayName;
-  if (sanitizedAvatarUrl !== undefined) profileUpdates.avatarUrl = sanitizedAvatarUrl;
+  const profileUpdates: {
+    displayName?: string | null;
+    avatarUrl?: string | null;
+  } = {};
+  if (sanitizedDisplayName !== undefined)
+    profileUpdates.displayName = sanitizedDisplayName;
+  if (sanitizedAvatarUrl !== undefined)
+    profileUpdates.avatarUrl = sanitizedAvatarUrl;
 
-  const profile = await upsertAccountProfile(
-    profileUpdates,
-    { supabase },
-  );
+  const profile = await upsertAccountProfile(profileUpdates, { supabase });
 
   if (!profile) {
     return {
@@ -89,7 +101,9 @@ export async function saveProfileAction(input: SaveProfileInput) {
   if (Object.keys(userUpdatePayload).length > 0) {
     const { data, error: updateError } = await supabase.auth.updateUser(
       userUpdatePayload,
-      { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings` }
+      {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings`,
+      },
     );
 
     if (updateError) {

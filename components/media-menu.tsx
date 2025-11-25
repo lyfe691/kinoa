@@ -146,19 +146,12 @@ export function MediaMenu({
     >
       {isBusy ? (
         <Loader
-          className={cn(
-            "animate-spin",
-            size === "sm" ? "h-4 w-4" : "h-5 w-5",
-          )}
+          className={cn("animate-spin", size === "sm" ? "h-4 w-4" : "h-5 w-5")}
         />
       ) : isInWatchlist ? (
-        <BookmarkMinus
-          className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-        />
+        <BookmarkMinus className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")} />
       ) : (
-        <BookmarkPlus
-          className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-        />
+        <BookmarkPlus className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")} />
       )}
       {layout === "button" && <span>{buttonLabel}</span>}
     </Button>

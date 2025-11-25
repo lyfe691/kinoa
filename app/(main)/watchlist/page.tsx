@@ -14,7 +14,9 @@ export const metadata: Metadata = {
   description: "Your saved movies and TV shows",
 };
 
-async function fetchMediaItem(item: WatchlistItem): Promise<MediaSummary | null> {
+async function fetchMediaItem(
+  item: WatchlistItem,
+): Promise<MediaSummary | null> {
   try {
     if (item.media_type === "movie") {
       const movie = await getMovieDetails(String(item.media_id));

@@ -23,9 +23,9 @@ export default function TermsPage() {
           These Terms of Service (the “Terms”) form a binding agreement between
           you and Kinoa (“Kinoa”, “we”, “us”, “our”). By accessing or using the
           Kinoa website, applications, or embeddable tools (collectively, the
-          “Service”), you confirm that you have read, understood, and agree to be
-          bound by these Terms. If you do not agree, you must discontinue use of
-          the Service immediately.
+          “Service”), you confirm that you have read, understood, and agree to
+          be bound by these Terms. If you do not agree, you must discontinue use
+          of the Service immediately.
         </p>
       </header>
 
@@ -97,7 +97,8 @@ export default function TermsPage() {
           </li>
           <li>
             Ensure that accessing third-party streams complies with the laws of
-            your country of residence and the country where you view the content.
+            your country of residence and the country where you view the
+            content.
           </li>
           <li>
             Do not copy, record, rebroadcast, capture screenshots, distribute,
@@ -143,14 +144,14 @@ export default function TermsPage() {
           6. Third-Party Services and Content
         </h2>
         <p>
-          The Service surfaces links and embedded players operated by independent
-          third-party hosters. Those hosters act as separate controllers of any
-          personal data they process and may impose their own age gates,
-          subscriptions, region locks, or advertising. We have no control over
-          their catalogues, moderation practices, takedown policies, or
-          technical reliability. You are solely responsible for reviewing and
-          complying with any terms, privacy notices, or community guidelines
-          published by those third parties before engaging with them.
+          The Service surfaces links and embedded players operated by
+          independent third-party hosters. Those hosters act as separate
+          controllers of any personal data they process and may impose their own
+          age gates, subscriptions, region locks, or advertising. We have no
+          control over their catalogues, moderation practices, takedown
+          policies, or technical reliability. You are solely responsible for
+          reviewing and complying with any terms, privacy notices, or community
+          guidelines published by those third parties before engaging with them.
         </p>
         <p>
           Kinoa does not intermediate payments, customer support, advertising,
@@ -307,8 +308,8 @@ export default function TermsPage() {
           The courts of Zürich, Switzerland have exclusive jurisdiction to
           resolve any dispute or claim arising from or related to the Service or
           these Terms. If you are considered a consumer under the laws of your
-          habitual residence, you may also benefit from any mandatory protections
-          afforded to you in that jurisdiction.
+          habitual residence, you may also benefit from any mandatory
+          protections afforded to you in that jurisdiction.
         </p>
       </section>
 

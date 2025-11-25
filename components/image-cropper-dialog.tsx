@@ -137,11 +137,15 @@ export function ImageCropperDialog({
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isLoading} className="min-w-[100px]">
+          <Button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="min-w-[100px]"
+          >
             {isLoading ? (
               <Loader className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              "Apply"
+              "Done"
             )}
           </Button>
         </DialogFooter>

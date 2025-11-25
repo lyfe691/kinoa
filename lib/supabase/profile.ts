@@ -1,6 +1,11 @@
 "use server";
 
 import { createSupabaseServerClient } from "./server";
+import {
+  mapRowToProfile,
+  type ProfileRow,
+  type AccountProfile,
+} from "@/lib/profile-utils";
 
 type SupabaseServerClient = Awaited<
   ReturnType<typeof createSupabaseServerClient>
@@ -15,48 +20,6 @@ type SupabaseServerClient = Awaited<
  *   - `updated_at` (timestamp, defaults to now())
  * - Storage bucket `avatars` with authenticated uploads and public read.
  */
-
-type ProfileRow = {
-  id: string;
-  display_name: string | null;
-  avatar_url: string | null;
-};
-
-export type AccountProfile = {
-  id: string;
-  displayName: string | null;
-  avatarUrl: string | null;
-  email: string;
-};
-
-function mapRowToProfile(
-  row: ProfileRow | null,
-  email: string,
-  fallbackId: string,
-  metadata?: Record<string, unknown>,
-): AccountProfile {
-  const displayNameFromMetadataCandidates = [
-    metadata?.display_name,
-    metadata?.full_name,
-    metadata?.name,
-    metadata?.username,
-    metadata?.preferred_username,
-    metadata?.nickname,
-  ];
-  const displayNameFromMetadata =
-    displayNameFromMetadataCandidates
-      .map((value) => (typeof value === "string" ? value.trim() : ""))
-      .find((value) => value.length > 0) ?? null;
-  const avatarFromMetadata =
-    typeof metadata?.avatar_url === "string" ? metadata.avatar_url : null;
-
-  return {
-    id: row?.id ?? fallbackId,
-    email,
-    displayName: row?.display_name ?? displayNameFromMetadata,
-    avatarUrl: row?.avatar_url ?? avatarFromMetadata,
-  };
-}
 
 async function fetchProfileRow(
   supabase: SupabaseServerClient,

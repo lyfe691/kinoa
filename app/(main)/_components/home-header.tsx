@@ -13,7 +13,7 @@ const FADE_UP: Variants = {
   hidden: {
     opacity: 0,
     y: 20,
-    filter: "blur(8px)"
+    filter: "blur(8px)",
   },
   visible: {
     opacity: 1,
@@ -21,7 +21,7 @@ const FADE_UP: Variants = {
     filter: "blur(0px)",
     transition: {
       duration: 1.0,
-      ease: EASE
+      ease: EASE,
     },
   },
 };
@@ -54,10 +54,7 @@ export function HomeHeader() {
         </span>
       </motion.h1>
 
-      <motion.div
-        variants={FADE_UP}
-        className="w-full max-w-2xl"
-      >
+      <motion.div variants={FADE_UP} className="w-full max-w-2xl">
         <Suspense fallback={<SearchBarFallback />}>
           <div className="relative">
             {/* Soft anchor glow behind input */}

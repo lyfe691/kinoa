@@ -23,7 +23,7 @@ export function AuthMessageHandler() {
       // Handle specific success flow for secure email change
       if (msg.includes("Confirmation link accepted")) {
         setMessage(
-          "Confirmation accepted. Please check your other email address to complete the process."
+          "Confirmation accepted. Please check your other email address to complete the process.",
         );
         setIsSuccess(true);
       } else {
@@ -44,9 +44,7 @@ export function AuthMessageHandler() {
           <h1 className="text-2xl font-semibold tracking-tight">
             Step 1 Complete
           </h1>
-          <p className="mx-auto max-w-md text-muted-foreground">
-            {message}
-          </p>
+          <p className="mx-auto max-w-md text-muted-foreground">{message}</p>
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
           <Mail className="h-4 w-4" />
@@ -79,4 +77,3 @@ export function AuthMessageHandler() {
     </div>
   );
 }
-

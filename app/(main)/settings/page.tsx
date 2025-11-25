@@ -1,15 +1,16 @@
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs"
-import type { Metadata } from "next"
-import { redirect } from "next/navigation"
-import { getSession } from "@/lib/supabase/session"
-import { type AccountProfile, getAccountProfile } from "@/lib/supabase/profile"
-import { ProfileSettingsPanel } from "./_components/profile-settings-panel"
-import { SecuritySettingsPanel } from "./_components/security-settings-panel"
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/supabase/session";
+import { getAccountProfile } from "@/lib/supabase/profile";
+import { type AccountProfile } from "@/lib/profile-utils";
+import { ProfileSettingsPanel } from "./_components/profile-settings-panel";
+import { SecuritySettingsPanel } from "./_components/security-settings-panel";
 
 export const metadata: Metadata = {
   title: "Settings",
   description: "Manage your Kinoa account details, security, and data.",
-}
+};
 
 const settingsTabs = [
   {
@@ -20,16 +21,16 @@ const settingsTabs = [
     value: "security",
     label: "Security & Data",
   },
-] as const
+] as const;
 
 export default async function SettingsPage() {
-  const session = await getSession()
+  const session = await getSession();
 
   if (!session) {
-    redirect("/login")
+    redirect("/login");
   }
 
-  const profileData = await getAccountProfile()
+  const profileData = await getAccountProfile();
 
   const profile: AccountProfile = profileData ?? {
     id: session.user.id,
@@ -41,7 +42,7 @@ export default async function SettingsPage() {
     avatarUrl:
       (session.user.user_metadata as { avatar_url?: string })?.avatar_url ??
       null,
-  }
+  };
 
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-10">
@@ -80,5 +81,5 @@ export default async function SettingsPage() {
         </TabsPanel>
       </Tabs>
     </section>
-  )
+  );
 }
