@@ -8,7 +8,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -200,12 +199,15 @@ function DesktopActions({
   setIsDropdownOpen,
 }: DesktopActionsProps) {
   return (
-    <div className="hidden items-center gap-1 md:flex">
+    <div
+      className={cn(
+        "hidden items-center gap-1 md:flex transition-opacity duration-300",
+        loading ? "opacity-0" : "opacity-100",
+      )}
+    >
       <ModeToggle />
       <div className="mx-1 h-6 w-px bg-border/50" />
-      {loading ? (
-        <Skeleton className="h-10 w-28 rounded-lg" />
-      ) : user && account ? (
+      {user && account ? (
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <Button
@@ -388,36 +390,41 @@ function MobileDrawer({
       </nav>
 
       <div className="mt-auto space-y-3 border-t px-6 py-4">
-        {loading ? (
-          <Skeleton className="h-10 w-full rounded-lg" />
-        ) : user && account ? (
-          <Button
-            variant="outline"
-            className="h-10 w-full rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
-            onClick={onSignOut}
-            disabled={signingOut}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            {signingOut ? "Signing out..." : "Sign out"}
-          </Button>
-        ) : (
-          <div className="space-y-2">
-            <DrawerClose asChild>
-              <Button
-                variant="outline"
-                className="h-10 w-full rounded-lg"
-                asChild
-              >
-                <Link href="/login">Sign in</Link>
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button className="h-10 w-full rounded-lg" asChild>
-                <Link href="/register">Sign up</Link>
-              </Button>
-            </DrawerClose>
-          </div>
-        )}
+        <div
+          className={cn(
+            "space-y-2 transition-opacity duration-300",
+            loading ? "opacity-0" : "opacity-100",
+          )}
+        >
+          {user && account ? (
+            <Button
+              variant="outline"
+              className="h-10 w-full rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={onSignOut}
+              disabled={signingOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              {signingOut ? "Signing out..." : "Sign out"}
+            </Button>
+          ) : (
+            <>
+              <DrawerClose asChild>
+                <Button
+                  variant="outline"
+                  className="h-10 w-full rounded-lg"
+                  asChild
+                >
+                  <Link href="/login">Sign in</Link>
+                </Button>
+              </DrawerClose>
+              <DrawerClose asChild>
+                <Button className="h-10 w-full rounded-lg" asChild>
+                  <Link href="/register">Sign up</Link>
+                </Button>
+              </DrawerClose>
+            </>
+          )}
+        </div>
         <div className="flex items-center justify-between rounded-lg px-4 py-2.5">
           <span className="text-sm font-medium text-foreground">Theme</span>
           <ModeToggle />

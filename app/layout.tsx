@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { StructuredData } from "@/components/structured-data";
 import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
+import { getSession } from "@/lib/supabase/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -91,6 +92,7 @@ export const metadata: Metadata = {
     telephone: false,
     email: false,
     address: false,
+    manifest: false,
   },
 };
 
@@ -103,11 +105,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -124,7 +128,7 @@ export default function RootLayout({
           enableColorScheme
           disableTransitionOnChange
         >
-          <AuthProvider>
+          <AuthProvider initialSession={session}>
             <TooltipProvider>
               <div
                 data-vaul-drawer-wrapper
