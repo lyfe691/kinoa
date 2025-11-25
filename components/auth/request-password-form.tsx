@@ -4,8 +4,8 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CircleAlertIcon, InfoIcon, Loader } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 
 export function RequestPasswordResetForm() {
@@ -57,7 +57,7 @@ export function RequestPasswordResetForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">Email address</Label>
         <Input
           id="email"
           type="email"
@@ -71,24 +71,22 @@ export function RequestPasswordResetForm() {
       </div>
 
       {error && (
-        <Alert variant="error">
-          <CircleAlertIcon />
-          <AlertTitle>Unable to send reset link</AlertTitle>
+        <Alert variant="error" className="text-sm">
+          <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {success && (
-        <Alert variant="info">
-          <InfoIcon />
-          <AlertTitle>Check your inbox</AlertTitle>
+        <Alert className="border-emerald-500/50 bg-emerald-500/10 text-sm text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading && <Loader className="h-4 w-4 animate-spin" />}
-        {loading ? "Sending reset link..." : "Send reset link"}
+        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {loading ? "Sending..." : "Send reset link"}
       </Button>
     </form>
   );

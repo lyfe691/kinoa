@@ -3,22 +3,27 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
-import { CircleAlertIcon, Loader } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 function AuthDivider() {
   return (
-    <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
-      <div className="h-px w-full bg-border" />
-      <span>or</span>
-      <div className="h-px w-full bg-border" />
+    <div className="relative my-6">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t" />
+      </div>
+      <div className="relative flex justify-center text-xs uppercase">
+        <span className="bg-background px-2 text-muted-foreground">
+          or continue with
+        </span>
+      </div>
     </div>
   );
 }
@@ -77,7 +82,7 @@ export function LoginForm() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <GoogleAuthButton
         disabled={loading}
         onError={setError}
@@ -102,7 +107,15 @@ export function LoginForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              href="/forgot-password"
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <Input
             id="password"
             type="password"
@@ -116,9 +129,8 @@ export function LoginForm() {
         </div>
 
         {error && (
-          <Alert variant="error">
-            <CircleAlertIcon />
-            <AlertTitle>Heads up!</AlertTitle>
+          <Alert variant="error" className="text-sm">
+            <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -128,20 +140,9 @@ export function LoginForm() {
           className="w-full"
           disabled={loading || oauthLoading}
         >
-          {loading && <Loader className="h-4 w-4 animate-spin" />}
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading ? "Signing in..." : "Sign in"}
         </Button>
-
-        <p className="text-center text-xs text-muted-foreground">
-          Forgot your password?{" "}
-          <Link
-            href="/forgot-password"
-            className="text-foreground underline underline-offset-4"
-          >
-            Reset it
-          </Link>
-          .
-        </p>
       </form>
     </div>
   );

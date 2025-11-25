@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { useSession } from "@/lib/supabase/auth";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type GoogleAuthButtonProps = {
   disabled?: boolean;
@@ -61,16 +61,16 @@ export function GoogleAuthButton({
     <Button
       type="button"
       variant="outline"
-      className="w-full"
+      className="w-full gap-3"
       onClick={handleClick}
       disabled={disabled || loading}
     >
       {loading ? (
-        <Loader className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
         <GoogleIcon className="h-4 w-4" />
       )}
-      Continue with Google
+      <span>Continue with Google</span>
     </Button>
   );
 }
