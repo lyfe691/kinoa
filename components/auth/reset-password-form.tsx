@@ -42,11 +42,12 @@ export function ResetPasswordForm() {
         return;
       }
 
+      // Use getUser() to verify authenticity
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (session && session.user) {
+      if (user) {
         if (!isMounted) return;
         setStatus("ready");
       } else {

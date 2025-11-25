@@ -11,6 +11,46 @@ type SaveProfileInput = {
   avatarUrl?: string | null;
 };
 
+export async function updateEmailAction(email: string) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return {
+      success: false,
+      error: "You need to be signed in to update your email.",
+    };
+  }
+
+  const sanitizedEmail = email.trim();
+  if (sanitizedEmail === user.email) {
+    return { success: true };
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser(
+    { email: sanitizedEmail },
+    {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings`,
+    },
+  );
+
+  if (updateError) {
+    return {
+      success: false,
+      error: updateError.message ?? "Failed to update email.",
+    };
+  }
+
+  // Since "Secure email change" is disabled, only the new email needs confirmation.
+  return {
+    success: true,
+    confirmationRequired: true,
+  };
+}
+
 export async function saveProfileAction(input: SaveProfileInput) {
   const supabase = await createSupabaseServerClient();
   const {
@@ -36,7 +76,6 @@ export async function saveProfileAction(input: SaveProfileInput) {
     };
   }
 
-  const sanitizedEmail = input.email?.trim();
   const sanitizedAvatarUrl = input.avatarUrl;
 
   // Validate avatar URL is from our Supabase storage
@@ -74,61 +113,25 @@ export async function saveProfileAction(input: SaveProfileInput) {
     };
   }
 
-  let emailChanged = false;
-  let emailRequiresConfirmation = false;
-
-  const currentEmail = user.email ?? "";
-
+  // Update auth metadata to keep it in sync
   const metadataUpdates: Record<string, string | null> = {};
   if (sanitizedDisplayName !== undefined) {
     metadataUpdates.display_name = sanitizedDisplayName;
   }
-
   if (sanitizedAvatarUrl !== undefined) {
     metadataUpdates.avatar_url = sanitizedAvatarUrl ?? null;
   }
 
-  const userUpdatePayload: Parameters<typeof supabase.auth.updateUser>[0] = {};
-
-  if (sanitizedEmail && sanitizedEmail !== currentEmail) {
-    userUpdatePayload.email = sanitizedEmail;
-  }
-
   if (Object.keys(metadataUpdates).length > 0) {
-    userUpdatePayload.data = metadataUpdates;
-  }
-
-  if (Object.keys(userUpdatePayload).length > 0) {
-    const { data, error: updateError } = await supabase.auth.updateUser(
-      userUpdatePayload,
-      {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings`,
-      },
-    );
-
-    if (updateError) {
-      return {
-        success: false,
-        error:
-          updateError.message ??
-          "We couldn’t update your profile details. Please try again.",
-      };
-    }
-
-    if (userUpdatePayload.email) {
-      emailChanged = true;
-      if (data?.user?.email !== sanitizedEmail) {
-        emailRequiresConfirmation = true;
-      }
-    }
+    await supabase.auth.updateUser({
+      data: metadataUpdates,
+    });
   }
 
   await revalidatePath("/settings");
 
   return {
     success: true,
-    emailChanged,
-    emailRequiresConfirmation,
     profile,
   };
 }

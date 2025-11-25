@@ -10,7 +10,7 @@ import { Loader } from "lucide-react";
 
 import { useSession } from "@/lib/supabase/auth";
 import type { AccountProfile } from "@/lib/profile-utils";
-import { saveProfileAction } from "../actions";
+import { updateEmailAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -49,22 +49,33 @@ export function EmailFrame({ profile }: { profile: AccountProfile | null }) {
     setSaving(true);
     try {
       const trimmedEmail = values.email.trim();
-      const result = await saveProfileAction({
-        email: trimmedEmail,
-      });
+      const result = await updateEmailAction(trimmedEmail);
 
       if (!result?.success) {
         toast.error(result?.error ?? "Update failed.");
         return;
       }
 
-      const description = result.emailChanged
-        ? result.emailRequiresConfirmation
-          ? "Confirmation link sent to new email."
-          : "Email updated."
-        : undefined;
+      if (result.confirmationRequired) {
+        toast.message("Check your inbox", {
+          description: (
+            <span>
+              We&apos;ve sent a confirmation link to{" "}
+              <span className="font-semibold">{trimmedEmail}</span>.
+            </span>
+          ),
+        });
+      } else {
+        toast.success("Email updated", {
+          description: (
+            <span>
+              Your email has been changed to{" "}
+              <span className="font-semibold">{trimmedEmail}</span>.
+            </span>
+          ),
+        });
+      }
 
-      toast.success("Email updated", { description });
       form.reset({ email: trimmedEmail });
       await refreshSession();
       router.refresh();

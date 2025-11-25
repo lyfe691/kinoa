@@ -14,13 +14,19 @@ export async function GET(request: Request) {
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === "development";
 
+      // Construct the redirect URL
+      // We append ?verified=true to the 'next' path so the destination page knows auth just succeeded
+      // We need to handle if 'next' already has params
+      const nextUrl = new URL(next, requestUrl.origin);
+      nextUrl.searchParams.set("verified", "true");
+      const nextPath = nextUrl.pathname + nextUrl.search;
+
       if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${requestUrl.origin}${next}`);
+        return NextResponse.redirect(`${requestUrl.origin}${nextPath}`);
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+        return NextResponse.redirect(`https://${forwardedHost}${nextPath}`);
       } else {
-        return NextResponse.redirect(`${requestUrl.origin}${next}`);
+        return NextResponse.redirect(`${requestUrl.origin}${nextPath}`);
       }
     }
   }

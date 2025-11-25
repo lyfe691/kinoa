@@ -44,12 +44,21 @@ export function AuthProvider({
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const refreshSession = useCallback(async () => {
+    // Use getUser() to verify authenticity, then get session
     const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession();
+      data: { user: verifiedUser },
+    } = await supabase.auth.getUser();
 
-    setSession(currentSession);
-    setUser(currentSession?.user ?? null);
+    if (verifiedUser) {
+      const {
+        data: { session: currentSession },
+      } = await supabase.auth.getSession();
+      setSession(currentSession);
+      setUser(verifiedUser);
+    } else {
+      setSession(null);
+      setUser(null);
+    }
   }, [supabase]);
 
   useEffect(() => {
@@ -57,14 +66,23 @@ export function AuthProvider({
 
     const initAuth = async () => {
       try {
+        // Use getUser() to verify authenticity first
         const {
-          data: { session: currentSession },
-        } = await supabase.auth.getSession();
+          data: { user: verifiedUser },
+        } = await supabase.auth.getUser();
 
         if (!isMounted) return;
 
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        if (verifiedUser) {
+          const {
+            data: { session: currentSession },
+          } = await supabase.auth.getSession();
+          setSession(currentSession);
+          setUser(verifiedUser);
+        } else {
+          setSession(null);
+          setUser(null);
+        }
       } catch (error) {
         console.error("Failed to initialize auth", error);
       } finally {

@@ -6,6 +6,7 @@ import { getAccountProfile } from "@/lib/supabase/profile";
 import { type AccountProfile } from "@/lib/profile-utils";
 import { ProfileSettingsPanel } from "./_components/profile-settings-panel";
 import { SecuritySettingsPanel } from "./_components/security-settings-panel";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -89,7 +90,9 @@ export default async function SettingsPage() {
         </TabsList>
 
         <TabsPanel value="profile" className="space-y-6 pt-2">
-          <ProfileSettingsPanel profile={profile} />
+          <Suspense fallback={null}>
+            <ProfileSettingsPanel profile={profile} />
+          </Suspense>
         </TabsPanel>
 
         <TabsPanel value="security" className="space-y-6 pt-2">
