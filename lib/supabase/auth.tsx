@@ -25,6 +25,7 @@ type AuthContextValue = {
   session: Session | null;
   profile: AuthProfile | null;
   loading: boolean;
+  profileLoading: boolean;
   supabase: BrowserSupabase | null;
   refreshSession: () => Promise<void>;
 };
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextValue>({
   session: null,
   profile: null,
   loading: true,
+  profileLoading: false,
   supabase: null,
   refreshSession: async () => {},
 });
@@ -51,6 +53,7 @@ export function AuthProvider({
   const [user, setUser] = useState<User | null>(initialSession?.user ?? null);
   const [profile, setProfile] = useState<AuthProfile | null>(null);
   const [loading, setLoading] = useState(!initialSession);
+  const [profileLoading, setProfileLoading] = useState(false);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const fetchProfile = useCallback(
@@ -84,30 +87,48 @@ export function AuthProvider({
   );
 
   const refreshSession = useCallback(async () => {
-    // 1. Get current session from client state/cookies
-    const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession();
+    setLoading(true);
+    setProfileLoading(false);
 
-    let currentUser = currentSession?.user ?? null;
+    try {
+      // 1. Get current session from client state/cookies
+      const {
+        data: { session: currentSession },
+      } = await supabase.auth.getSession();
 
-    // 2. If we have a session, try to fetch fresh user data from server
-    // This ensures we get the latest email/metadata if it changed recently
-    if (currentSession) {
-      const { data: { user: freshUser }, error } = await supabase.auth.getUser();
-      if (freshUser && !error) {
-        currentUser = freshUser;
+      let currentUser = currentSession?.user ?? null;
+
+      // 2. If we have a session, try to fetch fresh user data from server
+      // This ensures we get the latest email/metadata if it changed recently
+      if (currentSession) {
+        const { data: { user: freshUser }, error } = await supabase.auth.getUser();
+        if (freshUser && !error) {
+          currentUser = freshUser;
+        }
       }
-    }
 
-    setSession(currentSession);
-    setUser(currentUser);
+      setSession(currentSession);
+      setUser(currentUser);
+      setLoading(false);
 
-    if (currentUser) {
-      const userProfile = await fetchProfile(currentUser.id, currentUser.email ?? null);
-      setProfile(userProfile);
-    } else {
+      if (currentUser) {
+        setProfileLoading(true);
+        const userProfile = await fetchProfile(
+          currentUser.id,
+          currentUser.email ?? null,
+        );
+        setProfile(userProfile);
+      } else {
+        setProfile(null);
+      }
+    } catch (error) {
+      console.error("Failed to refresh session", error);
+      setSession(null);
+      setUser(null);
       setProfile(null);
+      setLoading(false);
+    } finally {
+      setProfileLoading(false);
     }
   }, [supabase, fetchProfile]);
 
@@ -123,7 +144,7 @@ export function AuthProvider({
         if (!isMounted) return;
 
         let currentUser = currentSession?.user ?? null;
-        
+
         // Fetch fresh user data on init too, to catch any out-of-band updates
         if (currentSession) {
            const { data: { user: freshUser } } = await supabase.auth.getUser();
@@ -134,8 +155,10 @@ export function AuthProvider({
 
         setSession(currentSession);
         setUser(currentUser);
+        setLoading(false);
 
         if (currentUser) {
+          setProfileLoading(true);
           const userProfile = await fetchProfile(
             currentUser.id,
             currentUser.email ?? null,
@@ -143,12 +166,15 @@ export function AuthProvider({
           if (isMounted) {
             setProfile(userProfile);
           }
+        } else {
+          setProfile(null);
         }
       } catch (error) {
         console.error("Failed to initialize auth", error);
       } finally {
         if (isMounted) {
           setLoading(false);
+          setProfileLoading(false);
         }
       }
     };
@@ -165,6 +191,8 @@ export function AuthProvider({
         setSession(null);
         setUser(null);
         setProfile(null);
+        setLoading(false);
+        setProfileLoading(false);
         return;
       }
 
@@ -173,6 +201,8 @@ export function AuthProvider({
         setSession(newSession);
         const currentUser = newSession?.user ?? null;
         setUser(currentUser);
+        setLoading(false);
+        setProfileLoading(false);
         // Typically don't need to fetch profile for recovery, but safe to do so
         return;
       }
@@ -181,8 +211,10 @@ export function AuthProvider({
       setSession(newSession);
       const currentUser = newSession?.user ?? null;
       setUser(currentUser);
+      setLoading(false);
 
       if (currentUser) {
+        setProfileLoading(true);
         const userProfile = await fetchProfile(
           currentUser.id,
           currentUser.email ?? null,
@@ -192,6 +224,12 @@ export function AuthProvider({
         }
       } else {
         setProfile(null);
+        setProfileLoading(false);
+        return;
+      }
+
+      if (isMounted) {
+        setProfileLoading(false);
       }
     });
 
@@ -202,8 +240,16 @@ export function AuthProvider({
   }, [supabase, fetchProfile]);
 
   const value = useMemo(
-    () => ({ user, session, profile, loading, supabase, refreshSession }),
-    [user, session, profile, loading, supabase, refreshSession],
+    () => ({
+      user,
+      session,
+      profile,
+      loading,
+      profileLoading,
+      supabase,
+      refreshSession,
+    }),
+    [user, session, profile, loading, profileLoading, supabase, refreshSession],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

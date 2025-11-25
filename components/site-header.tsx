@@ -24,7 +24,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSession, type AuthProfile } from "@/lib/supabase/auth";
+import { useSession } from "@/lib/supabase/auth";
 import { signOutEverywhere } from "@/lib/supabase/sign-out";
 import { LogOut, ChevronDown, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -47,9 +47,15 @@ const NAV_ITEMS = [
 export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, profile, loading, supabase, refreshSession } = useSession();
+  const { user, profile, profileLoading, supabase, refreshSession } =
+    useSession();
   const [signingOut, setSigningOut] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+
+  const isAccountLoading = React.useMemo(
+    () => Boolean(user && profileLoading),
+    [user, profileLoading],
+  );
 
   const displayProfile = React.useMemo<DisplayProfile | null>(() => {
     if (!user) return null;
@@ -136,7 +142,7 @@ export function SiteHeader() {
           <div className="flex-1" />
 
           <DesktopActions
-            loading={loading}
+            loading={isAccountLoading}
             user={user}
             account={displayProfile}
             onSignOut={handleSignOut}
@@ -151,7 +157,7 @@ export function SiteHeader() {
 
       <MobileDrawer
         pathname={pathname}
-        loading={loading}
+        loading={isAccountLoading}
         user={user}
         account={displayProfile}
         signingOut={signingOut}
