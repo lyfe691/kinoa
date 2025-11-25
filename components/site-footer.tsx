@@ -47,39 +47,108 @@ export function SiteFooter() {
             </p>
           </div>
 
-          {/* Bottom bar: Copyright + Legal */}
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-border/40 pt-5 text-xs text-muted-foreground sm:flex-row sm:text-sm">
-            <p>&copy; {new Date().getFullYear()} Kinoa. All rights reserved.</p>
-            <nav className="flex items-center" aria-label="Footer">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 text-xs text-muted-foreground hover:text-foreground sm:text-sm"
-                    aria-label="Open legal links"
-                  >
-                    Legal
-                    <ChevronDown className="ml-1 h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  {legalLinks.map((link) => (
-                    <DropdownMenuItem key={link.href} asChild>
-                      <Link
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="cursor-pointer flex items-center gap-2"
-                      >
-                        <span className="flex-1">{link.label}</span>
-                        <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </nav>
+          {/* Bottom bar */}
+          <div className="border-t border-border/40 pt-5">
+            {/* Mobile: stacked layout */}
+            <div className="flex flex-col items-center gap-4 sm:hidden">
+              <a
+                href="https://www.buymeacoffee.com/lyfe691"
+                target="_blank"
+                rel="noreferrer"
+                className="block transition-opacity hover:opacity-90"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                  alt="Buy Me A Coffee"
+                  className="h-10 w-auto"
+                />
+              </a>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <p>&copy; {new Date().getFullYear()} Kinoa</p>
+                <span className="text-border">•</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto px-0 py-0 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
+                      aria-label="Open legal links"
+                    >
+                      Legal
+                      <ChevronDown className="ml-0.5 h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center">
+                    {legalLinks.map((link) => (
+                      <DropdownMenuItem key={link.href} asChild>
+                        <Link
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex cursor-pointer items-center gap-2"
+                        >
+                          <span className="flex-1">{link.label}</span>
+                          <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            {/* Desktop: horizontal layout */}
+            <div className="hidden items-center justify-between text-sm text-muted-foreground sm:flex">
+              <div className="flex items-center gap-6">
+                <p>
+                  &copy; {new Date().getFullYear()} Kinoa. All rights reserved.
+                </p>
+                <a
+                  href="https://www.buymeacoffee.com/lyfe691"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block transition-opacity hover:opacity-90"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                    alt="Buy Me A Coffee"
+                    className="h-9 w-auto"
+                  />
+                </a>
+              </div>
+              <nav className="flex items-center" aria-label="Footer">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 text-sm text-muted-foreground hover:text-foreground"
+                      aria-label="Open legal links"
+                    >
+                      Legal
+                      <ChevronDown className="ml-1 h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="center">
+                    {legalLinks.map((link) => (
+                      <DropdownMenuItem key={link.href} asChild>
+                        <Link
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex cursor-pointer items-center gap-2"
+                        >
+                          <span className="flex-1">{link.label}</span>
+                          <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
