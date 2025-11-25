@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Info, Loader2 } from "lucide-react";
+import { AlertCircle, Info, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
@@ -147,7 +147,7 @@ export function ResetPasswordForm() {
   if (status === "checking") {
     return (
       <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-muted-foreground">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Loader className="h-6 w-6 animate-spin" />
         <p>Verifying your reset link…</p>
       </div>
     );
@@ -224,7 +224,7 @@ export function ResetPasswordForm() {
           disabled={loading || signingOut}
         >
           {(loading || signingOut) && (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader className="h-4 w-4 animate-spin" />
           )}
           {loading
             ? "Saving…"

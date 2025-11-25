@@ -10,19 +10,17 @@ import { Label } from "@/components/ui/label";
 import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { toast } from "sonner";
 
 function AuthDivider() {
   return (
-    <div className="relative my-6">
+    <div className="relative">
       <div className="absolute inset-0 flex items-center">
         <div className="w-full border-t" />
       </div>
       <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-background px-2 text-muted-foreground">
-          or continue with
-        </span>
+        <span className="bg-background px-2 text-muted-foreground">or</span>
       </div>
     </div>
   );
@@ -117,7 +115,7 @@ export function RegisterForm() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <GoogleAuthButton
         disabled={loading}
         onError={setError}
@@ -190,7 +188,7 @@ export function RegisterForm() {
           className="w-full"
           disabled={loading || oauthLoading}
         >
-          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading && <Loader className="h-4 w-4 animate-spin" />}
           {loading ? "Creating account..." : "Create account"}
         </Button>
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 
 export function RequestPasswordResetForm() {
@@ -85,7 +85,7 @@ export function RequestPasswordResetForm() {
       )}
 
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {loading && <Loader className="h-4 w-4 animate-spin" />}
         {loading ? "Sending..." : "Send reset link"}
       </Button>
     </form>
