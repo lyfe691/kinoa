@@ -58,7 +58,7 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
                       key={imageIndex + image}
                       src={image}
                       alt={`Image ${imageIndex + 1}`}
-                      className="aspect-[970/700] rounded-lg object-cover ring-1 ring-white/10 shadow-2xl shadow-black/50"
+                      className="aspect-970/700 rounded-lg object-cover ring-1 ring-border shadow-2xl"
                       width={970}
                       height={700}
                     />
@@ -83,8 +83,8 @@ const GridLineHorizontal = ({ className, offset }: GridLineHorizontalProps) => {
     <div
       style={
         {
-          "--background": "#000000",
-          "--color": "rgba(255, 255, 255, 0.2)",
+          "--background": "var(--muted)", // Changed from var(--background) to var(--muted)
+          "--color": "var(--foreground)", // Use foreground with low opacity for dots
           "--height": "1px",
           "--width": "5px",
           "--fade-stop": "90%",
@@ -93,11 +93,11 @@ const GridLineHorizontal = ({ className, offset }: GridLineHorizontalProps) => {
         } as React.CSSProperties
       }
       className={cn(
-        "absolute left-[calc(var(--offset)/2*-1)] h-[var(--height)] w-[calc(100%+var(--offset))]",
-        "bg-[linear-gradient(to_right,var(--color),var(--color)_50%,transparent_0,transparent)]",
-        "[background-size:var(--width)_var(--height)]",
-        "[mask:linear-gradient(to_left,var(--background)_var(--fade-stop),transparent),_linear-gradient(to_right,var(--background)_var(--fade-stop),transparent),_linear-gradient(black,black)]",
-        "[mask-composite:exclude]",
+        "absolute left-[calc(var(--offset)/2*-1)] h-(--height) w-[calc(100%+var(--offset))]",
+        "bg-[linear-gradient(to_right,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20", // Added opacity-20
+        "bg-size-[var(--width)_var(--height)]",
+        "[mask:linear-gradient(to_left,var(--background)_var(--fade-stop),transparent),linear-gradient(to_right,var(--background)_var(--fade-stop),transparent),linear-gradient(black,black)]",
+        "mask-exclude",
         "z-30",
         className,
       )}
@@ -115,8 +115,8 @@ const GridLineVertical = ({ className, offset }: GridLineVerticalProps) => {
     <div
       style={
         {
-          "--background": "#000000",
-          "--color": "rgba(255, 255, 255, 0.2)",
+          "--background": "var(--muted)", // Changed from var(--background) to var(--muted)
+          "--color": "var(--foreground)", // Use foreground with low opacity for dots
           "--height": "5px",
           "--width": "1px",
           "--fade-stop": "90%",
@@ -125,11 +125,11 @@ const GridLineVertical = ({ className, offset }: GridLineVerticalProps) => {
         } as React.CSSProperties
       }
       className={cn(
-        "absolute top-[calc(var(--offset)/2*-1)] h-[calc(100%+var(--offset))] w-[var(--width)]",
-        "bg-[linear-gradient(to_bottom,var(--color),var(--color)_50%,transparent_0,transparent)]",
-        "[background-size:var(--width)_var(--height)]",
-        "[mask:linear-gradient(to_top,var(--background)_var(--fade-stop),transparent),_linear-gradient(to_bottom,var(--background)_var(--fade-stop),transparent),_linear-gradient(black,black)]",
-        "[mask-composite:exclude]",
+        "absolute top-[calc(var(--offset)/2*-1)] h-[calc(100%+var(--offset))] w-(--width)",
+        "bg-[linear-gradient(to_bottom,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20", // Added opacity-20
+        "bg-size-[var(--width)_var(--height)]",
+        "[mask:linear-gradient(to_top,var(--background)_var(--fade-stop),transparent),linear-gradient(to_bottom,var(--background)_var(--fade-stop),transparent),linear-gradient(black,black)]",
+        "mask-exclude",
         "z-30",
         className,
       )}
