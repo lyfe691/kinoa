@@ -9,8 +9,7 @@ export type ThreeDMarqueeProps = {
   className?: string;
 };
 
-export function ThreeDMarquee({ images, className }: ThreeDMarqueeProps) {
-  // Split the images array into 4 equal parts
+export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
   const chunkSize = Math.ceil(images.length / 4);
   const chunks = Array.from({ length: 4 }, (_, colIndex) => {
     const start = colIndex * chunkSize;
@@ -19,7 +18,10 @@ export function ThreeDMarquee({ images, className }: ThreeDMarqueeProps) {
 
   return (
     <div
-      className={cn("mx-auto block h-full w-full overflow-hidden", className)}
+      className={cn(
+        "mx-auto block h-[600px] overflow-hidden rounded-2xl max-sm:h-100",
+        className,
+      )}
     >
       <div className="flex size-full items-center justify-center">
         <div className="size-[1720px] shrink-0 scale-50 sm:scale-75 lg:scale-100">
@@ -33,9 +35,10 @@ export function ThreeDMarquee({ images, className }: ThreeDMarqueeProps) {
               <motion.div
                 animate={{ y: colIndex % 2 === 0 ? 100 : -100 }}
                 transition={{
-                  duration: colIndex % 2 === 0 ? 10 : 15,
+                  duration: colIndex % 2 === 0 ? 20 : 25,
                   repeat: Infinity,
                   repeatType: "reverse",
+                  ease: "linear",
                 }}
                 key={colIndex + "marquee"}
                 className="flex flex-col items-start gap-8"
@@ -52,9 +55,10 @@ export function ThreeDMarquee({ images, className }: ThreeDMarqueeProps) {
                         duration: 0.3,
                         ease: "easeInOut",
                       }}
+                      key={imageIndex + image}
                       src={image}
-                      alt={`Poster ${imageIndex + 1}`}
-                      className="aspect-[970/700] rounded-lg object-cover ring ring-white/10 hover:shadow-2xl"
+                      alt={`Image ${imageIndex + 1}`}
+                      className="aspect-[970/700] rounded-lg object-cover ring-1 ring-white/10 shadow-2xl shadow-black/50"
                       width={970}
                       height={700}
                     />
@@ -67,20 +71,20 @@ export function ThreeDMarquee({ images, className }: ThreeDMarqueeProps) {
       </div>
     </div>
   );
-}
+};
 
-type GridLineHorizontalProps = {
+export type GridLineHorizontalProps = {
   className?: string;
   offset?: string;
 };
 
-function GridLineHorizontal({ className, offset }: GridLineHorizontalProps) {
+const GridLineHorizontal = ({ className, offset }: GridLineHorizontalProps) => {
   return (
     <div
       style={
         {
           "--background": "#000000",
-          "--color": "rgba(255, 255, 255, 0.1)",
+          "--color": "rgba(255, 255, 255, 0.2)",
           "--height": "1px",
           "--width": "5px",
           "--fade-stop": "90%",
@@ -97,22 +101,22 @@ function GridLineHorizontal({ className, offset }: GridLineHorizontalProps) {
         "z-30",
         className,
       )}
-    />
+    ></div>
   );
-}
+};
 
-type GridLineVerticalProps = {
+export type GridLineVerticalProps = {
   className?: string;
   offset?: string;
 };
 
-function GridLineVertical({ className, offset }: GridLineVerticalProps) {
+const GridLineVertical = ({ className, offset }: GridLineVerticalProps) => {
   return (
     <div
       style={
         {
           "--background": "#000000",
-          "--color": "rgba(255, 255, 255, 0.1)",
+          "--color": "rgba(255, 255, 255, 0.2)",
           "--height": "5px",
           "--width": "1px",
           "--fade-stop": "90%",
@@ -129,6 +133,6 @@ function GridLineVertical({ className, offset }: GridLineVerticalProps) {
         "z-30",
         className,
       )}
-    />
+    ></div>
   );
-}
+};

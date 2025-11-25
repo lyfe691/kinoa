@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AuthMarquee } from "@/components/auth/auth-marquee";
-import { getPopularBackdrops } from "@/lib/tmdb";
+import { AuthBrandingPanel } from "@/components/auth/auth-branding-panel";
+import { getAuthBrandingImages } from "@/lib/tmdb";
 
 export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const backdrops = await getPopularBackdrops();
+  const images = await getAuthBrandingImages();
 
   return (
     <div className="flex min-h-screen">
@@ -31,19 +31,8 @@ export default async function AuthLayout({
         </main>
       </div>
 
-      {/* Right panel - 3D Poster Marquee (hidden on mobile) */}
-      <div className="relative hidden w-1/2 overflow-hidden bg-zinc-950 lg:block">
-        <AuthMarquee images={backdrops} />
-
-        {/* Tagline overlay */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-10">
-          <p className="text-2xl font-medium leading-relaxed text-white/90">
-            Your personal streaming companion.
-            <br />
-            <span className="text-white/60">Discover, track, and enjoy.</span>
-          </p>
-        </div>
-      </div>
+      {/* Right panel - Branding with 3D Marquee */}
+      <AuthBrandingPanel images={images} />
     </div>
   );
 }

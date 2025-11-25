@@ -269,43 +269,6 @@ export async function getTopRatedMovies(): Promise<MediaSummary[]> {
   return enrichMediaSummaries(mapMovieList(data.results));
 }
 
-/**
- * Fetches popular movie/TV backdrop URLs for decorative use (e.g., auth pages).
- * Returns 32 landscape backdrops for the 3D marquee effect.
- */
-export async function getPopularBackdrops(): Promise<string[]> {
-  const [movies, tv] = await Promise.all([
-    tmdbFetch<TmdbListResponse<TmdbMovieListItem>>(
-      "/movie/popular",
-      { language: "en-US" },
-      CACHE_REVALIDATE.day,
-    ),
-    tmdbFetch<TmdbListResponse<TmdbTvListItem>>(
-      "/tv/popular",
-      { language: "en-US" },
-      CACHE_REVALIDATE.day,
-    ),
-  ]);
-
-  const movieBackdrops = movies.results
-    .filter((m) => m.backdrop_path)
-    .map((m) => buildImage(m.backdrop_path, BACKDROP_SIZE)!);
-
-  const tvBackdrops = tv.results
-    .filter((t) => t.backdrop_path)
-    .map((t) => buildImage(t.backdrop_path, BACKDROP_SIZE)!);
-
-  // Interleave movies and TV shows for variety
-  const combined: string[] = [];
-  const maxLen = Math.max(movieBackdrops.length, tvBackdrops.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (movieBackdrops[i]) combined.push(movieBackdrops[i]);
-    if (tvBackdrops[i]) combined.push(tvBackdrops[i]);
-  }
-
-  return combined.slice(0, 32);
-}
-
 // Genres
 type TmdbGenresResponse = {
   genres: { id: number; name: string }[];
@@ -861,3 +824,44 @@ async function enrichMediaSummaries(
 }
 
 export { formatRuntime } from "./format-runtime";
+
+/**
+ * Fetches backdrop images for the auth branding panel.
+ * Returns an array of image URLs from trending movies/shows.
+ */
+export async function getAuthBrandingImages(): Promise<string[]> {
+  const [page1, page2, page3] = await Promise.all([
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 1 },
+      CACHE_REVALIDATE.long,
+    ),
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 2 },
+      CACHE_REVALIDATE.long,
+    ),
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 3 },
+      CACHE_REVALIDATE.long,
+    ),
+  ]);
+
+  const allResults = [...page1.results, ...page2.results, ...page3.results];
+
+  return (
+    allResults
+      .filter(
+        (item): item is TmdbTrendingItem & { backdrop_path: string } =>
+          item.backdrop_path !== null,
+      )
+      // Remove duplicates based on ID
+      .filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.id === item.id),
+      )
+      .slice(0, 60) // Increase to 60 images (15 per column)
+      .map((item) => buildImage(item.backdrop_path, BACKDROP_SIZE)!)
+  );
+}
