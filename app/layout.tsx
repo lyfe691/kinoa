@@ -92,7 +92,6 @@ export const metadata: Metadata = {
     telephone: false,
     email: false,
     address: false,
-    manifest: false,
   },
 };
 
