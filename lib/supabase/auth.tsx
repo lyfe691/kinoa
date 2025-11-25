@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import { createSupabaseBrowserClient } from "./client";
 import type { User, Session } from "@supabase/supabase-js";
@@ -50,8 +51,9 @@ export function AuthProvider({
   const [session, setSession] = useState<Session | null>(initialSession);
   const [user, setUser] = useState<User | null>(initialSession?.user ?? null);
   const [profile, setProfile] = useState<AuthProfile | null>(null);
-  const [loading, setLoading] = useState(!initialSession);
+  const [loading, setLoading] = useState(true);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const isMounted = useRef(true);
 
   const fetchProfile = useCallback(
     async (userId: string, userEmail: string | null) => {
@@ -83,123 +85,103 @@ export function AuthProvider({
     [supabase],
   );
 
+  const applySessionState = useCallback(
+    async (nextSession: Session | null, shouldMarkLoaded = false) => {
+      if (!isMounted.current) return;
+
+      const nextUser = nextSession?.user ?? null;
+      setSession(nextSession);
+      setUser(nextUser);
+
+      if (!nextUser) {
+        setProfile(null);
+        if (shouldMarkLoaded) setLoading(false);
+        return;
+      }
+
+      const userProfile = await fetchProfile(
+        nextUser.id,
+        nextUser.email ?? null,
+      );
+
+      if (!isMounted.current) return;
+
+      setProfile(userProfile);
+      if (shouldMarkLoaded) setLoading(false);
+    },
+    [fetchProfile, isMounted],
+  );
+
   const refreshSession = useCallback(async () => {
-    // 1. Get current session from client state/cookies
-    const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession();
+    try {
+      setLoading(true);
 
-    let currentUser = currentSession?.user ?? null;
+      const {
+        data: { session: currentSession },
+        error,
+      } = await supabase.auth.getSession();
 
-    // 2. If we have a session, try to fetch fresh user data from server
-    // This ensures we get the latest email/metadata if it changed recently
-    if (currentSession) {
-      const { data: { user: freshUser }, error } = await supabase.auth.getUser();
-      if (freshUser && !error) {
-        currentUser = freshUser;
+      if (error) {
+        throw error;
+      }
+
+      let sessionWithFreshUser = currentSession;
+
+      if (currentSession) {
+        const {
+          data: { user: freshUser },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (freshUser) {
+          sessionWithFreshUser = { ...currentSession, user: freshUser };
+        }
+      }
+
+      await applySessionState(sessionWithFreshUser, true);
+    } catch (error) {
+      console.error('Failed to refresh session', error);
+      if (isMounted.current) {
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
       }
     }
-
-    setSession(currentSession);
-    setUser(currentUser);
-
-    if (currentUser) {
-      const userProfile = await fetchProfile(currentUser.id, currentUser.email ?? null);
-      setProfile(userProfile);
-    } else {
-      setProfile(null);
-    }
-  }, [supabase, fetchProfile]);
+  }, [applySessionState, isMounted, supabase]);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const initAuth = async () => {
-      try {
-        const {
-          data: { session: currentSession },
-        } = await supabase.auth.getSession();
-
-        if (!isMounted) return;
-
-        let currentUser = currentSession?.user ?? null;
-        
-        // Fetch fresh user data on init too, to catch any out-of-band updates
-        if (currentSession) {
-           const { data: { user: freshUser } } = await supabase.auth.getUser();
-           if (freshUser) {
-             currentUser = freshUser;
-           }
-        }
-
-        setSession(currentSession);
-        setUser(currentUser);
-
-        if (currentUser) {
-          const userProfile = await fetchProfile(
-            currentUser.id,
-            currentUser.email ?? null,
-          );
-          if (isMounted) {
-            setProfile(userProfile);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to initialize auth", error);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    initAuth();
+    refreshSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      if (!isMounted) return;
+      if (!isMounted.current) return;
 
-      // Handle sign out - clear everything
-      if (event === "SIGNED_OUT") {
+      if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setProfile(null);
+        setLoading(false);
         return;
       }
 
-      // Handle password recovery
-      if (event === "PASSWORD_RECOVERY") {
-        setSession(newSession);
-        const currentUser = newSession?.user ?? null;
-        setUser(currentUser);
-        // Typically don't need to fetch profile for recovery, but safe to do so
-        return;
-      }
+      await applySessionState(newSession);
 
-      // Handle all other auth state changes
-      setSession(newSession);
-      const currentUser = newSession?.user ?? null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        const userProfile = await fetchProfile(
-          currentUser.id,
-          currentUser.email ?? null,
-        );
-        if (isMounted) {
-          setProfile(userProfile);
-        }
-      } else {
-        setProfile(null);
+      if (isMounted.current) {
+        setLoading(false);
       }
     });
 
     return () => {
-      isMounted = false;
+      isMounted.current = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile]);
+  }, [applySessionState, refreshSession, supabase]);
 
   const value = useMemo(
     () => ({ user, session, profile, loading, supabase, refreshSession }),
