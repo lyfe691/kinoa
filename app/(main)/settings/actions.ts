@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { upsertAccountProfile } from "@/lib/supabase/profile";
-import type { AccountProfile } from "@/lib/profile-utils";
+// import type { AccountProfile } from "@/lib/profile-utils";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type SaveProfileInput = {

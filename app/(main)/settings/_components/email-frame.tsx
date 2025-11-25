@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 
 import { useSession } from "@/lib/supabase/auth";
-import type { AccountProfile } from "@/lib/supabase/profile";
+import type { AccountProfile } from "@/lib/profile-utils";
 import { saveProfileAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

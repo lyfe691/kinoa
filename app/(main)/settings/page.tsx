@@ -32,16 +32,32 @@ export default async function SettingsPage() {
 
   const profileData = await getAccountProfile();
 
+  // Calculate initials for fallback
+  const displayName =
+    (session.user.user_metadata as { display_name?: string })?.display_name ??
+    (session.user.user_metadata as { full_name?: string })?.full_name ??
+    session.user.email?.split("@")[0] ??
+    "User";
+
+  const normalizedName = displayName.replace(/\s+/g, " ");
+  const initials =
+    normalizedName
+      .split(/[\s._-]+/)
+      .filter(Boolean)
+      .map((part) => part[0].toUpperCase())
+      .slice(0, 2)
+      .join("") ||
+    normalizedName.slice(0, 2).toUpperCase() ||
+    "U";
+
   const profile: AccountProfile = profileData ?? {
     id: session.user.id,
     email: session.user.email ?? "",
-    displayName:
-      (session.user.user_metadata as { display_name?: string })?.display_name ??
-      (session.user.user_metadata as { full_name?: string })?.full_name ??
-      null,
+    displayName,
     avatarUrl:
       (session.user.user_metadata as { avatar_url?: string })?.avatar_url ??
       null,
+    initials,
   };
 
   return (

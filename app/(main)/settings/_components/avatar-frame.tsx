@@ -7,7 +7,7 @@ import { Loader } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useSession } from "@/lib/supabase/auth";
-import type { AccountProfile } from "@/lib/supabase/profile";
+import type { AccountProfile } from "@/lib/profile-utils";
 import { saveProfileAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
