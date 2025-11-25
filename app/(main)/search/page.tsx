@@ -94,7 +94,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         <div className="mx-auto max-w-2xl">
           <Suspense fallback={null}>
-            <SearchBar placeholder="Search..." />
+            <SearchBar placeholder="Search..." enableSuggestions={false} />{" "}
+            {/* we don't want suggestions here since its the search page */}
           </Suspense>
         </div>
       </header>

@@ -27,6 +27,7 @@ export function SiteHeader() {
   const { profile: account, loading: profileLoading } = useProfile();
   const [signingOut, setSigningOut] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
   const loading = sessionLoading || (!!user && profileLoading);
 
@@ -56,7 +57,12 @@ export function SiteHeader() {
   }, [supabase, refreshSession, router]);
 
   return (
-    <Drawer shouldScaleBackground setBackgroundColorOnScale={false}>
+    <Drawer
+      shouldScaleBackground
+      setBackgroundColorOnScale={false}
+      open={isDrawerOpen}
+      onOpenChange={setIsDrawerOpen}
+    >
       <header className="sticky top-0 z-50 w-full bg-background">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <BrandLink />
