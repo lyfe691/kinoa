@@ -56,6 +56,32 @@ export function AuthProvider({
   const [profileLoading, setProfileLoading] = useState(false);
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
+  const loadProfileForUser = useCallback(
+    async (currentUser: User | null) => {
+      if (!currentUser) {
+        setProfile(null);
+        setProfileLoading(false);
+        return;
+      }
+
+      setProfileLoading(true);
+
+      try {
+        const userProfile = await fetchProfile(
+          currentUser.id,
+          currentUser.email ?? null,
+        );
+        setProfile(userProfile);
+      } catch (error) {
+        console.error("Failed to load profile", error);
+        setProfile(null);
+      } finally {
+        setProfileLoading(false);
+      }
+    },
+    [fetchProfile],
+  );
+
   const fetchProfile = useCallback(
     async (userId: string, userEmail: string | null) => {
       try {
@@ -88,7 +114,6 @@ export function AuthProvider({
 
   const refreshSession = useCallback(async () => {
     setLoading(true);
-    setProfileLoading(false);
 
     try {
       // 1. Get current session from client state/cookies
@@ -111,26 +136,15 @@ export function AuthProvider({
       setUser(currentUser);
       setLoading(false);
 
-      if (currentUser) {
-        setProfileLoading(true);
-        const userProfile = await fetchProfile(
-          currentUser.id,
-          currentUser.email ?? null,
-        );
-        setProfile(userProfile);
-      } else {
-        setProfile(null);
-      }
+      await loadProfileForUser(currentUser);
     } catch (error) {
       console.error("Failed to refresh session", error);
       setSession(null);
       setUser(null);
       setProfile(null);
       setLoading(false);
-    } finally {
-      setProfileLoading(false);
     }
-  }, [supabase, fetchProfile]);
+  }, [supabase, loadProfileForUser]);
 
   useEffect(() => {
     let isMounted = true;
@@ -157,18 +171,9 @@ export function AuthProvider({
         setUser(currentUser);
         setLoading(false);
 
-        if (currentUser) {
-          setProfileLoading(true);
-          const userProfile = await fetchProfile(
-            currentUser.id,
-            currentUser.email ?? null,
-          );
-          if (isMounted) {
-            setProfile(userProfile);
-          }
-        } else {
-          setProfile(null);
-        }
+        if (!isMounted) return;
+
+        await loadProfileForUser(currentUser);
       } catch (error) {
         console.error("Failed to initialize auth", error);
       } finally {
@@ -202,7 +207,6 @@ export function AuthProvider({
         const currentUser = newSession?.user ?? null;
         setUser(currentUser);
         setLoading(false);
-        setProfileLoading(false);
         // Typically don't need to fetch profile for recovery, but safe to do so
         return;
       }
@@ -213,31 +217,16 @@ export function AuthProvider({
       setUser(currentUser);
       setLoading(false);
 
-      if (currentUser) {
-        setProfileLoading(true);
-        const userProfile = await fetchProfile(
-          currentUser.id,
-          currentUser.email ?? null,
-        );
-        if (isMounted) {
-          setProfile(userProfile);
-        }
-      } else {
-        setProfile(null);
-        setProfileLoading(false);
-        return;
-      }
+      if (!isMounted) return;
 
-      if (isMounted) {
-        setProfileLoading(false);
-      }
+      await loadProfileForUser(currentUser);
     });
 
     return () => {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile]);
+  }, [supabase, loadProfileForUser]);
 
   const value = useMemo(
     () => ({
