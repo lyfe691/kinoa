@@ -51,23 +51,16 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
                   ease: "linear",
                 }}
                 key={colIndex + "marquee"}
-                className="flex flex-col items-center gap-4 md:gap-8"
+                className="flex flex-col items-center gap-4 will-change-transform md:gap-8"
               >
                 <GridLineVertical className="-left-2 md:-left-4" offset="80px" />
                 {subarray.map((image, imageIndex) => (
                   <div className="relative w-full" key={`${colIndex}-${imageIndex}-${image}`}>
                     <GridLineHorizontal className="-top-2 md:-top-4" offset="20px" />
                     <motion.img
-                      whileHover={{
-                       y: -10,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut",
-                      }}
                       src={image}
                       alt={`Image ${imageIndex + 1}`}
-                      className="aspect-[970/700] w-full rounded-lg object-cover shadow-2xl ring-1 ring-border"
+                      className="aspect-970/700 w-full rounded-lg object-cover shadow-2xl ring-1 ring-border will-change-transform"
                       loading="lazy"
                     />
                   </div>
