@@ -14,7 +14,7 @@ export function AuthBrandingPanel({ images }: AuthBrandingPanelProps) {
       style={{ "--background": "var(--background)" } as React.CSSProperties}
     >
       {/* 3D Marquee Background */}
-      <div className="absolute inset-0 z-1000">
+      <div className="absolute inset-0">
         <ThreeDMarquee
           images={images}
           className="h-full rounded-none opacity-100"
