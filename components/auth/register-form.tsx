@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,7 +130,7 @@ export function RegisterForm() {
           <Input
             id="username"
             type="text"
-            placeholder="John Doe"
+            placeholder="cinephile"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={loading || oauthLoading}
@@ -177,8 +177,9 @@ export function RegisterForm() {
         )}
 
         {success && (
-          <Alert className="border-emerald-500/50 bg-emerald-500/10 text-sm text-emerald-600 dark:text-emerald-400">
+          <Alert variant="success">
             <CheckCircle2 className="h-4 w-4" />
+            <AlertTitle>Check your inbox</AlertTitle>
             <AlertDescription>{success}</AlertDescription>
           </Alert>
         )}

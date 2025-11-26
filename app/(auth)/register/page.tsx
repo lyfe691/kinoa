@@ -22,7 +22,7 @@ export default async function RegisterPage() {
           Create account
         </h1>
         <p className="text-sm text-muted-foreground">
-          Join Kinoa to track your watchlist
+          Join Kinoa to track your watchlist and more
         </p>
       </div>
 

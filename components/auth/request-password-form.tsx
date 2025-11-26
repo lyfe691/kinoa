@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 
@@ -78,8 +78,9 @@ export function RequestPasswordResetForm() {
       )}
 
       {success && (
-        <Alert className="border-emerald-500/50 bg-emerald-500/10 text-sm text-emerald-600 dark:text-emerald-400">
+        <Alert variant="success">
           <CheckCircle2 className="h-4 w-4" />
+          <AlertTitle>Check your inbox</AlertTitle>
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
