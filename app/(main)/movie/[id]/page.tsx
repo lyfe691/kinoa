@@ -134,17 +134,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
           voteCount={movie.voteCount}
         />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <MediaMenu
-            mediaId={movie.id}
-            mediaType="movie"
-            layout="button"
-            className="w-full justify-center sm:w-auto"
-          />
-          <p className="text-sm text-muted-foreground">
-            Save this movie to revisit it anytime.
-          </p>
-        </div>
+        <MediaMenu mediaId={movie.id} mediaType="movie" layout="button" />
 
         <MediaOverview>{movie.overview}</MediaOverview>
 

@@ -163,17 +163,7 @@ export default async function EpisodePage({ params }: EpisodePageProps) {
           voteCount={details.voteCount}
         />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <MediaMenu
-            mediaId={details.showId}
-            mediaType="tv"
-            layout="button"
-            className="w-full justify-center sm:w-auto"
-          />
-          <p className="text-sm text-muted-foreground">
-            Save this series to keep it on your watchlist.
-          </p>
-        </div>
+        <MediaMenu mediaId={details.showId} mediaType="tv" layout="button" />
 
         <MediaOverview>
           {details.episode.overview || details.overview}

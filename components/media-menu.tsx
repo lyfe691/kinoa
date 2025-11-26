@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { BookmarkMinus, BookmarkPlus, Loader } from "lucide-react";
+import { Bookmark, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -22,6 +22,7 @@ import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 type MediaMenuProps = {
   mediaId: number;
@@ -50,7 +51,6 @@ export function MediaMenu({
   const [loading, setLoading] = React.useState(false);
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
 
-  // Use hook result as source of truth
   React.useEffect(() => {
     if (!checkingWatchlist) {
       setIsInWatchlist(hookIsInWatchlist);
@@ -70,30 +70,36 @@ export function MediaMenu({
     setLoading(true);
 
     try {
-      if (isInWatchlist) {
+      const previousState = isInWatchlist;
+      setIsInWatchlist(!previousState);
+
+      if (previousState) {
         const result = await removeFromWatchlist(mediaId, mediaType);
         if (result.success) {
-          setIsInWatchlist(false);
           toast.success("Removed from watchlist");
           router.refresh();
         } else {
+          setIsInWatchlist(true);
           toast.error(result.error ?? "Failed to remove from watchlist");
         }
       } else {
         const result = await addToWatchlist(mediaId, mediaType);
         if (result.success) {
-          setIsInWatchlist(true);
-          toast.success("Added to watchlist");
+          toast.success("Added to watchlist", {
+            action: {
+              label: "View",
+              onClick: () => router.push("/watchlist"),
+            },
+          });
           router.refresh();
         } else {
-          // Handle duplicate key error gracefully
           if (
             result.error?.includes("duplicate") ||
             result.error?.includes("unique")
           ) {
-            setIsInWatchlist(true);
             router.refresh();
           } else {
+            setIsInWatchlist(false);
             toast.error(result.error ?? "Failed to add to watchlist");
           }
         }
@@ -101,103 +107,167 @@ export function MediaMenu({
     } catch (error) {
       console.error("Watchlist error:", error);
       toast.error("Something went wrong");
+      setIsInWatchlist(!isInWatchlist);
     } finally {
       setLoading(false);
     }
   }, [user, isInWatchlist, mediaId, mediaType, router, checkingWatchlist]);
 
   const isBusy = loading || checkingWatchlist;
-  const buttonLabel = isInWatchlist ? "Saved" : "Save";
-  const buttonAriaLabel =
-    layout === "button"
-      ? buttonLabel
-      : isInWatchlist
-        ? "Remove from watchlist"
-        : "Add to watchlist";
 
-  const renderButton = () => (
-    <Button
-      variant={layout === "button" ? "outline" : "ghost"}
-      size={
-        layout === "button"
-          ? size === "sm"
-            ? "sm"
-            : "default"
-          : size === "sm"
-            ? "icon-sm"
-            : "icon"
-      }
-      className={cn(
-        "rounded-full transition-all cursor-pointer",
-        layout === "button" &&
-          "gap-2 px-4 text-sm font-semibold hover:-translate-y-0.5",
-        isInWatchlist &&
-          (layout === "button"
-            ? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/20"
-            : "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"),
-        className,
-      )}
-      aria-label={buttonAriaLabel}
-      onClick={(e) => {
-        e.preventDefault();
-        handleToggleWatchlist();
-      }}
-      disabled={isBusy}
-    >
-      {isBusy ? (
-        <Loader
-          className={cn("animate-spin", size === "sm" ? "h-4 w-4" : "h-5 w-5")}
-        />
-      ) : isInWatchlist ? (
-        <BookmarkMinus className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")} />
-      ) : (
-        <BookmarkPlus className={cn(size === "sm" ? "h-4 w-4" : "h-5 w-5")} />
-      )}
-      {layout === "button" && <span>{buttonLabel}</span>}
-    </Button>
-  );
+  // Icon-only layout (for cards)
+  if (layout === "icon") {
+    const containerSize = size === "sm" ? "h-9 w-9" : "h-11 w-11";
+    const iconSize = size === "sm" ? "h-5 w-5" : "h-6 w-6";
+    const label = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
 
-  return (
-    <>
-      {layout === "icon" ? (
+    return (
+      <>
         <Tooltip>
-          <TooltipTrigger asChild>{renderButton()}</TooltipTrigger>
-          <TooltipContent>
-            <p>{buttonAriaLabel}</p>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "rounded-full transition-all duration-200 cursor-pointer",
+                containerSize,
+                "hover:bg-primary/5 hover:scale-105 active:scale-95",
+                isInWatchlist
+                  ? "text-primary hover:text-primary"
+                  : "text-muted-foreground hover:text-primary",
+                className,
+              )}
+              aria-label={label}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleToggleWatchlist();
+              }}
+              disabled={isBusy}
+            >
+              {isBusy ? (
+                <Loader className={cn("animate-spin", iconSize)} />
+              ) : (
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={isInWatchlist ? "saved" : "unsaved"}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <Bookmark
+                      className={cn(iconSize, isInWatchlist && "fill-current")}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <p>{label}</p>
           </TooltipContent>
         </Tooltip>
-      ) : (
-        renderButton()
-      )}
 
-      <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-        <AlertDialogPopup>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign in required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be signed in to add items to your watchlist.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-            <Button
-              variant="outline"
-              onClick={() => setShowAuthDialog(false)}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                setShowAuthDialog(false);
-                router.push("/login");
-              }}
-              className="w-full sm:w-auto"
-            >
-              Sign in
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogPopup>
-      </AlertDialog>
+        <AuthDialog
+          open={showAuthDialog}
+          onOpenChange={setShowAuthDialog}
+          onSignIn={() => {
+            setShowAuthDialog(false);
+            router.push("/login");
+          }}
+        />
+      </>
+    );
+  }
+
+  // Button layout (for detail pages)
+  return (
+    <>
+      <button
+        className={cn(
+          "group inline-flex items-center gap-2.5 cursor-pointer",
+          isInWatchlist
+            ? "text-primary"
+            : "text-muted-foreground hover:text-foreground",
+          isBusy && "pointer-events-none opacity-60",
+          className,
+        )}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleToggleWatchlist();
+        }}
+        disabled={isBusy}
+        aria-label={
+          isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
+        }
+      >
+        <span
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-150",
+            "group-active:scale-90",
+            isInWatchlist
+              ? "border-primary/30 bg-primary/10"
+              : "border-border bg-muted/50 group-hover:border-foreground/20 group-hover:bg-muted",
+          )}
+        >
+          {isBusy ? (
+            <Loader className="h-4 w-4 animate-spin" />
+          ) : (
+            <Bookmark
+              className={cn("h-4 w-4", isInWatchlist && "fill-current")}
+            />
+          )}
+        </span>
+        <span className="text-sm font-medium transition-opacity duration-150 group-hover:opacity-80">
+          {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
+        </span>
+      </button>
+
+      <AuthDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        onSignIn={() => {
+          setShowAuthDialog(false);
+          router.push("/login");
+        }}
+      />
     </>
+  );
+}
+
+function AuthDialog({
+  open,
+  onOpenChange,
+  onSignIn,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSignIn: () => void;
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogPopup>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Sign in required</AlertDialogTitle>
+          <AlertDialogDescription>
+            You need to be signed in to add items to your watchlist.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto"
+          >
+            Cancel
+          </Button>
+          <Button onClick={onSignIn} className="w-full sm:w-auto">
+            Sign in
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogPopup>
+    </AlertDialog>
   );
 }
