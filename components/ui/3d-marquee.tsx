@@ -53,10 +53,19 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
                 key={colIndex + "marquee"}
                 className="flex flex-col items-center gap-4 will-change-transform md:gap-8"
               >
-                <GridLineVertical className="-left-2 md:-left-4" offset="80px" />
+                <GridLineVertical
+                  className="-left-2 md:-left-4"
+                  offset="80px"
+                />
                 {subarray.map((image, imageIndex) => (
-                  <div className="relative w-full" key={`${colIndex}-${imageIndex}-${image}`}>
-                    <GridLineHorizontal className="-top-2 md:-top-4" offset="20px" />
+                  <div
+                    className="relative w-full"
+                    key={`${colIndex}-${imageIndex}-${image}`}
+                  >
+                    <GridLineHorizontal
+                      className="-top-2 md:-top-4"
+                      offset="20px"
+                    />
                     <motion.img
                       src={image}
                       alt={`Image ${imageIndex + 1}`}

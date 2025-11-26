@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
+import { parseRateLimitSeconds } from "@/lib/supabase/errors";
 
 export function RequestPasswordResetForm() {
   const { supabase } = useSession();
@@ -14,6 +15,24 @@ export function RequestPasswordResetForm() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
+  const [cooldown, setCooldown] = React.useState(0);
+
+  // Countdown timer effect
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          setError(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,14 +64,22 @@ export function RequestPasswordResetForm() {
           "If an account exists for that email, we've sent password reset instructions.",
         );
       } catch (err) {
-        console.error("Password reset request failed", err);
-        setError("We couldn't start the reset process. Please try again.");
+        const seconds = parseRateLimitSeconds(err);
+        if (seconds) {
+          setCooldown(seconds);
+          setError(`Too many requests. Please wait ${seconds} seconds.`);
+        } else {
+          console.error("Password reset request failed", err);
+          setError("We couldn't start the reset process. Please try again.");
+        }
       } finally {
         setLoading(false);
       }
     },
     [email, supabase],
   );
+
+  const isDisabled = loading || cooldown > 0;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,7 +91,7 @@ export function RequestPasswordResetForm() {
           placeholder="you@example.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          disabled={loading}
+          disabled={isDisabled}
           required
           autoComplete="email"
         />
@@ -73,7 +100,11 @@ export function RequestPasswordResetForm() {
       {error && (
         <Alert variant="error" className="text-sm">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>
+            {cooldown > 0
+              ? `Too many requests. Please wait ${cooldown} seconds.`
+              : error}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -85,9 +116,13 @@ export function RequestPasswordResetForm() {
         </Alert>
       )}
 
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button type="submit" className="w-full" disabled={isDisabled}>
         {loading && <Loader className="h-4 w-4 animate-spin" />}
-        {loading ? "Sending..." : "Send reset link"}
+        {loading
+          ? "Sending..."
+          : cooldown > 0
+            ? `Wait ${cooldown}s`
+            : "Send reset link"}
       </Button>
     </form>
   );

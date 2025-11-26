@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
-import { getAuthErrorMessage } from "@/lib/supabase/errors";
+import {
+  getAuthErrorMessage,
+  parseRateLimitSeconds,
+} from "@/lib/supabase/errors";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,8 +38,26 @@ export function RegisterForm() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [oauthLoading, setOauthLoading] = React.useState(false);
+  const [cooldown, setCooldown] = React.useState(0);
   const { supabase } = useSession();
   const isSubmitting = React.useRef(false);
+
+  // Countdown timer effect
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          setError(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -101,11 +122,17 @@ export function RegisterForm() {
 
         setSuccess("Confirm your email to claim your account.");
       } catch (err) {
-        const message = getAuthErrorMessage(
-          err,
-          "Unable to create your account right now.",
-        );
-        setError(message);
+        const seconds = parseRateLimitSeconds(err);
+        if (seconds) {
+          setCooldown(seconds);
+          setError(`Too many requests. Please wait ${seconds} seconds.`);
+        } else {
+          const message = getAuthErrorMessage(
+            err,
+            "Unable to create your account right now.",
+          );
+          setError(message);
+        }
       } finally {
         setLoading(false);
         isSubmitting.current = false;
@@ -114,10 +141,12 @@ export function RegisterForm() {
     [username, email, password, supabase, router],
   );
 
+  const isDisabled = loading || oauthLoading || cooldown > 0;
+
   return (
     <div className="space-y-4">
       <GoogleAuthButton
-        disabled={loading}
+        disabled={isDisabled}
         onError={setError}
         onLoadingChange={setOauthLoading}
       />
@@ -133,7 +162,7 @@ export function RegisterForm() {
             placeholder="cinephile"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="name"
             maxLength={25}
@@ -148,7 +177,7 @@ export function RegisterForm() {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="email"
           />
@@ -162,7 +191,7 @@ export function RegisterForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="new-password"
             minLength={6}
@@ -172,7 +201,11 @@ export function RegisterForm() {
         {error && (
           <Alert variant="error" className="text-sm">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {cooldown > 0
+                ? `Too many requests. Please wait ${cooldown} seconds.`
+                : error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -184,13 +217,13 @@ export function RegisterForm() {
           </Alert>
         )}
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || oauthLoading}
-        >
+        <Button type="submit" className="w-full" disabled={isDisabled}>
           {loading && <Loader className="h-4 w-4 animate-spin" />}
-          {loading ? "Creating account..." : "Create account"}
+          {loading
+            ? "Creating account..."
+            : cooldown > 0
+              ? `Wait ${cooldown}s`
+              : "Create account"}
         </Button>
 
         <p className="text-center text-xs text-muted-foreground">
