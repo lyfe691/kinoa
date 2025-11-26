@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CircleAlertIcon, InfoIcon, Loader } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Info, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
 import { toast } from "sonner";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
@@ -146,8 +146,8 @@ export function ResetPasswordForm() {
 
   if (status === "checking") {
     return (
-      <div className="flex flex-col items-center gap-4 text-center text-sm text-muted-foreground">
-        <Loader className="h-5 w-5 animate-spin" />
+      <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-muted-foreground">
+        <Loader className="h-6 w-6 animate-spin" />
         <p>Verifying your reset link…</p>
       </div>
     );
@@ -155,18 +155,15 @@ export function ResetPasswordForm() {
 
   if (status === "error") {
     return (
-      <div className="space-y-4 text-center">
-        <Alert variant="error">
-          <CircleAlertIcon />
-          <AlertTitle>Reset link not valid</AlertTitle>
+      <div className="space-y-4">
+        <Alert variant="error" className="text-sm">
+          <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {error ??
-              "We couldn't verify your reset link. Please request a new email."}
+            {error ?? "This reset link is invalid or has expired."}
           </AlertDescription>
         </Alert>
         <Button
           type="button"
-          variant="ghost"
           className="w-full"
           onClick={() => router.push("/forgot-password")}
         >
@@ -207,36 +204,45 @@ export function ResetPasswordForm() {
       </div>
 
       {error && (
-        <Alert variant="error">
-          <CircleAlertIcon />
-          <AlertTitle>Unable to update password</AlertTitle>
+        <Alert variant="error" className="text-sm">
+          <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      <Alert variant="info">
-        <InfoIcon />
-        <AlertTitle>Password requirements</AlertTitle>
+      <Alert className="border-blue-500/30 bg-blue-500/5 text-sm text-blue-600 dark:text-blue-400">
+        <Info className="h-4 w-4" />
         <AlertDescription>
-          Use at least 6 characters. For best security, include a mix of
-          letters, numbers, and symbols.
+          Use at least 6 characters with a mix of letters, numbers, and symbols.
         </AlertDescription>
       </Alert>
 
-      <Button type="submit" className="w-full" disabled={loading || signingOut}>
-        {(loading || signingOut) && <Loader className="h-4 w-4 animate-spin" />}
-        {loading ? "Saving…" : signingOut ? "Signing out…" : "Update password"}
-      </Button>
+      <div className="flex flex-col gap-2 pt-2">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading || signingOut}
+        >
+          {(loading || signingOut) && (
+            <Loader className="h-4 w-4 animate-spin" />
+          )}
+          {loading
+            ? "Saving…"
+            : signingOut
+              ? "Signing out…"
+              : "Update password"}
+        </Button>
 
-      <Button
-        type="button"
-        variant="ghost"
-        className="w-full text-muted-foreground"
-        onClick={handleCancel}
-        disabled={loading || signingOut}
-      >
-        Cancel reset
-      </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          className="w-full text-muted-foreground"
+          onClick={handleCancel}
+          disabled={loading || signingOut}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }

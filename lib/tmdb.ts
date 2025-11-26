@@ -824,3 +824,44 @@ async function enrichMediaSummaries(
 }
 
 export { formatRuntime } from "./format-runtime";
+
+/**
+ * Fetches backdrop images for the auth branding panel.
+ * Returns an array of image URLs from trending movies/shows.
+ */
+export async function getAuthBrandingImages(): Promise<string[]> {
+  const [page1, page2, page3] = await Promise.all([
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 1 },
+      CACHE_REVALIDATE.long,
+    ),
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 2 },
+      CACHE_REVALIDATE.long,
+    ),
+    tmdbFetch<TmdbTrendingResponse>(
+      "/trending/all/week",
+      { language: "en-US", page: 3 },
+      CACHE_REVALIDATE.long,
+    ),
+  ]);
+
+  const allResults = [...page1.results, ...page2.results, ...page3.results];
+
+  return (
+    allResults
+      .filter(
+        (item): item is TmdbTrendingItem & { backdrop_path: string } =>
+          item.backdrop_path !== null,
+      )
+      // Remove duplicates based on ID
+      .filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.id === item.id),
+      )
+      .slice(0, 60) // Increase to 60 images (15 per column)
+      .map((item) => buildImage(item.backdrop_path, BACKDROP_SIZE)!)
+  );
+}

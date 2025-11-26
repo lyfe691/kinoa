@@ -17,21 +17,23 @@ export default async function ForgotPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-8">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Forgot password</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Forgot password?
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email address and we&apos;ll send you a reset link.
+          Enter your email and we&apos;ll send you a reset link
         </p>
       </div>
 
       <RequestPasswordResetForm />
 
       <p className="text-center text-sm text-muted-foreground">
-        Remembered your password?{" "}
+        Remember your password?{" "}
         <Link
           href="/login"
-          className="underline underline-offset-4 text-primary"
+          className="text-primary underline underline-offset-4"
         >
           Sign in
         </Link>

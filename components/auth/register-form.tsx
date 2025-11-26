@@ -9,16 +9,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
-import { getAuthErrorMessage } from "@/lib/supabase/errors";
-import { CircleAlertIcon, InfoIcon, Loader } from "lucide-react";
+import {
+  getAuthErrorMessage,
+  parseRateLimitSeconds,
+} from "@/lib/supabase/errors";
+import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
 import { toast } from "sonner";
 
 function AuthDivider() {
   return (
-    <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
-      <div className="h-px w-full bg-border" />
-      <span>or</span>
-      <div className="h-px w-full bg-border" />
+    <div className="relative">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t" />
+      </div>
+      <div className="relative flex justify-center text-xs uppercase">
+        <span className="bg-background px-2 text-muted-foreground">or</span>
+      </div>
     </div>
   );
 }
@@ -32,8 +38,26 @@ export function RegisterForm() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
   const [oauthLoading, setOauthLoading] = React.useState(false);
+  const [cooldown, setCooldown] = React.useState(0);
   const { supabase } = useSession();
   const isSubmitting = React.useRef(false);
+
+  // Countdown timer effect
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          setError(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -98,11 +122,17 @@ export function RegisterForm() {
 
         setSuccess("Confirm your email to claim your account.");
       } catch (err) {
-        const message = getAuthErrorMessage(
-          err,
-          "Unable to create your account right now.",
-        );
-        setError(message);
+        const seconds = parseRateLimitSeconds(err);
+        if (seconds) {
+          setCooldown(seconds);
+          setError(`Too many requests. Please wait ${seconds} seconds.`);
+        } else {
+          const message = getAuthErrorMessage(
+            err,
+            "Unable to create your account right now.",
+          );
+          setError(message);
+        }
       } finally {
         setLoading(false);
         isSubmitting.current = false;
@@ -111,10 +141,12 @@ export function RegisterForm() {
     [username, email, password, supabase, router],
   );
 
+  const isDisabled = loading || oauthLoading || cooldown > 0;
+
   return (
     <div className="space-y-4">
       <GoogleAuthButton
-        disabled={loading}
+        disabled={isDisabled}
         onError={setError}
         onLoadingChange={setOauthLoading}
       />
@@ -127,10 +159,10 @@ export function RegisterForm() {
           <Input
             id="username"
             type="text"
-            placeholder="John Doe"
+            placeholder="cinephile"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="name"
             maxLength={25}
@@ -145,7 +177,7 @@ export function RegisterForm() {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="email"
           />
@@ -159,7 +191,7 @@ export function RegisterForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={loading || oauthLoading}
+            disabled={isDisabled}
             required
             autoComplete="new-password"
             minLength={6}
@@ -167,28 +199,31 @@ export function RegisterForm() {
         </div>
 
         {error && (
-          <Alert variant="error">
-            <CircleAlertIcon />
-            <AlertTitle>Heads up!</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+          <Alert variant="error" className="text-sm">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {cooldown > 0
+                ? `Too many requests. Please wait ${cooldown} seconds.`
+                : error}
+            </AlertDescription>
           </Alert>
         )}
 
         {success && (
-          <Alert variant="info">
-            <InfoIcon />
+          <Alert variant="success">
+            <CheckCircle2 className="h-4 w-4" />
             <AlertTitle>Check your inbox</AlertTitle>
             <AlertDescription>{success}</AlertDescription>
           </Alert>
         )}
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading || oauthLoading}
-        >
+        <Button type="submit" className="w-full" disabled={isDisabled}>
           {loading && <Loader className="h-4 w-4 animate-spin" />}
-          {loading ? "Creating account..." : "Create account"}
+          {loading
+            ? "Creating account..."
+            : cooldown > 0
+              ? `Wait ${cooldown}s`
+              : "Create account"}
         </Button>
 
         <p className="text-center text-xs text-muted-foreground">

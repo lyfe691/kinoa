@@ -61,7 +61,7 @@ export function GoogleAuthButton({
     <Button
       type="button"
       variant="outline"
-      className="w-full"
+      className="w-full gap-3"
       onClick={handleClick}
       disabled={disabled || loading}
     >
@@ -70,7 +70,7 @@ export function GoogleAuthButton({
       ) : (
         <GoogleIcon className="h-4 w-4" />
       )}
-      Continue with Google
+      <span>Continue with Google</span>
     </Button>
   );
 }

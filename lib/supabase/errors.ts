@@ -23,16 +23,12 @@ const AUTH_ERROR_MATCHERS: ErrorMatcher[] = [
     friendly: "Passwords must be at least 6 characters long.",
   },
   {
-    includes: "rate limit",
-    friendly: "Too many attempts. Please try again later.",
-  },
-  {
     includes: "signup requires a valid password",
     friendly: "Please choose a stronger password.",
   },
   {
     includes: "new password should be different from the old password",
-    friendly: "Please choose a password you haven’t used before.",
+    friendly: "Please choose a password you haven't used before.",
   },
 ];
 
@@ -46,6 +42,42 @@ function extractErrorMessage(error: unknown): string | null {
   ) {
     return (error as { message: string }).message;
   }
+  return null;
+}
+
+/**
+ * Parses rate limit errors from Supabase.
+ * Example message: "For security purposes, you can only request this after 42 seconds."
+ * Returns the number of seconds if found, otherwise null.
+ */
+export function parseRateLimitSeconds(error: unknown): number | null {
+  const message = extractErrorMessage(error);
+  if (!message) return null;
+
+  const normalized = message.toLowerCase();
+
+  // Check for rate limit patterns
+  if (
+    !normalized.includes("security purposes") &&
+    !normalized.includes("rate limit")
+  ) {
+    return null;
+  }
+
+  // Try to extract seconds from the message
+  const match = message.match(/after\s+(\d+)\s+seconds?/i);
+  if (match) {
+    return parseInt(match[1], 10);
+  }
+
+  // Fallback: if it's a rate limit but no seconds found, return a default
+  if (
+    normalized.includes("rate limit") ||
+    normalized.includes("security purposes")
+  ) {
+    return 60; // Default to 60 seconds
+  }
+
   return null;
 }
 

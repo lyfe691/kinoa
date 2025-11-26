@@ -16,11 +16,11 @@ export default async function LoginPage() {
     redirect("/");
   }
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-8">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
         <p className="text-sm text-muted-foreground">
-          Sign in to your account to continue
+          Sign in to continue to Kinoa
         </p>
       </div>
 
@@ -30,7 +30,7 @@ export default async function LoginPage() {
         Don&apos;t have an account?{" "}
         <Link
           href="/register"
-          className="underline underline-offset-4 text-primary"
+          className="text-primary underline underline-offset-4"
         >
           Create one
         </Link>
