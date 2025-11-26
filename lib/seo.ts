@@ -168,7 +168,7 @@ export function buildEpisodeJsonLd(details: TvEpisodeDetails) {
     partOfSeries: {
       "@type": "TVSeries",
       name: details.showName,
-      url: absoluteUrl(`/tv/${details.showId}/1/1`),
+      url: absoluteUrl(`/tv/${details.showId}`),
       genre: details.genres,
       sameAs: details.imdbId
         ? `https://www.imdb.com/title/${details.imdbId}`

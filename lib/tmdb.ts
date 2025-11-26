@@ -154,7 +154,7 @@ export async function getTrending(): Promise<MediaSummary[]> {
         releaseYear: releaseDate
           ? new Date(releaseDate).getFullYear().toString()
           : undefined,
-        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`,
         imdbId: null,
         rating: item.vote_average,
         voteCount: item.vote_count,
@@ -227,7 +227,7 @@ function mapTvList(items: TmdbTvListItem[]): MediaSummary[] {
       posterUrl: buildImage(item.poster_path, POSTER_SIZE),
       backdropUrl: buildImage(item.backdrop_path, BACKDROP_SIZE),
       releaseYear,
-      href: `/tv/${item.id}/1/1`,
+      href: `/tv/${item.id}`,
       imdbId: null,
       rating: item.vote_average,
       voteCount: item.vote_count,
@@ -374,7 +374,7 @@ export async function searchTitles(query: string): Promise<MediaSummary[]> {
         releaseYear: releaseDate
           ? new Date(releaseDate).getFullYear().toString()
           : undefined,
-        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`,
         imdbId: null,
         rating: item.vote_average,
         voteCount: item.vote_count,
@@ -420,7 +420,7 @@ export async function searchPreviews(query: string): Promise<MediaPreview[]> {
         releaseYear: releaseDate
           ? new Date(releaseDate).getFullYear().toString()
           : undefined,
-        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}/1/1`,
+        href: type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`,
         rating: item.vote_average,
       };
     });
@@ -522,7 +522,11 @@ type TmdbSeasonResponse = {
   episodes: {
     id: number;
     name: string;
+    overview: string;
     episode_number: number;
+    still_path: string | null;
+    air_date: string | null;
+    runtime: number | null;
   }[];
 };
 
@@ -593,6 +597,36 @@ export type TvShowDetails = {
   imdbId: string | null;
 };
 
+export type TvEpisode = {
+  id: number;
+  number: number;
+  name: string;
+  overview: string;
+  stillUrl: string | null;
+  airDate?: string;
+  runtime?: number | null;
+};
+
+export type TvSeason = {
+  number: number;
+  name: string;
+  episodes: TvEpisode[];
+};
+
+export type TvShowPageData = {
+  id: number;
+  name: string;
+  overview: string;
+  posterUrl: string | null;
+  backdropUrl: string | null;
+  genres: string[];
+  rating?: number;
+  voteCount?: number;
+  imdbId: string | null;
+  firstAirDate?: string;
+  seasons: TvSeason[];
+};
+
 export async function getTvShow(id: string): Promise<TvShowDetails> {
   const show = await getTvShowCached(id);
 
@@ -619,6 +653,62 @@ export async function getTvShow(id: string): Promise<TvShowDetails> {
     rating: show.vote_average,
     voteCount: show.vote_count,
     imdbId,
+  };
+}
+
+export async function getTvShowWithSeasons(id: string): Promise<TvShowPageData> {
+  const show = await getTvShowCached(id);
+
+  const firstAirYear = show.first_air_date
+    ? new Date(show.first_air_date).getFullYear().toString()
+    : undefined;
+
+  const imdbId = await ensureImdbId({
+    imdbId: undefined,
+    title: show.name,
+    year: firstAirYear,
+    type: "series",
+  });
+
+  // Filter to only real seasons (not specials which are season 0)
+  const seasonNumbers = (show.seasons ?? [])
+    .filter((s) => s.season_number > 0)
+    .map((s) => s.season_number);
+
+  // Fetch all seasons in parallel
+  const seasonDataPromises = seasonNumbers.map(async (seasonNum) => {
+    const seasonData = await getTvSeasonCached(id, String(seasonNum));
+    const seasonInfo = show.seasons.find((s) => s.season_number === seasonNum);
+
+    return {
+      number: seasonNum,
+      name: seasonInfo?.name || `Season ${seasonNum}`,
+      episodes: seasonData.episodes.map((ep) => ({
+        id: ep.id,
+        number: ep.episode_number,
+        name: ep.name || `Episode ${ep.episode_number}`,
+        overview: ep.overview || "",
+        stillUrl: buildImage(ep.still_path, BACKDROP_SIZE),
+        airDate: ep.air_date ?? undefined,
+        runtime: ep.runtime,
+      })),
+    };
+  });
+
+  const seasons = await Promise.all(seasonDataPromises);
+
+  return {
+    id: show.id,
+    name: show.name,
+    overview: show.overview,
+    posterUrl: buildImage(show.poster_path, POSTER_SIZE),
+    backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
+    genres: show.genres.map((genre) => genre.name),
+    rating: show.vote_average,
+    voteCount: show.vote_count,
+    imdbId,
+    firstAirDate: show.first_air_date ?? undefined,
+    seasons,
   };
 }
 

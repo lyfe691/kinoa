@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -13,47 +11,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { TvSeason } from "@/lib/tmdb";
 
-type EpisodeNavigatorProps = {
-  showId: number;
-  seasons: {
-    number: number;
-    name: string;
-    episodeCount: number;
-  }[];
-  seasonEpisodes: {
-    number: number;
-    name: string;
-  }[];
+type EpisodeSelectorProps = {
+  seasons: TvSeason[];
   currentSeason: number;
   currentEpisode: number;
+  onEpisodeChange: (season: number, episode: number) => void;
   className?: string;
 };
 
 const EPISODES_PER_PAGE = 12;
 
-export function EpisodeNavigator({
-  showId,
+export function EpisodeSelector({
   seasons,
-  seasonEpisodes,
   currentSeason,
   currentEpisode,
+  onEpisodeChange,
   className,
-}: EpisodeNavigatorProps) {
-  const router = useRouter();
-  const [page, setPage] = useState(() => {
-    // Start on the page containing the current episode
-    return Math.floor((currentEpisode - 1) / EPISODES_PER_PAGE);
-  });
+}: EpisodeSelectorProps) {
+  const season = useMemo(
+    () => seasons.find((s) => s.number === currentSeason),
+    [seasons, currentSeason],
+  );
+
+  const episodes = season?.episodes ?? [];
+
+  const [page, setPage] = useState(() =>
+    Math.floor((currentEpisode - 1) / EPISODES_PER_PAGE),
+  );
 
   useEffect(() => {
     setPage(Math.floor((currentEpisode - 1) / EPISODES_PER_PAGE));
   }, [currentEpisode]);
 
-  const totalPages = Math.ceil(seasonEpisodes.length / EPISODES_PER_PAGE);
+  const totalPages = Math.ceil(episodes.length / EPISODES_PER_PAGE);
   const startIdx = page * EPISODES_PER_PAGE;
   const endIdx = startIdx + EPISODES_PER_PAGE;
-  const visibleEpisodes = seasonEpisodes.slice(startIdx, endIdx);
+  const visibleEpisodes = episodes.slice(startIdx, endIdx);
+
+  const handleSeasonChange = (value: string) => {
+    const newSeason = parseInt(value, 10);
+    const newSeasonData = seasons.find((s) => s.number === newSeason);
+    const firstEpisode = newSeasonData?.episodes[0]?.number ?? 1;
+    setPage(0);
+    onEpisodeChange(newSeason, firstEpisode);
+  };
+
+  const handleEpisodeClick = (episodeNumber: number) => {
+    onEpisodeChange(currentSeason, episodeNumber);
+  };
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -62,13 +69,7 @@ export function EpisodeNavigator({
         <span className="text-[12px] font-medium tracking-wide text-muted-foreground">
           Season
         </span>
-        <Select
-          value={String(currentSeason)}
-          onValueChange={(value) => {
-            setPage(0);
-            router.push(`/tv/${showId}/${value}/1`);
-          }}
-        >
+        <Select value={String(currentSeason)} onValueChange={handleSeasonChange}>
           <SelectTrigger
             className="h-9 w-[160px] rounded-lg"
             aria-label="Select season"
@@ -79,7 +80,7 @@ export function EpisodeNavigator({
             {seasons.map((s) => (
               <SelectItem key={s.number} value={String(s.number)}>
                 Season {s.number}
-                {s.episodeCount ? ` · ${s.episodeCount} eps` : ""}
+                {s.episodes.length > 0 ? ` · ${s.episodes.length} eps` : ""}
               </SelectItem>
             ))}
           </SelectContent>
@@ -95,17 +96,13 @@ export function EpisodeNavigator({
               key={episode.number}
               variant={isActive ? "secondary" : "ghost"}
               className={cn(
-                "h-auto w-full justify-start rounded-md p-2 sm:p-2.5 transition-colors",
+                "h-auto w-full justify-start rounded-md p-2 sm:p-2.5 transition-colors cursor-pointer",
                 isActive ? "hover:bg-accent" : "hover:bg-accent/60",
               )}
-              asChild
+              onClick={() => handleEpisodeClick(episode.number)}
+              aria-current={isActive ? "true" : undefined}
             >
-              <Link
-                href={`/tv/${showId}/${currentSeason}/${episode.number}`}
-                scroll={false}
-                aria-current={isActive ? "true" : undefined}
-                className="flex w-full min-w-0 items-start gap-2"
-              >
+              <div className="flex w-full min-w-0 items-start gap-2">
                 <div className="min-w-0 flex-1 space-y-0.5 text-left">
                   <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                     Episode {episode.number}
@@ -114,7 +111,7 @@ export function EpisodeNavigator({
                     {episode.name}
                   </div>
                 </div>
-              </Link>
+              </div>
             </Button>
           );
         })}
@@ -133,8 +130,8 @@ export function EpisodeNavigator({
             <span className="hidden sm:inline">Previous</span>
           </Button>
           <span className="text-[11px] text-muted-foreground">
-            {startIdx + 1}-{Math.min(endIdx, seasonEpisodes.length)} of{" "}
-            {seasonEpisodes.length}
+            {startIdx + 1}-{Math.min(endIdx, episodes.length)} of{" "}
+            {episodes.length}
           </span>
           <Button
             variant="outline"

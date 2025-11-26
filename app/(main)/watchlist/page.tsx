@@ -46,7 +46,7 @@ async function fetchMediaItem(
         posterUrl: show.posterUrl,
         backdropUrl: show.backdropUrl,
         releaseYear: undefined,
-        href: `/tv/${show.id}/1/1`,
+        href: `/tv/${show.id}`,
         imdbId: show.imdbId ?? null,
         seasonCount: show.seasonCount,
         episodeCount: show.episodeCount,
