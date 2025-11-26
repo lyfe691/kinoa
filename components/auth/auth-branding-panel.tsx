@@ -20,6 +20,10 @@ export function AuthBrandingPanel({ images }: AuthBrandingPanelProps) {
           className="h-full rounded-none opacity-100"
         />
       </div>
+
+      {/* Gradient Overlays for smoother edges */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-background via-transparent to-background opacity-40" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
     </div>
   );
 }

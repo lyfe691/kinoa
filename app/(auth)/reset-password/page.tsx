@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="w-full max-w-sm space-y-8">
+    <div className="w-full max-w-md space-y-8">
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">
           Set new password

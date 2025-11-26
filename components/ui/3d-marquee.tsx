@@ -10,10 +10,15 @@ export type ThreeDMarqueeProps = {
 };
 
 export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
-  const chunkSize = Math.ceil(images.length / 4);
-  const chunks = Array.from({ length: 4 }, (_, colIndex) => {
+  // Duplicate images to ensure we have enough content for more columns
+  // and sufficient vertical height for the scrolling effect
+  const allImages = [...images, ...images];
+  const COLUMNS = 8; // Increased from 4 to 8 for better density on large screens
+  const chunkSize = Math.ceil(allImages.length / COLUMNS);
+
+  const chunks = Array.from({ length: COLUMNS }, (_, colIndex) => {
     const start = colIndex * chunkSize;
-    return images.slice(start, start + chunkSize);
+    return allImages.slice(start, start + chunkSize);
   });
 
   return (
@@ -24,12 +29,17 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
       )}
     >
       <div className="flex size-full items-center justify-center">
-        <div className="size-[1720px] shrink-0 scale-50 sm:scale-75 lg:scale-100">
+        {/* 
+          Use vmax to ensure the grid is always large enough relative to the viewport,
+          preventing empty spaces when zooming out.
+          Removed fixed pixel sizes and responsive scales.
+        */}
+        <div className="h-[150vmax] w-[150vmax] shrink-0">
           <div
             style={{
               transform: "rotateX(55deg) rotateY(0deg) rotateZ(-45deg)",
             }}
-            className="relative top-96 right-[50%] grid size-full origin-top-left grid-cols-4 gap-8 transform-3d"
+            className="grid size-full origin-center grid-cols-8 gap-4 transform-3d md:gap-8"
           >
             {chunks.map((subarray, colIndex) => (
               <motion.div
@@ -41,26 +51,24 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
                   ease: "linear",
                 }}
                 key={colIndex + "marquee"}
-                className="flex flex-col items-start gap-8"
+                className="flex flex-col items-center gap-4 md:gap-8"
               >
-                <GridLineVertical className="-left-4" offset="80px" />
+                <GridLineVertical className="-left-2 md:-left-4" offset="80px" />
                 {subarray.map((image, imageIndex) => (
-                  <div className="relative" key={imageIndex + image}>
-                    <GridLineHorizontal className="-top-4" offset="20px" />
+                  <div className="relative w-full" key={`${colIndex}-${imageIndex}-${image}`}>
+                    <GridLineHorizontal className="-top-2 md:-top-4" offset="20px" />
                     <motion.img
                       whileHover={{
-                        y: -10,
+                       y: -10,
                       }}
                       transition={{
                         duration: 0.3,
                         ease: "easeInOut",
                       }}
-                      key={imageIndex + image}
                       src={image}
                       alt={`Image ${imageIndex + 1}`}
-                      className="aspect-970/700 rounded-lg object-cover ring-1 ring-border shadow-2xl"
-                      width={970}
-                      height={700}
+                      className="aspect-[970/700] w-full rounded-lg object-cover shadow-2xl ring-1 ring-border"
+                      loading="lazy"
                     />
                   </div>
                 ))}
@@ -83,8 +91,8 @@ const GridLineHorizontal = ({ className, offset }: GridLineHorizontalProps) => {
     <div
       style={
         {
-          "--background": "var(--muted)", // Changed from var(--background) to var(--muted)
-          "--color": "var(--foreground)", // Use foreground with low opacity for dots
+          "--background": "var(--muted)",
+          "--color": "var(--foreground)",
           "--height": "1px",
           "--width": "5px",
           "--fade-stop": "90%",
@@ -94,7 +102,7 @@ const GridLineHorizontal = ({ className, offset }: GridLineHorizontalProps) => {
       }
       className={cn(
         "absolute left-[calc(var(--offset)/2*-1)] h-(--height) w-[calc(100%+var(--offset))]",
-        "bg-[linear-gradient(to_right,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20", // Added opacity-20
+        "bg-[linear-gradient(to_right,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20",
         "bg-size-[var(--width)_var(--height)]",
         "[mask:linear-gradient(to_left,var(--background)_var(--fade-stop),transparent),linear-gradient(to_right,var(--background)_var(--fade-stop),transparent),linear-gradient(black,black)]",
         "mask-exclude",
@@ -115,8 +123,8 @@ const GridLineVertical = ({ className, offset }: GridLineVerticalProps) => {
     <div
       style={
         {
-          "--background": "var(--muted)", // Changed from var(--background) to var(--muted)
-          "--color": "var(--foreground)", // Use foreground with low opacity for dots
+          "--background": "var(--muted)",
+          "--color": "var(--foreground)",
           "--height": "5px",
           "--width": "1px",
           "--fade-stop": "90%",
@@ -126,7 +134,7 @@ const GridLineVertical = ({ className, offset }: GridLineVerticalProps) => {
       }
       className={cn(
         "absolute top-[calc(var(--offset)/2*-1)] h-[calc(100%+var(--offset))] w-(--width)",
-        "bg-[linear-gradient(to_bottom,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20", // Added opacity-20
+        "bg-[linear-gradient(to_bottom,var(--color),var(--color)_50%,transparent_0,transparent)] opacity-20",
         "bg-size-[var(--width)_var(--height)]",
         "[mask:linear-gradient(to_top,var(--background)_var(--fade-stop),transparent),linear-gradient(to_bottom,var(--background)_var(--fade-stop),transparent),linear-gradient(black,black)]",
         "mask-exclude",
