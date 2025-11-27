@@ -1,3 +1,6 @@
+"use client";
+
+import * as React from "react";
 import Image from "next/image";
 import { Star, Clock, Calendar, Tv, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -33,6 +36,8 @@ export function MediaHero({
   children,
 }: MediaHeroProps) {
   const TypeIcon = type === "movie" ? Film : Tv;
+  const [isBackdropLoaded, setIsBackdropLoaded] = React.useState(false);
+  const [isPosterLoaded, setIsPosterLoaded] = React.useState(false);
 
   return (
     <div className={cn("relative", className)}>
@@ -49,14 +54,18 @@ export function MediaHero({
               fill
               priority
               unoptimized
-              className="object-cover object-center"
+              className={cn(
+                "object-cover object-center transition-opacity duration-700",
+                isBackdropLoaded ? "opacity-100" : "opacity-0"
+              )}
               sizes="100vw"
+              onLoad={() => setIsBackdropLoaded(true)}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
+            <div className="absolute inset-0 bg-linear-to-t from-background via-background/70 to-background/30" />
+            <div className="absolute inset-0 bg-linear-to-r from-background/60 via-transparent to-background/60" />
           </>
         ) : (
-          <div className="h-full w-full bg-gradient-to-b from-muted/30 to-background" />
+          <div className="h-full w-full bg-linear-to-b from-muted/30 to-background" />
         )}
       </div>
 
@@ -66,7 +75,7 @@ export function MediaHero({
           {/* Poster */}
           <div className="shrink-0">
             <div className="relative w-36 sm:w-48 lg:w-56 overflow-hidden rounded-xl shadow-2xl shadow-black/50 ring-1 ring-white/10">
-              <div className="relative aspect-[2/3]">
+              <div className="relative aspect-2/3">
                 {posterUrl ? (
                   <Image
                     src={posterUrl}
@@ -74,8 +83,12 @@ export function MediaHero({
                     fill
                     priority
                     unoptimized
-                    className="object-cover"
+                    className={cn(
+                      "object-cover transition-opacity duration-700",
+                      isPosterLoaded ? "opacity-100" : "opacity-0"
+                    )}
                     sizes="(max-width: 640px) 144px, (max-width: 1024px) 192px, 224px"
+                    onLoad={() => setIsPosterLoaded(true)}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-muted">
