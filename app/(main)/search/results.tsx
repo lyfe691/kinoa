@@ -88,7 +88,7 @@ export default async function SearchResults({
                   <Link href="/">View All</Link>
                 </Button>
               </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
                 {trending.slice(0, 10).map((item, index) => (
                   <MediaCard
                     key={`trending-${item.type}-${item.id}`}
@@ -159,7 +159,7 @@ export default async function SearchResults({
     return (
       <div className="space-y-5">
         <h2 className="text-2xl font-semibold tracking-tight">Movies</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
           {movies.map((item, index) => (
             <MediaCard
               key={`movie-${item.id}`}
@@ -211,7 +211,7 @@ export default async function SearchResults({
     return (
       <div className="space-y-5">
         <h2 className="text-2xl font-semibold tracking-tight">TV Shows</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
           {shows.map((item, index) => (
             <MediaCard
               key={`tv-${item.id}`}
@@ -253,7 +253,7 @@ export default async function SearchResults({
       {movies.length > 0 && (
         <section className="space-y-5">
           <h2 className="text-2xl font-semibold tracking-tight">Movies</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
             {movies.slice(0, 10).map((item, index) => (
               <MediaCard
                 key={`movie-${item.id}`}
@@ -268,7 +268,7 @@ export default async function SearchResults({
       {shows.length > 0 && (
         <section className="space-y-5">
           <h2 className="text-2xl font-semibold tracking-tight">TV Shows</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
             {shows.slice(0, 10).map((item, index) => (
               <MediaCard
                 key={`tv-${item.id}`}

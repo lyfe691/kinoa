@@ -49,7 +49,7 @@ export function MediaCard({
   return (
     <Link
       href={href}
-      className={cn("group block space-y-3", className)}
+      className={cn("group block space-y-2 sm:space-y-3", className)}
       aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
     >
       <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">

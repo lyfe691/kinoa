@@ -10,7 +10,7 @@ export async function TopRatedShelf() {
       title="Top Rated"
       description="Timeless classics and critically acclaimed films."
     >
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
         {topRated.map((item, index) => (
           <MediaCard
             key={`top-rated-${item.id}`}
