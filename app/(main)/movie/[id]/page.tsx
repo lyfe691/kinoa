@@ -1,24 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Player } from "@/components/player";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { StructuredData } from "@/components/structured-data";
 import { getMovieDetails } from "@/lib/tmdb";
 import { formatRuntime } from "@/lib/format-runtime";
-import {
-  MediaDetailLayout,
-  MediaHeader,
-  MediaOverview,
-  MediaPoster,
-} from "@/components/media-detail";
+import { MediaHero, MediaContent, MediaSection } from "@/components/media-detail";
 import { absoluteUrl, buildMovieJsonLd } from "@/lib/seo";
 import { MediaMenu } from "@/components/media-menu";
 
@@ -105,46 +91,40 @@ export default async function MoviePage({ params }: MoviePageProps) {
   const movieJsonLd = buildMovieJsonLd(movie);
 
   return (
-    <div className="flex flex-col gap-8">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{movie.title}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <MediaDetailLayout
-        poster={
-          <MediaPoster src={movie.posterUrl} title={movie.title} priority />
-        }
+    <div>
+      <MediaHero
+        type="movie"
+        title={movie.title}
+        backdropUrl={movie.backdropUrl}
+        posterUrl={movie.posterUrl}
+        rating={movie.rating}
+        voteCount={movie.voteCount}
+        releaseYear={releaseYear}
+        runtime={runtime}
+        genres={movie.genres}
       >
-        <MediaHeader
-          badgeLabel="Movie"
-          title={movie.title}
-          metadata={[releaseYear, runtime]}
-          genres={movie.genres}
-          rating={movie.rating}
-          voteCount={movie.voteCount}
-        />
-
         <MediaMenu mediaId={movie.id} mediaType="movie" layout="button" />
+      </MediaHero>
 
-        <MediaOverview>{movie.overview}</MediaOverview>
+      <MediaContent>
+        {movie.overview && (
+          <MediaSection title="Overview">
+            <p className="text-muted-foreground leading-relaxed max-w-3xl">
+              {movie.overview}
+            </p>
+          </MediaSection>
+        )}
 
-        <Player
-          kind="movie"
-          imdbId={movie.imdbId}
-          tmdbId={movie.id}
-          title={movie.title}
-        />
-      </MediaDetailLayout>
+        <MediaSection title="Watch Now">
+          <Player
+            kind="movie"
+            imdbId={movie.imdbId}
+            tmdbId={movie.id}
+            title={movie.title}
+          />
+        </MediaSection>
+      </MediaContent>
+
       <StructuredData data={movieJsonLd} />
     </div>
   );

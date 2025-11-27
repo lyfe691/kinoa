@@ -2,26 +2,12 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Player } from "@/components/player";
 import { MediaMenu } from "@/components/media-menu";
-import {
-  MediaDetailLayout,
-  MediaHeader,
-  MediaOverview,
-  MediaPoster,
-} from "@/components/media-detail";
+import { MediaHero, MediaContent, MediaSection } from "@/components/media-detail";
 import { formatRuntime } from "@/lib/format-runtime";
 import { EpisodeSelector } from "./episode-selector";
-import type { TvShowPageData, TvEpisode } from "@/lib/tmdb";
+import type { TvShowPageData } from "@/lib/tmdb";
 
 type TvShowClientProps = {
   show: TvShowPageData;
@@ -37,7 +23,6 @@ export function TvShowClient({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Find valid initial values
   const getValidInitialState = useCallback(() => {
     const season = show.seasons.find((s) => s.number === initialSeason);
     if (season) {
@@ -45,13 +30,11 @@ export function TvShowClient({
       if (episode) {
         return { season: initialSeason, episode: initialEpisode };
       }
-      // Season exists but episode doesn't - default to first episode
       return {
         season: initialSeason,
         episode: season.episodes[0]?.number ?? 1,
       };
     }
-    // Season doesn't exist - default to first season, first episode
     const firstSeason = show.seasons[0];
     return {
       season: firstSeason?.number ?? 1,
@@ -61,7 +44,6 @@ export function TvShowClient({
 
   const [state, setState] = useState(getValidInitialState);
 
-  // Get current season and episode data
   const currentSeason = useMemo(
     () => show.seasons.find((s) => s.number === state.season),
     [show.seasons, state.season],
@@ -72,7 +54,6 @@ export function TvShowClient({
     [currentSeason, state.episode],
   );
 
-  // Update URL without navigation (shallow routing)
   const updateUrl = useCallback(
     (season: number, episode: number) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -83,7 +64,6 @@ export function TvShowClient({
     [router, searchParams, show.id],
   );
 
-  // Handle episode change
   const handleEpisodeChange = useCallback(
     (season: number, episode: number) => {
       setState({ season, episode });
@@ -92,69 +72,75 @@ export function TvShowClient({
     [updateUrl],
   );
 
-  // Format metadata
   const runtime = formatRuntime(currentEpisode?.runtime);
-  const airDate = currentEpisode?.airDate
-    ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-        new Date(currentEpisode.airDate),
-      )
-    : undefined;
-
   const episodeLabel = `S${state.season}:E${state.episode}`;
 
+  // Get first air year from show data
+  const releaseYear = show.firstAirDate
+    ? new Date(show.firstAirDate).getFullYear().toString()
+    : undefined;
+
   return (
-    <div className="flex flex-col gap-8">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{show.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <MediaDetailLayout
-        poster={<MediaPoster src={show.posterUrl} title={show.name} priority />}
+    <div>
+      <MediaHero
+        type="tv"
+        title={show.name}
+        backdropUrl={show.backdropUrl}
+        posterUrl={show.posterUrl}
+        rating={show.rating}
+        voteCount={show.voteCount}
+        releaseYear={releaseYear}
+        runtime={runtime}
+        genres={show.genres}
+        episodeLabel={episodeLabel}
       >
-        <MediaHeader
-          badgeLabel="Series"
-          title={show.name}
-          metadata={[episodeLabel, runtime, airDate]}
-          genres={show.genres}
-          rating={show.rating}
-          voteCount={show.voteCount}
-        />
-
         <MediaMenu mediaId={show.id} mediaType="tv" layout="button" />
+      </MediaHero>
 
-        <MediaOverview>
-          {currentEpisode?.overview || show.overview}
-        </MediaOverview>
+      <MediaContent>
+        {/* Episode info */}
+        {currentEpisode && (
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold">
+              {currentEpisode.name}
+            </h2>
+            {currentEpisode.overview && (
+              <p className="text-muted-foreground leading-relaxed max-w-3xl">
+                {currentEpisode.overview}
+              </p>
+            )}
+          </div>
+        )}
 
-        <Player
-          key={`${state.season}-${state.episode}`}
-          kind="tv"
-          tmdbId={show.id}
-          season={state.season}
-          episode={state.episode}
-          title={`${show.name} - ${currentEpisode?.name ?? `Episode ${state.episode}`}`}
-        />
+        {/* Fallback to show overview if no episode overview */}
+        {!currentEpisode?.overview && show.overview && (
+          <p className="text-muted-foreground leading-relaxed max-w-3xl">
+            {show.overview}
+          </p>
+        )}
+
+        <MediaSection title="Watch Now">
+          <Player
+            key={`${state.season}-${state.episode}`}
+            kind="tv"
+            tmdbId={show.id}
+            season={state.season}
+            episode={state.episode}
+            title={`${show.name} - ${currentEpisode?.name ?? `Episode ${state.episode}`}`}
+          />
+        </MediaSection>
 
         {show.seasons.length > 0 && currentSeason && (
-          <EpisodeSelector
-            seasons={show.seasons}
-            currentSeason={state.season}
-            currentEpisode={state.episode}
-            onEpisodeChange={handleEpisodeChange}
-          />
+          <MediaSection title="Episodes">
+            <EpisodeSelector
+              seasons={show.seasons}
+              currentSeason={state.season}
+              currentEpisode={state.episode}
+              onEpisodeChange={handleEpisodeChange}
+            />
+          </MediaSection>
         )}
-      </MediaDetailLayout>
+      </MediaContent>
     </div>
   );
 }
-

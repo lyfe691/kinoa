@@ -4,7 +4,8 @@ import { ensureImdbId } from "./imdb";
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 const POSTER_SIZE = "w500";
-const BACKDROP_SIZE = "w780";
+const BACKDROP_SIZE = "w1280";
+const BACKDROP_SIZE_LARGE = "original";
 
 const CACHE_REVALIDATE = {
   short: 5 * 60,
@@ -479,7 +480,7 @@ export async function getMovieDetails(id: string): Promise<MovieDetails> {
     title: movie.title,
     overview: movie.overview,
     posterUrl: buildImage(movie.poster_path, POSTER_SIZE),
-    backdropUrl: buildImage(movie.backdrop_path, BACKDROP_SIZE),
+    backdropUrl: buildImage(movie.backdrop_path, BACKDROP_SIZE_LARGE),
     releaseDate: movie.release_date ?? undefined,
     runtime: movie.runtime,
     genres: movie.genres.map((genre) => genre.name),
@@ -702,7 +703,7 @@ export async function getTvShowWithSeasons(id: string): Promise<TvShowPageData> 
     name: show.name,
     overview: show.overview,
     posterUrl: buildImage(show.poster_path, POSTER_SIZE),
-    backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE),
+    backdropUrl: buildImage(show.backdrop_path, BACKDROP_SIZE_LARGE),
     genres: show.genres.map((genre) => genre.name),
     rating: show.vote_average,
     voteCount: show.vote_count,

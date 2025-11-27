@@ -186,11 +186,9 @@ export function MediaMenu({
     <>
       <button
         className={cn(
-          "group inline-flex items-center gap-2.5 cursor-pointer",
-          isInWatchlist
-            ? "text-primary"
-            : "text-muted-foreground hover:text-foreground",
-          isBusy && "pointer-events-none opacity-60",
+          "group inline-flex items-center gap-2 transition-colors cursor-pointer",
+          isInWatchlist ? "text-primary" : "text-muted-foreground hover:text-foreground",
+          isBusy && "pointer-events-none opacity-50",
           className,
         )}
         onClick={(e) => {
@@ -199,32 +197,27 @@ export function MediaMenu({
           handleToggleWatchlist();
         }}
         disabled={isBusy}
-        aria-label={
-          isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
-        }
+        aria-label={isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
       >
-        <span
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-150",
-            "group-active:scale-90",
-            isInWatchlist
-              ? "border-primary/30 bg-primary/10"
-              : "border-border bg-muted/50 group-hover:border-foreground/20 group-hover:bg-muted",
-          )}
-        >
+        <span className="relative">
           {isBusy ? (
             <Loader className="h-4 w-4 animate-spin" />
           ) : (
             <Bookmark
-              className={cn("h-4 w-4", isInWatchlist && "fill-current")}
+              className={cn(
+                "h-4 w-4 transition-all duration-200",
+                "group-hover:scale-110 group-active:scale-95",
+                isInWatchlist && "fill-current"
+              )}
             />
           )}
         </span>
-        <span className="text-sm font-medium transition-opacity duration-150 group-hover:opacity-80">
+        
+        <span className="text-sm font-medium">
           {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
         </span>
       </button>
-
+  
       <AuthDialog
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}

@@ -117,7 +117,7 @@ export default async function RootLayout({
         <StructuredData data={siteJsonLd} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen overflow-x-hidden bg-background font-sans antialiased`}
       >
         <Analytics />
         <ThemeProvider
