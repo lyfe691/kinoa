@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import getCroppedImg from "@/lib/image-crop";
-import { Loader, ZoomIn, ZoomOut, Crop } from "lucide-react";
+import { Loader2, ZoomIn, ZoomOut, Crop } from "lucide-react";
 
 interface ImageCropperDialogProps {
   open: boolean;
@@ -143,7 +143,7 @@ export function ImageCropperDialog({
             className="min-w-[100px]"
           >
             {isLoading ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Done"
             )}

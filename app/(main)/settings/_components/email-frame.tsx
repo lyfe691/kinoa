@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toastManager } from "@/components/ui/toast";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { useSession } from "@/lib/supabase/auth";
 import type { AccountProfile } from "@/lib/profile-utils";
@@ -124,7 +124,7 @@ export function EmailFrame({ profile }: { profile: AccountProfile | null }) {
               size="sm"
               className="bg-foreground text-background hover:bg-foreground/90"
             >
-              {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save
             </Button>
           </div>

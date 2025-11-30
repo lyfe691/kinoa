@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toastManager } from "@/components/ui/toast";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useSession } from "@/lib/supabase/auth";
@@ -121,7 +121,7 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
           selectedFile?.name.split(".").pop()?.toLowerCase() ?? "png";
         const path = `${profileId}/${crypto.randomUUID()}.${extension}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: upLoader2ror } = await supabase.storage
           .from("avatars")
           .upload(path, pendingBlob, {
             cacheControl: "3600",
@@ -129,8 +129,8 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
             contentType: selectedFile?.type || "image/png",
           });
 
-        if (uploadError) {
-          console.error("[profiles] Avatar upload failed", uploadError);
+        if (upLoader2ror) {
+          console.error("[profiles] Avatar upload failed", upLoader2ror);
           toastManager.add({
             title: "We couldn’t upload your avatar. Please try again.",
             type: "error",
@@ -246,7 +246,7 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
           size="sm"
           className="bg-foreground text-background hover:bg-foreground/90"
         >
-          {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Save
         </Button>
       </div>

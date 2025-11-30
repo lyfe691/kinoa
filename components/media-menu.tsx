@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, Loader } from "lucide-react";
+import { Bookmark, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -160,7 +160,7 @@ export function MediaMenu({
               disabled={isBusy}
             >
               {isBusy ? (
-                <Loader className={cn("animate-spin", iconSize)} />
+                <Loader2 className={cn("animate-spin", iconSize)} />
               ) : (
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
@@ -219,7 +219,7 @@ export function MediaMenu({
       >
         <span className="relative">
           {isBusy ? (
-            <Loader className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Bookmark
               className={cn(

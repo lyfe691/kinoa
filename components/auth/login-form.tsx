@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
-import { AlertCircle, Loader } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toastManager } from "@/components/ui/toast";
 
 function AuthDivider() {
@@ -137,8 +137,9 @@ export function LoginForm() {
           type="submit"
           className="w-full"
           disabled={loading || oauthLoading}
+          size="lg"
         >
-          {loading && <Loader className="h-4 w-4 animate-spin" />}
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading ? "Signing in..." : "Sign in"}
         </Button>
       </form>

@@ -13,7 +13,7 @@ import {
   getAuthErrorMessage,
   parseRateLimitSeconds,
 } from "@/lib/supabase/errors";
-import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { toastManager } from "@/components/ui/toast";
 
 function AuthDivider() {
@@ -220,8 +220,8 @@ export function RegisterForm() {
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={isDisabled}>
-          {loading && <Loader className="h-4 w-4 animate-spin" />}
+        <Button type="submit" className="w-full" disabled={isDisabled} size="lg">
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading
             ? "Creating account..."
             : cooldown > 0
