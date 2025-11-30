@@ -84,7 +84,8 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
 
   const handleCropComplete = async (croppedBlob: Blob) => {
     if (croppedBlob.size > UPLOAD_SIZE_LIMIT) {
-      // Ideally warn, but we'll proceed.
+      toast.error("Image is too large. Please use an image under 300KB.");
+      return;
     }
 
     // Create a local preview URL

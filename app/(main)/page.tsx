@@ -13,7 +13,7 @@ export default async function Home() {
   return (
     <div className="space-y-24 pb-24">
       <HomeHeader />
-
+      
       <div className="space-y-12">
         <TrendingFilter items={trending} />
 
