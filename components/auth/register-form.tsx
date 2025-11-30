@@ -14,7 +14,7 @@ import {
   parseRateLimitSeconds,
 } from "@/lib/supabase/errors";
 import { AlertCircle, CheckCircle2, Loader } from "lucide-react";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 
 function AuthDivider() {
   return (
@@ -114,7 +114,10 @@ export function RegisterForm() {
         }
 
         if (data.session) {
-          toast.success("Account created. Welcome to Kinoa!");
+          toastManager.add({
+            title: "Account created. Welcome to Kinoa!",
+            type: "success",
+          });
           router.push("/");
           router.refresh();
           return;

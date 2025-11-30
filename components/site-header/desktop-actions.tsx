@@ -13,20 +13,20 @@ type DesktopActionsProps = {
   loading: boolean;
   user: User | null;
   account: AccountProfile | null;
-  onSignOut: () => void;
+  onSignOutAction: () => void;
   signingOut: boolean;
   isDropdownOpen: boolean;
-  setIsDropdownOpen: (open: boolean) => void;
+  setIsDropdownOpenAction: (open: boolean) => void;
 };
 
 export function DesktopActions({
   loading,
   user,
   account,
-  onSignOut,
+  onSignOutAction,
   signingOut,
   isDropdownOpen,
-  setIsDropdownOpen,
+  setIsDropdownOpenAction,
 }: DesktopActionsProps) {
   return (
     <AnimatePresence mode="wait">
@@ -50,22 +50,31 @@ export function DesktopActions({
             <motion.div variants={itemVariants}>
               <UserMenu
                 account={account}
-                onSignOut={onSignOut}
+                onSignOut={onSignOutAction}
                 signingOut={signingOut}
                 isOpen={isDropdownOpen}
-                setIsOpen={setIsDropdownOpen}
+                setIsOpen={setIsDropdownOpenAction}
               />
             </motion.div>
           ) : (
             <>
               <motion.div variants={itemVariants}>
-                <Button variant="ghost" asChild className="rounded-lg px-3">
-                  <Link href="/login">Sign in</Link>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  render={<Link href="/login" />}
+                  className="rounded-lg px-3"
+                >
+                  Sign in
                 </Button>
               </motion.div>
               <motion.div variants={itemVariants}>
-                <Button asChild className="rounded-lg px-3">
-                  <Link href="/register">Sign up</Link>
+                <Button
+                  size="lg"
+                  render={<Link href="/register" />}
+                  className="rounded-lg px-3"
+                >
+                  Sign up
                 </Button>
               </motion.div>
             </>

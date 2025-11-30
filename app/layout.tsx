@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/supabase/auth";
-import { Toaster } from "@/components/ui/sonner";
+import { ToastProvider } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { StructuredData } from "@/components/structured-data";
 import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
@@ -129,15 +129,16 @@ export default async function RootLayout({
         >
           <AuthProvider initialSession={session}>
             <TooltipProvider>
-              <div
-                data-vaul-drawer-wrapper
-                className="flex min-h-screen flex-col"
-              >
-                {children}
-              </div>
+              <ToastProvider>
+                <div
+                  data-vaul-drawer-wrapper
+                  className="flex min-h-screen flex-col"
+                >
+                  {children}
+                </div>
+              </ToastProvider>
             </TooltipProvider>
           </AuthProvider>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

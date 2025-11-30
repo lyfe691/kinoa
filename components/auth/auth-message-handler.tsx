@@ -50,8 +50,8 @@ export function AuthMessageHandler() {
           <Mail className="h-4 w-4" />
           <span>Check your inbox for the second confirmation link</span>
         </div>
-        <Button asChild className="mt-4">
-          <Link href="/">Return Home</Link>
+        <Button render={<Link href="/" />} className="mt-4">
+          Return Home
         </Button>
       </div>
     );
@@ -71,8 +71,8 @@ export function AuthMessageHandler() {
             "We couldn't sign you in. The link may have expired or already been used. Please try signing in again."}
         </p>
       </div>
-      <Button asChild className="mt-4">
-        <Link href="/">Back to home</Link>
+      <Button render={<Link href="/" />} className="mt-4">
+        Back to home
       </Button>
     </div>
   );

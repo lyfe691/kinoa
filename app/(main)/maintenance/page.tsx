@@ -36,17 +36,20 @@ export default function MaintenancePage() {
         </p>
       </div>
 
-      <Button asChild variant="secondary">
-        <Link
-          href="https://neal.fun/infinite-craft/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open Neal's Infinite Craft (opens in a new tab)"
-          className="inline-flex items-center"
-        >
-          Pass the time
-          <ArrowUpRight className="h-4 w-4" />
-        </Link>
+      <Button
+        variant="secondary"
+        render={
+          <Link
+            href="https://neal.fun/infinite-craft/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open Neal's Infinite Craft (opens in a new tab)"
+            className="inline-flex items-center"
+          />
+        }
+      >
+        Pass the time
+        <ArrowUpRight className="h-4 w-4" />
       </Button>
     </section>
   );

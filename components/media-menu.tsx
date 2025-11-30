@@ -20,7 +20,7 @@ import {
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -76,19 +76,30 @@ export function MediaMenu({
       if (previousState) {
         const result = await removeFromWatchlist(mediaId, mediaType);
         if (result.success) {
-          toast.success("Removed from watchlist");
+          toastManager.add({
+            title: "Removed from watchlist",
+            type: "success",
+          });
           router.refresh();
         } else {
           setIsInWatchlist(true);
-          toast.error(result.error ?? "Failed to remove from watchlist");
+          toastManager.add({
+            title: result.error ?? "Failed to remove from watchlist",
+            type: "error",
+          });
         }
       } else {
         const result = await addToWatchlist(mediaId, mediaType);
         if (result.success) {
-          toast.success("Added to watchlist", {
-            action: {
-              label: "View",
-              onClick: () => router.push("/watchlist"),
+          const id = toastManager.add({
+            title: "Added to watchlist",
+            type: "success",
+            actionProps: {
+              children: "View",
+              onClick: () => {
+                router.push("/watchlist");
+                toastManager.close(id);
+              },
             },
           });
           router.refresh();
@@ -100,13 +111,16 @@ export function MediaMenu({
             router.refresh();
           } else {
             setIsInWatchlist(false);
-            toast.error(result.error ?? "Failed to add to watchlist");
+            toastManager.add({
+              title: result.error ?? "Failed to add to watchlist",
+              type: "error",
+            });
           }
         }
       }
     } catch (error) {
       console.error("Watchlist error:", error);
-      toast.error("Something went wrong");
+      toastManager.add({ title: "Something went wrong", type: "error" });
       setIsInWatchlist(!isInWatchlist);
     } finally {
       setLoading(false);
@@ -187,7 +201,9 @@ export function MediaMenu({
       <button
         className={cn(
           "group inline-flex items-center gap-2 transition-colors cursor-pointer",
-          isInWatchlist ? "text-primary" : "text-muted-foreground hover:text-foreground",
+          isInWatchlist
+            ? "text-primary"
+            : "text-muted-foreground hover:text-foreground",
           isBusy && "pointer-events-none opacity-50",
           className,
         )}
@@ -197,7 +213,9 @@ export function MediaMenu({
           handleToggleWatchlist();
         }}
         disabled={isBusy}
-        aria-label={isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
+        aria-label={
+          isInWatchlist ? "Remove from watchlist" : "Add to watchlist"
+        }
       >
         <span className="relative">
           {isBusy ? (
@@ -207,17 +225,17 @@ export function MediaMenu({
               className={cn(
                 "h-4 w-4 transition-all duration-200",
                 "group-hover:scale-110 group-active:scale-95",
-                isInWatchlist && "fill-current"
+                isInWatchlist && "fill-current",
               )}
             />
           )}
         </span>
-        
+
         <span className="text-sm font-medium">
           {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
         </span>
       </button>
-  
+
       <AuthDialog
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}

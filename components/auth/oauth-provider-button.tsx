@@ -64,6 +64,7 @@ export function GoogleAuthButton({
       className="w-full gap-3"
       onClick={handleClick}
       disabled={disabled || loading}
+      size="lg"
     >
       {loading ? (
         <Loader className="h-4 w-4 animate-spin" />

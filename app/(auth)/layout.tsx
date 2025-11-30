@@ -17,11 +17,14 @@ export default async function AuthLayout({
       <div className="relative flex w-full flex-col lg:w-1/2">
         {/* Back button */}
         <header className="absolute left-0 right-0 top-0 z-50 p-4 sm:p-6 lg:p-8">
-          <Button variant="ghost" size="sm" asChild className="gap-2">
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Back home</span>
-            </Link>
+          <Button
+            variant="ghost"
+            size="default"
+            render={<Link href="/" />}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Back home</span>
           </Button>
         </header>
 

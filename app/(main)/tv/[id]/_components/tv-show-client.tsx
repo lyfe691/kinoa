@@ -4,7 +4,11 @@ import { useState, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Player } from "@/components/player";
 import { MediaMenu } from "@/components/media-menu";
-import { MediaHero, MediaContent, MediaSection } from "@/components/media-detail";
+import {
+  MediaHero,
+  MediaContent,
+  MediaSection,
+} from "@/components/media-detail";
 import { formatRuntime } from "@/lib/format-runtime";
 import { EpisodeSelector } from "./episode-selector";
 import type { TvShowPageData } from "@/lib/tmdb";
@@ -101,9 +105,7 @@ export function TvShowClient({
         {/* Episode info */}
         {currentEpisode && (
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold">
-              {currentEpisode.name}
-            </h2>
+            <h2 className="text-xl font-semibold">{currentEpisode.name}</h2>
             {currentEpisode.overview && (
               <p className="text-muted-foreground leading-relaxed max-w-3xl">
                 {currentEpisode.overview}

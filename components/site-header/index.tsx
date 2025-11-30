@@ -7,7 +7,7 @@ import { useSession } from "@/lib/supabase/auth";
 import { useProfile } from "@/hooks/use-profile";
 import { signOutEverywhere } from "@/lib/supabase/sign-out";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 
 import { BrandLink } from "./brand-link";
 import { DesktopNav } from "./desktop-nav";
@@ -42,7 +42,7 @@ export function SiteHeader() {
     try {
       await signOutEverywhere(supabase);
       await refreshSession();
-      toast.success("Signed out");
+      toastManager.add({ title: "Signed out", type: "success" });
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -50,7 +50,7 @@ export function SiteHeader() {
         error,
         "We couldn't sign you out. Please try again.",
       );
-      toast.error(message);
+      toastManager.add({ title: message, type: "error" });
     } finally {
       setSigningOut(false);
     }
@@ -74,10 +74,10 @@ export function SiteHeader() {
             loading={loading}
             user={user}
             account={account}
-            onSignOut={handleSignOut}
+            onSignOutAction={handleSignOut}
             signingOut={signingOut}
             isDropdownOpen={isDropdownOpen}
-            setIsDropdownOpen={setIsDropdownOpen}
+            setIsDropdownOpenAction={setIsDropdownOpen}
           />
 
           <MobileMenuTrigger />

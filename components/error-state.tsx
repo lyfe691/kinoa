@@ -36,8 +36,8 @@ export function ErrorState({
             Try again
           </Button>
         )}
-        <Button variant="secondary" asChild>
-          <Link href="/">Back to home</Link>
+        <Button variant="secondary" render={<Link href="/" />}>
+          Back to home
         </Button>
       </div>
     </div>

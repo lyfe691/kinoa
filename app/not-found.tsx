@@ -40,11 +40,9 @@ export default function NotFound() {
             </p>
           </div>
           <div className="flex items-center justify-center gap-3">
-            <Button asChild>
-              <Link href="/">Go home</Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/search">Search</Link>
+            <Button render={<Link href="/" />}>Go home</Button>
+            <Button variant="ghost" render={<Link href="/search" />}>
+              Search
             </Button>
           </div>
         </section>

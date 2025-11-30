@@ -13,6 +13,12 @@ import {
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import type { MediaSummary } from "@/lib/tmdb";
 import { MediaCard } from "@/components/media-card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -175,21 +181,27 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
           </AnimatePresence>
         </motion.div>
       ) : (
-        <div className="flex min-h-[200px] flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">No results found</p>
+        <Empty className="min-h-[200px] border-dashed">
+          <EmptyHeader>
+            <EmptyTitle className="text-base font-normal text-muted-foreground">
+              No results found
+            </EmptyTitle>
+          </EmptyHeader>
           {searchQuery && (
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <EmptyContent className="flex-row gap-2">
               <Button variant="outline" onClick={() => setSearchQuery("")}>
                 Clear search
               </Button>
-              <Button asChild>
-                <Link href={`/search?q=${encodeURIComponent(searchQuery)}`}>
-                  Search Kinoa library
-                </Link>
+              <Button
+                render={
+                  <Link href={`/search?q=${encodeURIComponent(searchQuery)}`} />
+                }
+              >
+                Search Kinoa library
               </Button>
-            </div>
+            </EmptyContent>
           )}
-        </div>
+        </Empty>
       )}
     </div>
   );

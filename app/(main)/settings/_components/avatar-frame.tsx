@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import { Loader } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -69,12 +69,18 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please choose an image file.");
+      toastManager.add({
+        title: "Please choose an image file.",
+        type: "error",
+      });
       return;
     }
 
     if (file.size > MAX_AVATAR_SIZE) {
-      toast.error("Image is too large. Please choose an image under 5MB.");
+      toastManager.add({
+        title: "Image is too large. Please choose an image under 5MB.",
+        type: "error",
+      });
       return;
     }
 
@@ -84,7 +90,10 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
 
   const handleCropComplete = async (croppedBlob: Blob) => {
     if (croppedBlob.size > UPLOAD_SIZE_LIMIT) {
-      toast.error("Image is too large. Please use an image under 300KB.");
+      toastManager.add({
+        title: "Image is too large. Please use an image under 300KB.",
+        type: "error",
+      });
       return;
     }
 
@@ -122,13 +131,19 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
 
         if (uploadError) {
           console.error("[profiles] Avatar upload failed", uploadError);
-          toast.error("We couldn’t upload your avatar. Please try again.");
+          toastManager.add({
+            title: "We couldn’t upload your avatar. Please try again.",
+            type: "error",
+          });
           return;
         }
 
         const { data } = supabase.storage.from("avatars").getPublicUrl(path);
         if (!data?.publicUrl) {
-          toast.error("We couldn’t generate a link for your avatar.");
+          toastManager.add({
+            title: "We couldn’t generate a link for your avatar.",
+            type: "error",
+          });
           return;
         }
         finalAvatarUrl = data.publicUrl;
@@ -140,11 +155,17 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
       });
 
       if (!result?.success) {
-        toast.error(result?.error ?? "We couldn’t update your profile.");
+        toastManager.add({
+          title: result?.error ?? "We couldn’t update your profile.",
+          type: "error",
+        });
         return;
       }
 
-      toast.success("Profile updated successfully");
+      toastManager.add({
+        title: "Profile updated successfully",
+        type: "success",
+      });
 
       // Update refs and state
       propAvatarUrlRef.current = result.profile?.avatarUrl ?? null;
@@ -158,7 +179,7 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
       router.refresh();
     } catch (error) {
       console.error("Failed to save avatar", error);
-      toast.error("Failed to save changes.");
+      toastManager.add({ title: "Failed to save changes.", type: "error" });
     } finally {
       setSaving(false);
     }

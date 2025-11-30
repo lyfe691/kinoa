@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import { Loader } from "lucide-react";
 
 import { useSession } from "@/lib/supabase/auth";
@@ -57,17 +57,20 @@ export function DisplayNameFrame({
       });
 
       if (!result?.success) {
-        toast.error(result?.error ?? "Update failed.");
+        toastManager.add({
+          title: result?.error ?? "Update failed.",
+          type: "error",
+        });
         return;
       }
 
-      toast.success("Display name updated");
+      toastManager.add({ title: "Display name updated", type: "success" });
       form.reset({ displayName: trimmedName });
       await refreshSession();
       router.refresh();
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong.");
+      toastManager.add({ title: "Something went wrong.", type: "error" });
     } finally {
       setSaving(false);
     }

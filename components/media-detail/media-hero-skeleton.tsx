@@ -25,24 +25,24 @@ export function MediaHeroSkeleton() {
               <Skeleton className="h-7 w-20 rounded-full" />
               <Skeleton className="h-7 w-16 rounded-full" />
             </div>
-            
+
             {/* Title */}
             <Skeleton className="h-10 sm:h-12 w-64 sm:w-96" />
-            
+
             {/* Metadata */}
             <div className="flex gap-4">
               <Skeleton className="h-5 w-16" />
               <Skeleton className="h-5 w-16" />
               <Skeleton className="h-5 w-20" />
             </div>
-            
+
             {/* Genres */}
             <div className="flex gap-2">
               <Skeleton className="h-7 w-20 rounded-full" />
               <Skeleton className="h-7 w-16 rounded-full" />
               <Skeleton className="h-7 w-24 rounded-full" />
             </div>
-            
+
             {/* Actions */}
             <Skeleton className="h-9 w-36 rounded-full mt-2" />
           </div>
@@ -51,4 +51,3 @@ export function MediaHeroSkeleton() {
     </div>
   );
 }
-

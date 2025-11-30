@@ -69,7 +69,10 @@ export function EpisodeSelector({
         <span className="text-[12px] font-medium tracking-wide text-muted-foreground">
           Season
         </span>
-        <Select value={String(currentSeason)} onValueChange={handleSeasonChange}>
+        <Select
+          value={String(currentSeason)}
+          onValueChange={handleSeasonChange}
+        >
           <SelectTrigger
             className="h-9 w-[160px] rounded-lg"
             aria-label="Select season"

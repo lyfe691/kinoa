@@ -17,7 +17,11 @@ type MediaSectionProps = {
   className?: string;
 };
 
-export function MediaSection({ title, children, className }: MediaSectionProps) {
+export function MediaSection({
+  title,
+  children,
+  className,
+}: MediaSectionProps) {
   return (
     <section className={cn("space-y-4", className)}>
       {title && (
@@ -27,4 +31,3 @@ export function MediaSection({ title, children, className }: MediaSectionProps) 
     </section>
   );
 }
-

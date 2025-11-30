@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import type { AccountProfile } from "@/lib/profile-utils";
 import { AvatarFrame } from "./avatar-frame";
 import { DisplayNameFrame } from "./display-name-frame";
@@ -22,9 +22,10 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
     if (searchParams.get("verified") === "true") {
       // Use setTimeout to ensure the toast library is ready and to allow for a smooth transition
       const timer = setTimeout(() => {
-        toast.success("Email successfully verified", {
-          duration: 5000,
+        toastManager.add({
+          title: "Email successfully verified",
           description: "Your account email has been updated.",
+          type: "success",
         });
 
         // Clean up the URL without a full page reload

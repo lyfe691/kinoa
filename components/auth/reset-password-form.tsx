@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Info, Loader } from "lucide-react";
 import { useSession } from "@/lib/supabase/auth";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { signOutEverywhere } from "@/lib/supabase/sign-out";
 
@@ -109,7 +109,10 @@ export function ResetPasswordForm() {
 
         setHasUpdated(true);
         await signOutEverywhere(supabase);
-        toast.success("Password updated. Please sign in again.");
+        toastManager.add({
+          title: "Password updated. Please sign in again.",
+          type: "success",
+        });
         router.push("/login");
       } catch (err) {
         console.error("Password update failed", err);
@@ -131,7 +134,7 @@ export function ResetPasswordForm() {
     try {
       await signOutEverywhere(supabase);
       setHasUpdated(true);
-      toast.success("You have been signed out.");
+      toastManager.add({ title: "You have been signed out.", type: "success" });
       router.push("/login");
     } catch (err) {
       const message = getAuthErrorMessage(

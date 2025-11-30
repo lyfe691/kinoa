@@ -42,7 +42,7 @@ export function MediaHero({
   return (
     <div className={cn("relative", className)}>
       {/* Full-bleed backdrop */}
-      <div 
+      <div
         className="absolute left-1/2 -translate-x-1/2 w-screen h-[580px] sm:h-[520px] lg:h-[540px] -z-10 -top-12"
         aria-hidden="true"
       >
@@ -56,7 +56,7 @@ export function MediaHero({
               unoptimized
               className={cn(
                 "object-cover object-center transition-opacity duration-700",
-                isBackdropLoaded ? "opacity-100" : "opacity-0"
+                isBackdropLoaded ? "opacity-100" : "opacity-0",
               )}
               sizes="100vw"
               onLoad={() => setIsBackdropLoaded(true)}
@@ -85,7 +85,7 @@ export function MediaHero({
                     unoptimized
                     className={cn(
                       "object-cover transition-opacity duration-700",
-                      isPosterLoaded ? "opacity-100" : "opacity-0"
+                      isPosterLoaded ? "opacity-100" : "opacity-0",
                     )}
                     sizes="(max-width: 640px) 144px, (max-width: 1024px) 192px, 224px"
                     onLoad={() => setIsPosterLoaded(true)}

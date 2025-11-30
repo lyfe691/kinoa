@@ -103,8 +103,12 @@ export function SearchTypeTabs({
             </TabsTrigger>
           ))}
         </TabsList>
-        <Button asChild size="sm" variant="secondary">
-          <Link href={clearHref}>Clear search</Link>
+        <Button
+          render={<Link href={clearHref} />}
+          size="default"
+          variant="secondary"
+        >
+          Clear search
         </Button>
       </div>
 

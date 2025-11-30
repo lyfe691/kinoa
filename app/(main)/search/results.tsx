@@ -84,8 +84,12 @@ export default async function SearchResults({
                 <h2 className="text-2xl font-semibold tracking-tight">
                   Trending Now
                 </h2>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/">View All</Link>
+                <Button
+                  render={<Link href="/" />}
+                  variant="ghost"
+                  size="default"
+                >
+                  View All
                 </Button>
               </div>
               <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
@@ -143,13 +147,23 @@ export default async function SearchResults({
           </EmptyHeader>
           <EmptyContent>
             <div className="flex gap-3">
-              <Button asChild size="sm" variant="secondary">
-                <Link href={buildHref({ type: "movie" })}>Clear filters</Link>
+              <Button
+                render={<Link href={buildHref({ type: "movie" })} />}
+                size="default"
+                variant="secondary"
+              >
+                Clear filters
               </Button>
-              <Button asChild size="sm" variant="ghost">
-                <Link href={buildHref({ type: "all", genre, sort: sortBy })}>
-                  See all content
-                </Link>
+              <Button
+                render={
+                  <Link
+                    href={buildHref({ type: "all", genre, sort: sortBy })}
+                  />
+                }
+                size="default"
+                variant="ghost"
+              >
+                See all content
               </Button>
             </div>
           </EmptyContent>
@@ -195,13 +209,23 @@ export default async function SearchResults({
           </EmptyHeader>
           <EmptyContent>
             <div className="flex gap-3">
-              <Button asChild size="sm" variant="secondary">
-                <Link href={buildHref({ type: "tv" })}>Clear filters</Link>
+              <Button
+                render={<Link href={buildHref({ type: "tv" })} />}
+                size="default"
+                variant="secondary"
+              >
+                Clear filters
               </Button>
-              <Button asChild size="sm" variant="ghost">
-                <Link href={buildHref({ type: "all", genre, sort: sortBy })}>
-                  See all content
-                </Link>
+              <Button
+                render={
+                  <Link
+                    href={buildHref({ type: "all", genre, sort: sortBy })}
+                  />
+                }
+                size="default"
+                variant="ghost"
+              >
+                See all content
               </Button>
             </div>
           </EmptyContent>
@@ -240,8 +264,12 @@ export default async function SearchResults({
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button asChild size="sm" variant="secondary">
-            <Link href={buildHref({})}>Clear all</Link>
+          <Button
+            render={<Link href={buildHref({})} />}
+            size="default"
+            variant="secondary"
+          >
+            Clear all
           </Button>
         </EmptyContent>
       </Empty>

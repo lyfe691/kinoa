@@ -213,16 +213,19 @@ function MobileFooter({
                     <Button
                       variant="outline"
                       className="h-11 w-full rounded-xl"
-                      asChild
+                      render={<Link href="/login" />}
                     >
-                      <Link href="/login">Sign in</Link>
+                      Sign in
                     </Button>
                   </DrawerClose>
                 </motion.div>
                 <motion.div variants={mobileItemVariants}>
                   <DrawerClose asChild>
-                    <Button className="h-11 w-full rounded-xl" asChild>
-                      <Link href="/register">Sign up</Link>
+                    <Button
+                      className="h-11 w-full rounded-xl"
+                      render={<Link href="/register" />}
+                    >
+                      Sign up
                     </Button>
                   </DrawerClose>
                 </motion.div>

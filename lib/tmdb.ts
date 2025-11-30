@@ -657,7 +657,9 @@ export async function getTvShow(id: string): Promise<TvShowDetails> {
   };
 }
 
-export async function getTvShowWithSeasons(id: string): Promise<TvShowPageData> {
+export async function getTvShowWithSeasons(
+  id: string,
+): Promise<TvShowPageData> {
   const show = await getTvShowCached(id);
 
   const firstAirYear = show.first_air_date

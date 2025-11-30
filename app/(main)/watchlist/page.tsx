@@ -6,6 +6,14 @@ import { getSession } from "@/lib/supabase/session";
 import { getWatchlist, type WatchlistItem } from "@/lib/supabase/watchlist";
 import { getMovieDetails, getTvShow } from "@/lib/tmdb";
 import { WatchlistControls } from "@/components/watchlist/watchlist-controls";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -100,27 +108,23 @@ export default async function WatchlistPage() {
       </header>
 
       {validMedia.length === 0 ? (
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <div className="flex max-w-md flex-col items-center gap-6 text-center">
-            <div className="rounded-full bg-muted p-6">
-              <Bookmark className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-xl font-semibold">Your watchlist is empty</h2>
-              <p className="text-sm text-muted-foreground">
-                Start adding movies and shows by clicking the bookmark icon
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button asChild>
-                <Link href="/">Browse Trending</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/search">Search</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Empty className="min-h-[50vh]">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Bookmark />
+            </EmptyMedia>
+            <EmptyTitle>Your watchlist is empty</EmptyTitle>
+            <EmptyDescription>
+              Start adding movies and shows by clicking the bookmark icon
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent className="flex-row justify-center gap-3">
+            <Button render={<Link href="/" />}>Browse Trending</Button>
+            <Button variant="outline" render={<Link href="/search" />}>
+              Search
+            </Button>
+          </EmptyContent>
+        </Empty>
       ) : (
         <WatchlistControls media={validMedia} />
       )}

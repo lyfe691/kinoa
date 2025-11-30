@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 import { Loader } from "lucide-react";
 
 import { useSession } from "@/lib/supabase/auth";
@@ -52,27 +52,24 @@ export function EmailFrame({ profile }: { profile: AccountProfile | null }) {
       const result = await updateEmailAction(trimmedEmail);
 
       if (!result?.success) {
-        toast.error(result?.error ?? "Update failed.");
+        toastManager.add({
+          title: result?.error ?? "Update failed.",
+          type: "error",
+        });
         return;
       }
 
       if (result.confirmationRequired) {
-        toast.message("Check your inbox", {
-          description: (
-            <span>
-              We&apos;ve sent a confirmation link to{" "}
-              <span className="font-semibold">{trimmedEmail}</span>.
-            </span>
-          ),
+        toastManager.add({
+          title: "Check your inbox",
+          type: "info",
+          description: `We've sent a confirmation link to ${trimmedEmail}.`,
         });
       } else {
-        toast.success("Email updated", {
-          description: (
-            <span>
-              Your email has been changed to{" "}
-              <span className="font-semibold">{trimmedEmail}</span>.
-            </span>
-          ),
+        toastManager.add({
+          title: "Email updated",
+          type: "success",
+          description: `Your email has been changed to ${trimmedEmail}.`,
         });
       }
 
@@ -81,7 +78,7 @@ export function EmailFrame({ profile }: { profile: AccountProfile | null }) {
       router.refresh();
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong.");
+      toastManager.add({ title: "Something went wrong.", type: "error" });
     } finally {
       setSaving(false);
     }

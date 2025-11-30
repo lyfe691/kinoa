@@ -11,7 +11,7 @@ import { GoogleAuthButton } from "@/components/auth/oauth-provider-button";
 import { useSession } from "@/lib/supabase/auth";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { AlertCircle, Loader } from "lucide-react";
-import { toast } from "sonner";
+import { toastManager } from "@/components/ui/toast";
 
 function AuthDivider() {
   return (
@@ -62,7 +62,7 @@ export function LoginForm() {
 
         if (signInError) throw signInError;
 
-        toast.success("Signed in successfully.");
+        toastManager.add({ title: "Signed in successfully.", type: "success" });
         router.push("/");
         router.refresh();
       } catch (err) {

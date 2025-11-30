@@ -4,7 +4,11 @@ import { Player } from "@/components/player";
 import { StructuredData } from "@/components/structured-data";
 import { getMovieDetails } from "@/lib/tmdb";
 import { formatRuntime } from "@/lib/format-runtime";
-import { MediaHero, MediaContent, MediaSection } from "@/components/media-detail";
+import {
+  MediaHero,
+  MediaContent,
+  MediaSection,
+} from "@/components/media-detail";
 import { absoluteUrl, buildMovieJsonLd } from "@/lib/seo";
 import { MediaMenu } from "@/components/media-menu";
 
@@ -94,11 +98,11 @@ export default async function MoviePage({ params }: MoviePageProps) {
     <div>
       <MediaHero
         type="movie"
-          title={movie.title}
+        title={movie.title}
         backdropUrl={movie.backdropUrl}
         posterUrl={movie.posterUrl}
-          rating={movie.rating}
-          voteCount={movie.voteCount}
+        rating={movie.rating}
+        voteCount={movie.voteCount}
         releaseYear={releaseYear}
         runtime={runtime}
         genres={movie.genres}
@@ -111,17 +115,17 @@ export default async function MoviePage({ params }: MoviePageProps) {
           <MediaSection title="Overview">
             <p className="text-muted-foreground leading-relaxed max-w-3xl">
               {movie.overview}
-          </p>
+            </p>
           </MediaSection>
         )}
 
         <MediaSection title="Watch Now">
-        <Player
-          kind="movie"
-          imdbId={movie.imdbId}
-          tmdbId={movie.id}
-          title={movie.title}
-        />
+          <Player
+            kind="movie"
+            imdbId={movie.imdbId}
+            tmdbId={movie.id}
+            title={movie.title}
+          />
         </MediaSection>
       </MediaContent>
 
