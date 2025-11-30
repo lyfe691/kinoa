@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { motion, type Variants } from "framer-motion";
 import { SearchBar } from "@/components/search-bar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SearchBarFallback } from "@/components/search/search-bar-fallback";
 
 // Animation Config
 
@@ -49,13 +49,17 @@ export function HomeHeader() {
         variants={FADE_UP}
         className="mb-12 text-5xl font-medium tracking-tighter sm:text-7xl"
       >
-        <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+        <span className="bg-linear-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
           What do you want to watch?
         </span>
       </motion.h1>
 
       <motion.div variants={FADE_UP} className="w-full max-w-2xl">
-        <Suspense fallback={<SearchBarFallback />}>
+        <Suspense
+          fallback={
+            <SearchBarFallback className="border-border/40 bg-background/50 backdrop-blur-md" />
+          }
+        >
           <div className="relative">
             {/* Soft anchor glow behind input */}
             <div className="absolute -inset-4 -z-10 rounded-full bg-primary/5 blur-xl" />
@@ -64,17 +68,5 @@ export function HomeHeader() {
         </Suspense>
       </motion.div>
     </motion.section>
-  );
-}
-
-function SearchBarFallback() {
-  return (
-    <div className="relative flex h-14 w-full items-center rounded-2xl border border-border/40 bg-background/50 px-4 shadow-sm backdrop-blur-md">
-      <Skeleton className="mr-3 h-5 w-5 shrink-0 rounded-full opacity-25" />
-      <Skeleton className="h-5 w-40 rounded-md opacity-20" />
-      <div className="ml-auto">
-        <Skeleton className="h-8 w-8 rounded-lg opacity-10" />
-      </div>
-    </div>
   );
 }

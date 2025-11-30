@@ -2,24 +2,33 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 
 export type ThreeDMarqueeProps = {
   images: string[];
   className?: string;
+  loading?: boolean;
 };
 
-export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
+export const ThreeDMarquee = ({
+  images,
+  className,
+  loading = false,
+}: ThreeDMarqueeProps) => {
   // Duplicate images to ensure we have enough content for more columns
   // and sufficient vertical height for the scrolling effect
-  const allImages = [...images, ...images];
+  const isLoading = loading || images.length === 0;
+  const allImages = isLoading ? [] : [...images, ...images];
   const COLUMNS = 8; // Increased from 4 to 8 for better density on large screens
   const chunkSize = Math.ceil(allImages.length / COLUMNS);
 
-  const chunks = Array.from({ length: COLUMNS }, (_, colIndex) => {
-    const start = colIndex * chunkSize;
-    return allImages.slice(start, start + chunkSize);
-  });
+  const chunks = isLoading
+    ? Array.from({ length: COLUMNS }, () => Array.from({ length: 3 }))
+    : Array.from({ length: COLUMNS }, (_, colIndex) => {
+        const start = colIndex * chunkSize;
+        return allImages.slice(start, start + chunkSize);
+      });
 
   return (
     <div
@@ -60,18 +69,26 @@ export const ThreeDMarquee = ({ images, className }: ThreeDMarqueeProps) => {
                 {subarray.map((image, imageIndex) => (
                   <div
                     className="relative w-full"
-                    key={`${colIndex}-${imageIndex}-${image}`}
+                    key={
+                      isLoading
+                        ? `skeleton-${colIndex}-${imageIndex}`
+                        : `${colIndex}-${imageIndex}-${image}`
+                    }
                   >
                     <GridLineHorizontal
                       className="-top-2 md:-top-4"
                       offset="20px"
                     />
-                    <motion.img
-                      src={image}
-                      alt={`Image ${imageIndex + 1}`}
-                      className="aspect-970/700 w-full rounded-lg object-cover shadow-2xl ring-1 ring-border will-change-transform"
-                      loading="lazy"
-                    />
+                    {isLoading ? (
+                      <Skeleton className="aspect-970/700 w-full rounded-lg shadow-2xl ring-1 ring-border" />
+                    ) : (
+                      <motion.img
+                        src={image as string}
+                        alt={`Image ${imageIndex + 1}`}
+                        className="aspect-970/700 w-full rounded-lg object-cover shadow-2xl ring-1 ring-border will-change-transform"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                 ))}
               </motion.div>

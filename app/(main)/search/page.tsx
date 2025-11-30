@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { normalizeSort } from "./sort-options";
 import { SearchBar } from "@/components/search-bar";
+import { SearchBarFallback } from "@/components/search/search-bar-fallback";
 import { MediaCardSkeleton } from "@/components/media-card-skeleton";
 import SearchResults from "./results";
 import SearchFilters from "./filters";
@@ -93,7 +94,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
 
         <div className="mx-auto max-w-2xl">
-          <Suspense fallback={null}>
+          <Suspense fallback={<SearchBarFallback />}>
             <SearchBar placeholder="Search..." enableSuggestions={false} />{" "}
             {/* we don't want suggestions here since its the search page */}
           </Suspense>
