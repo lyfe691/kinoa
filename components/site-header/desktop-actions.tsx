@@ -6,6 +6,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { containerVariants, itemVariants } from "./animations";
 import { UserMenu } from "./user-menu";
+import { ChevronToArrowIcon } from "./chevron-to-arrow";
 import type { AccountProfile } from "@/lib/profile-utils";
 import type { User } from "@supabase/supabase-js";
 
@@ -72,9 +73,10 @@ export function DesktopActions({
                 <Button
                   size="lg"
                   render={<Link href="/register" />}
-                  className="rounded-lg px-3"
+                  className="group rounded-lg px-3"
                 >
                   Sign up
+                  <ChevronToArrowIcon/>
                 </Button>
               </motion.div>
             </>
