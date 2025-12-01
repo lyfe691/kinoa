@@ -10,7 +10,7 @@ export function SearchBarFallback({ className }: SearchBarFallbackProps) {
     <div
       className={cn(
         "relative flex h-14 w-full items-center rounded-2xl border border-border bg-card px-4 shadow-sm",
-        className
+        className,
       )}
     >
       <Skeleton className="mr-3 h-5 w-5 shrink-0 rounded-full opacity-25" />
@@ -21,4 +21,3 @@ export function SearchBarFallback({ className }: SearchBarFallbackProps) {
     </div>
   );
 }
-

@@ -113,7 +113,9 @@ export default async function WatchlistPage() {
             <EmptyMedia variant="icon">
               <Bookmark />
             </EmptyMedia>
-            <EmptyTitle className="font-semibold">Your watchlist is empty</EmptyTitle>
+            <EmptyTitle className="font-semibold">
+              Your watchlist is empty
+            </EmptyTitle>
             <EmptyDescription className="pt-3">
               Start adding movies and shows by clicking the bookmark icon
             </EmptyDescription>

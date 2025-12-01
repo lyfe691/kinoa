@@ -183,7 +183,12 @@ export function MediaMenu({
                 disabled={isBusy}
               >
                 {isBusy ? (
-                  <Loader2 className={cn("animate-spin", size === "sm" ? "h-4 w-4" : "h-5 w-5")} />
+                  <Loader2
+                    className={cn(
+                      "animate-spin",
+                      size === "sm" ? "h-4 w-4" : "h-5 w-5",
+                    )}
+                  />
                 ) : (
                   <BookmarkIcon
                     size={iconSize}

@@ -220,7 +220,12 @@ export function RegisterForm() {
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={isDisabled} size="lg">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isDisabled}
+          size="lg"
+        >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading
             ? "Creating account..."
