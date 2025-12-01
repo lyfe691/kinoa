@@ -36,9 +36,9 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-10 gap-2 rounded-lg px-3 hover:bg-accent data-[state=open]:bg-accent"
+          className="group h-10 gap-2 rounded-full border border-border/40 bg-muted/20 pl-1 pr-4 transition-all duration-200 ease-in-out hover:bg-muted/40 data-[state=open]:bg-muted/40"
         >
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 border border-border/20 transition-opacity duration-200 group-hover:opacity-90">
             <AvatarImage
               src={account.avatarUrl ?? undefined}
               alt={account.displayName ?? "User"}
@@ -48,14 +48,14 @@ export function UserMenu({
               {account.initials}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden max-w-[100px] truncate text-sm font-semibold lg:inline-block">
+          <span className="hidden max-w-[100px] truncate text-sm font-medium text-foreground/80 transition-colors duration-200 group-hover:text-foreground lg:inline-block">
             {account.displayName}
           </span>
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={springTransition}
           >
-            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground/70 transition-colors duration-200 group-hover:text-foreground" />
           </motion.div>
         </Button>
       </DropdownMenuTrigger>
