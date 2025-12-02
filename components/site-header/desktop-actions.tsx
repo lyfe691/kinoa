@@ -76,7 +76,7 @@ export function DesktopActions({
                   className="group rounded-lg px-3"
                 >
                   Sign up
-                  <ChevronToArrowIcon/>
+                  <ChevronToArrowIcon />
                 </Button>
               </motion.div>
             </>

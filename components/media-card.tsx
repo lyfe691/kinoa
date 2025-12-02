@@ -47,12 +47,12 @@ export function MediaCard({
   const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
-    <Link
-      href={href}
-      className={cn("group block space-y-2 sm:space-y-3", className)}
-      aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
-    >
-      <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">
+    <div className={cn("flex flex-col gap-2 sm:gap-3", className)}>
+      <Link
+        href={href}
+        className="group relative block aspect-2/3 overflow-hidden rounded-lg bg-muted"
+        aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
+      >
         {posterUrl ? (
           <>
             <Image
@@ -68,13 +68,13 @@ export function MediaCard({
             <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/90 backdrop-blur-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/90 backdrop-blur-sm shadow-lg">
                 <Play className="ml-0.5 h-5 w-5 fill-foreground text-foreground" />
               </div>
             </div>
 
             {formattedRating && (
-              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/30 px-2 py-1 backdrop-blur-sm">
+              <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/40 px-2 py-1 backdrop-blur-sm">
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 <span className="text-xs font-medium tabular-nums text-white">
                   {formattedRating}
@@ -99,11 +99,11 @@ export function MediaCard({
             </svg>
           </div>
         )}
-      </div>
+      </Link>
 
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1 space-y-1">
-          <h3 className="line-clamp-1 text-sm font-medium leading-tight">
+      <div className="flex items-start justify-between gap-3">
+        <Link href={href} className="min-w-0 flex-1 space-y-1 group">
+          <h3 className="line-clamp-1 text-sm font-medium leading-tight group-hover:text-primary transition-colors">
             {name}
           </h3>
 
@@ -112,9 +112,9 @@ export function MediaCard({
               {metadata.join(" · ")}
             </p>
           )}
-        </div>
+        </Link>
 
-        <div className="flex-shrink-0" onClick={(e) => e.preventDefault()}>
+        <div className="shrink-0 relative z-10">
           <MediaMenu
             mediaId={media.id}
             mediaType={type}
@@ -123,6 +123,6 @@ export function MediaCard({
           />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
