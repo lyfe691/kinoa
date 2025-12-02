@@ -13,13 +13,17 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
-import { ShareDialog } from "@/components/share-dialog";
+import dynamic from "next/dynamic";
+
+const ShareDialog = dynamic(() => import("@/components/share-dialog").then((mod) => mod.ShareDialog), {
+  ssr: false,
+});
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
 import shareIcon from "@/public/icons/share.json";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -29,8 +33,6 @@ import shareIcon from "@/public/icons/share.json";
 type MediaMenuProps = {
   mediaId: number;
   mediaType: "movie" | "tv";
-  title?: string;
-  posterUrl?: string | null;
   isInWatchlist?: boolean;
   className?: string;
   size?: "sm" | "default";
@@ -44,11 +46,9 @@ const MENU_WIDTH = 180;
 // Main Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function MediaMenu({
+export const MediaMenu = React.memo(function MediaMenu({
   mediaId,
   mediaType,
-  title,
-  posterUrl,
   isInWatchlist: initialIsInWatchlist,
   className,
   size = "default",
@@ -110,7 +110,33 @@ export function MediaMenu({
 
       if (result.success) {
         if (wasInWatchlist) {
-          toastManager.add({ title: "Removed from watchlist", type: "success" });
+          const toastId = toastManager.add({
+            title: "Removed from watchlist",
+            type: "success",
+            actionProps: {
+              children: "Undo",
+              onClick: async () => {
+                setIsProcessing(true);
+                const result = await addToWatchlist(mediaId, mediaType);
+
+                if (result.success) {
+                  setIsInWatchlist(true);
+                  toastManager.close(toastId);
+                  router.refresh();
+                } else {
+                  const isDuplicate =
+                    result.error?.includes("duplicate") || result.error?.includes("unique");
+                  if (isDuplicate) {
+                    setIsInWatchlist(true);
+                    toastManager.close(toastId);
+                  } else {
+                    toastManager.add({ title: "Failed to undo", type: "error" });
+                  }
+                }
+                setIsProcessing(false);
+              },
+            },
+          });
         } else {
           const toastId = toastManager.add({
             title: "Added to watchlist",
@@ -239,12 +265,10 @@ export function MediaMenu({
         onOpenChange={setShowShareDialog}
         mediaId={mediaId}
         mediaType={mediaType}
-        title={title}
-        posterUrl={posterUrl}
       />
     </>
   );
-}
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Menu Items

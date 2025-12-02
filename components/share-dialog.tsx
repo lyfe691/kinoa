@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import { Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -14,8 +13,6 @@ type ShareDialogProps = {
   onOpenChange: (open: boolean) => void;
   mediaId: number;
   mediaType: "movie" | "tv";
-  title?: string;
-  posterUrl?: string | null;
 };
 
 export function ShareDialog({
@@ -23,8 +20,6 @@ export function ShareDialog({
   onOpenChange,
   mediaId,
   mediaType,
-  title,
-  posterUrl,
 }: ShareDialogProps) {
   const isMobile = useIsMobile();
   const [copied, setCopied] = React.useState(false);
@@ -50,16 +45,7 @@ export function ShareDialog({
     }
   }, [open, copied]);
 
-  const content = (
-    <ShareContent
-      mediaType={mediaType}
-      title={title}
-      posterUrl={posterUrl}
-      shareUrl={shareUrl}
-      copied={copied}
-      onCopy={copyLink}
-    />
-  );
+  const content = <ShareContent shareUrl={shareUrl} copied={copied} onCopy={copyLink} />;
 
   if (isMobile) {
     return (
@@ -76,7 +62,7 @@ export function ShareDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Share</DialogTitle>
         </DialogHeader>
@@ -87,57 +73,44 @@ export function ShareDialog({
 }
 
 function ShareContent({
-  mediaType,
-  title,
-  posterUrl,
   shareUrl,
   copied,
   onCopy,
 }: {
-  mediaType: "movie" | "tv";
-  title?: string;
-  posterUrl?: string | null;
   shareUrl: string;
   copied: boolean;
   onCopy: () => void;
 }) {
   return (
-    <div className="space-y-4 pt-2">
-      <div className="flex items-center gap-3">
-        {posterUrl && (
-          <div className="relative shrink-0 w-12 aspect-2/3 rounded overflow-hidden bg-muted">
-            <Image src={posterUrl} alt="" fill unoptimized className="object-cover" />
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="flex-1 min-w-0 px-3 py-2.5 text-sm bg-muted/50 rounded-lg border border-border/50 text-foreground/80 font-mono truncate">
+            {shareUrl}
           </div>
-        )}
-        <div className="min-w-0">
-          {title && <p className="font-medium truncate">{title}</p>}
-          <p className="text-sm text-muted-foreground">
-            {mediaType === "tv" ? "TV Show" : "Movie"}
-          </p>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={onCopy}
+            className="shrink-0 h-10 w-10 rounded-lg transition-colors"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={copied ? "check" : "copy"}
+                initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                {copied ? (
+                  <Check className="size-4" />
+                ) : (
+                  <Copy className="size-4" />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </Button>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="flex-1 min-w-0 px-3 py-2 text-sm bg-muted rounded-md text-muted-foreground font-mono truncate">
-          {shareUrl}
-        </div>
-        <Button size="icon" variant="outline" onClick={onCopy} className="shrink-0">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={copied ? "check" : "copy"}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-            >
-              {copied ? (
-                <Check className="size-4 text-green-500" />
-              ) : (
-                <Copy className="size-4" />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </Button>
       </div>
     </div>
   );
