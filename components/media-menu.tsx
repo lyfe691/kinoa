@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { MoreVertical, Bookmark, Loader2 } from "lucide-react";
+import { MoreVertical, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -25,6 +25,8 @@ import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
 import shareIcon from "@/public/icons/share.json";
+import bookmarkIcon from "@/public/icons/bookmark.json";
+import bookmarkFilledIcon from "@/public/icons/bookmark-filled.json";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Constants
@@ -68,6 +70,7 @@ export const MediaMenu = React.memo(function MediaMenu({
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const [showShareDialog, setShowShareDialog] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
+  const bookmarkIconRef = React.useRef<AnimatedIconHandle>(null);
 
   const isBusy = isProcessing || isChecking;
   const triggerSize = TRIGGER_SIZE[size];
@@ -193,11 +196,17 @@ export const MediaMenu = React.memo(function MediaMenu({
           onClick={toggleWatchlist}
           disabled={isBusy}
           aria-label={watchlistLabel}
+          onMouseEnter={() => bookmarkIconRef.current?.play()}
         >
           {isBusy ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            <Bookmark className={cn("size-4", isInWatchlist && "fill-primary")} />
+            <AnimatedIcon
+              ref={bookmarkIconRef}
+              icon={isInWatchlist ? bookmarkFilledIcon : bookmarkIcon}
+              size={16}
+              className={cn(isInWatchlist && "text-primary")}
+            />
           )}
           {watchlistLabel}
         </button>
@@ -244,8 +253,7 @@ export const MediaMenu = React.memo(function MediaMenu({
               className="absolute right-0 top-0 origin-top-right overflow-hidden bg-popover border border-border rounded-xl shadow-lg"
             >
               <div className="flex flex-col p-1.5">
-                <MenuItem
-                  icon={Bookmark}
+                <WatchlistMenuItem
                   label={watchlistLabel}
                   onClick={toggleWatchlist}
                   isActive={isInWatchlist}
@@ -274,19 +282,19 @@ export const MediaMenu = React.memo(function MediaMenu({
 // Menu Items
 // ─────────────────────────────────────────────────────────────────────────────
 
-function MenuItem({
-  icon: Icon,
+function WatchlistMenuItem({
   label,
   onClick,
   isActive,
   isLoading,
 }: {
-  icon: React.ElementType;
   label: string;
   onClick: () => void;
   isActive?: boolean;
   isLoading?: boolean;
 }) {
+  const iconRef = React.useRef<AnimatedIconHandle>(null);
+
   return (
     <button
       className={cn(
@@ -295,11 +303,17 @@ function MenuItem({
       )}
       onClick={onClick}
       disabled={isLoading}
+      onMouseEnter={() => iconRef.current?.play()}
     >
       {isLoading ? (
         <Loader2 className="size-4 animate-spin" />
       ) : (
-        <Icon className={cn("size-4", isActive ? "fill-primary" : "opacity-60")} />
+        <AnimatedIcon
+          ref={iconRef}
+          icon={isActive ? bookmarkFilledIcon : bookmarkIcon}
+          size={16}
+          className={cn("opacity-60", isActive && "opacity-100 text-primary")}
+        />
       )}
       <span className="whitespace-nowrap">{label}</span>
     </button>
