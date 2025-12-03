@@ -14,7 +14,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
 import settingsIcon from "@/public/icons/settings.json";
 import signOutIcon from "@/public/icons/sign-out.json";
 import { springTransition } from "./animations";

@@ -118,8 +118,6 @@ export function MediaCard({
           <MediaMenu
             mediaId={media.id}
             mediaType={type}
-            title={name}
-            posterUrl={posterUrl}
             isInWatchlist={isInWatchlist}
             size="sm"
           />

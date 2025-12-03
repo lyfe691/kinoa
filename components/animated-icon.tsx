@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { Player } from "@lordicon/react";
 
 export type AnimatedIconHandle = {
@@ -33,7 +39,10 @@ export const AnimatedIcon = forwardRef<AnimatedIconHandle, AnimatedIconProps>(
 
       // Update on theme change
       const observer = new MutationObserver(updateColor);
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
 
       return () => observer.disconnect();
     }, []);
@@ -51,5 +60,5 @@ export const AnimatedIcon = forwardRef<AnimatedIconHandle, AnimatedIconProps>(
         <Player ref={playerRef} icon={icon} size={size} colorize={color} />
       </span>
     );
-  }
+  },
 );

@@ -15,15 +15,21 @@ import {
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
-const ShareDialog = dynamic(() => import("@/components/share-dialog").then((mod) => mod.ShareDialog), {
-  ssr: false,
-});
+const ShareDialog = dynamic(
+  () => import("@/components/share-dialog").then((mod) => mod.ShareDialog),
+  {
+    ssr: false,
+  },
+);
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
 import shareIcon from "@/public/icons/share.json";
 import bookmarkIcon from "@/public/icons/bookmark.json";
 import bookmarkFilledIcon from "@/public/icons/bookmark-filled.json";
@@ -58,14 +64,13 @@ export const MediaMenu = React.memo(function MediaMenu({
 }: MediaMenuProps) {
   const router = useRouter();
   const { user } = useSession();
-  const { isInWatchlist: fetchedStatus, loading: isChecking } = useWatchlistStatus(
-    mediaId,
-    mediaType,
-    initialIsInWatchlist
-  );
+  const { isInWatchlist: fetchedStatus, loading: isChecking } =
+    useWatchlistStatus(mediaId, mediaType, initialIsInWatchlist);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isInWatchlist, setIsInWatchlist] = React.useState(initialIsInWatchlist ?? false);
+  const [isInWatchlist, setIsInWatchlist] = React.useState(
+    initialIsInWatchlist ?? false,
+  );
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
   const [showShareDialog, setShowShareDialog] = React.useState(false);
@@ -88,7 +93,8 @@ export const MediaMenu = React.memo(function MediaMenu({
     const close = () => setIsOpen(false);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const onClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) close();
+      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+        close();
     };
 
     window.addEventListener("keydown", onKey);
@@ -128,12 +134,16 @@ export const MediaMenu = React.memo(function MediaMenu({
                   router.refresh();
                 } else {
                   const isDuplicate =
-                    result.error?.includes("duplicate") || result.error?.includes("unique");
+                    result.error?.includes("duplicate") ||
+                    result.error?.includes("unique");
                   if (isDuplicate) {
                     setIsInWatchlist(true);
                     toastManager.close(toastId);
                   } else {
-                    toastManager.add({ title: "Failed to undo", type: "error" });
+                    toastManager.add({
+                      title: "Failed to undo",
+                      type: "error",
+                    });
                   }
                 }
                 setIsProcessing(false);
@@ -156,12 +166,16 @@ export const MediaMenu = React.memo(function MediaMenu({
         router.refresh();
       } else {
         const isDuplicate =
-          result.error?.includes("duplicate") || result.error?.includes("unique");
+          result.error?.includes("duplicate") ||
+          result.error?.includes("unique");
         if (isDuplicate) {
           router.refresh();
         } else {
           setIsInWatchlist(wasInWatchlist);
-          toastManager.add({ title: result.error ?? "Something went wrong", type: "error" });
+          toastManager.add({
+            title: result.error ?? "Something went wrong",
+            type: "error",
+          });
         }
       }
     } catch {
@@ -189,9 +203,11 @@ export const MediaMenu = React.memo(function MediaMenu({
         <button
           className={cn(
             "inline-flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer",
-            isInWatchlist ? "text-primary" : "text-muted-foreground hover:text-foreground",
+            isInWatchlist
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground",
             isBusy && "pointer-events-none opacity-50",
-            className
+            className,
           )}
           onClick={toggleWatchlist}
           disabled={isBusy}
@@ -210,7 +226,11 @@ export const MediaMenu = React.memo(function MediaMenu({
           )}
           {watchlistLabel}
         </button>
-        <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} onSignIn={goToLogin} />
+        <AuthDialog
+          open={showAuthDialog}
+          onOpenChange={setShowAuthDialog}
+          onSignIn={goToLogin}
+        />
       </>
     );
   }
@@ -230,7 +250,7 @@ export const MediaMenu = React.memo(function MediaMenu({
           className={cn(
             "absolute right-0 top-0 flex items-center justify-center rounded-full cursor-pointer",
             "bg-background/70 hover:bg-background/90 backdrop-blur-sm",
-            isOpen && "opacity-0 pointer-events-none"
+            isOpen && "opacity-0 pointer-events-none",
           )}
           style={{ width: triggerSize, height: triggerSize }}
           onClick={() => setIsOpen(true)}
@@ -238,7 +258,10 @@ export const MediaMenu = React.memo(function MediaMenu({
           transition={{ duration: 0.1 }}
           aria-label="Open menu"
         >
-          <MoreVertical size={size === "sm" ? 16 : 18} className="text-foreground/70" />
+          <MoreVertical
+            size={size === "sm" ? 16 : 18}
+            className="text-foreground/70"
+          />
         </motion.button>
 
         {/* Expandable menu */}
@@ -266,7 +289,11 @@ export const MediaMenu = React.memo(function MediaMenu({
         </AnimatePresence>
       </div>
 
-      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} onSignIn={goToLogin} />
+      <AuthDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        onSignIn={goToLogin}
+      />
 
       <ShareDialog
         open={showShareDialog}
@@ -299,7 +326,7 @@ function WatchlistMenuItem({
     <button
       className={cn(
         "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent",
-        isActive && "text-primary"
+        isActive && "text-primary",
       )}
       onClick={onClick}
       disabled={isLoading}
@@ -329,7 +356,12 @@ function ShareMenuItem({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       onMouseEnter={() => iconRef.current?.play()}
     >
-      <AnimatedIcon ref={iconRef} icon={shareIcon} size={16} className="opacity-60" />
+      <AnimatedIcon
+        ref={iconRef}
+        icon={shareIcon}
+        size={16}
+        className="opacity-60"
+      />
       <span className="whitespace-nowrap">Share</span>
     </button>
   );
@@ -358,7 +390,11 @@ function AuthDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
           <Button onClick={onSignIn} className="w-full sm:w-auto">

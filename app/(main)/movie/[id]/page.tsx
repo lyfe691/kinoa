@@ -107,13 +107,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
         runtime={runtime}
         genres={movie.genres}
       >
-        <MediaMenu
-          mediaId={movie.id}
-          mediaType="movie"
-          title={movie.title}
-          posterUrl={movie.posterUrl}
-          variant="button"
-        />
+        <MediaMenu mediaId={movie.id} mediaType="movie" variant="button" />
       </MediaHero>
 
       <MediaContent>

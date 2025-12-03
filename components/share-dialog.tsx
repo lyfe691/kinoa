@@ -3,8 +3,18 @@
 import * as React from "react";
 import { Check, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -25,8 +35,11 @@ export function ShareDialog({
   const [copied, setCopied] = React.useState(false);
 
   const shareUrl = React.useMemo(
-    () => (typeof window !== "undefined" ? `${window.location.origin}/${mediaType}/${mediaId}` : ""),
-    [mediaType, mediaId]
+    () =>
+      typeof window !== "undefined"
+        ? `${window.location.origin}/${mediaType}/${mediaId}`
+        : "",
+    [mediaType, mediaId],
   );
 
   const copyLink = React.useCallback(() => {
@@ -45,7 +58,9 @@ export function ShareDialog({
     }
   }, [open, copied]);
 
-  const content = <ShareContent shareUrl={shareUrl} copied={copied} onCopy={copyLink} />;
+  const content = (
+    <ShareContent shareUrl={shareUrl} copied={copied} onCopy={copyLink} />
+  );
 
   if (isMobile) {
     return (
