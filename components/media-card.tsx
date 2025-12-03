@@ -6,6 +6,7 @@ import { Star, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRuntime } from "@/lib/format-runtime";
 import { MediaMenu } from "@/components/media-menu";
+import { useWatchedStatus } from "@/hooks/use-watched-status";
 
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -37,6 +38,8 @@ export function MediaCard({
     rating,
   } = media;
 
+  const { isWatched } = useWatchedStatus(media.id, type);
+
   const metadata = [];
 
   if (releaseYear) metadata.push(releaseYear);
@@ -47,7 +50,16 @@ export function MediaCard({
   const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
-    <div className={cn("flex flex-col gap-2 sm:gap-3", className)}>
+    <div className={cn("flex flex-col gap-2 sm:gap-3 relative isolate", className)}>
+      {/* Watched Background Layer */}
+      <div
+        className={cn(
+          "absolute -inset-2 rounded-xl pointer-events-none -z-10",
+          "transition-all duration-500 ease-out",
+          isWatched ? "bg-red-500/10 scale-100" : "bg-red-500/0 scale-95"
+        )}
+      />
+
       <Link
         href={href}
         className="group relative block aspect-2/3 overflow-hidden rounded-lg bg-muted"
@@ -114,7 +126,7 @@ export function MediaCard({
           )}
         </Link>
 
-        <div className="shrink-0 relative z-10">
+        <div className="shrink-0 relative">
           <MediaMenu
             mediaId={media.id}
             mediaType={type}

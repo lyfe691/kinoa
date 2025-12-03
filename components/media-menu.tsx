@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
+import { useWatchedStatus } from "@/hooks/use-watched-status";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import {
@@ -26,6 +27,7 @@ import {
 import shareIcon from "@/public/icons/share.json";
 import bookmarkIcon from "@/public/icons/bookmark.json";
 import bookmarkFilledIcon from "@/public/icons/bookmark-filled.json";
+import eyeIcon from "@/public/icons/eye.json";
 
 const ShareDialog = dynamic(
   () => import("@/components/share-dialog").then((mod) => mod.ShareDialog),
@@ -46,7 +48,7 @@ type MediaMenuProps = {
 };
 
 const TRIGGER_SIZE = { sm: 32, default: 36 } as const;
-const MENU_WIDTH = 180;
+const MENU_WIDTH = 200;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Custom Hook: Watchlist Logic
@@ -273,6 +275,8 @@ function MediaMenuPopup({
     setShowAuthDialog,
   } = useWatchlistAction({ mediaId, mediaType, initialIsInWatchlist });
 
+  const { isWatched, toggleWatched } = useWatchedStatus(mediaId, mediaType);
+
   const triggerSize = TRIGGER_SIZE[size];
   const watchlistLabel = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
 
@@ -347,6 +351,10 @@ function MediaMenuPopup({
                   isActive={isInWatchlist}
                   isLoading={isBusy}
                 />
+                <WatchedMenuItem
+                  isWatched={isWatched}
+                  onClick={toggleWatched}
+                />
                 <ShareMenuItem onClick={openShare} />
               </div>
             </motion.div>
@@ -415,6 +423,37 @@ function WatchlistMenuItem({
   );
 }
 
+function WatchedMenuItem({
+  isWatched,
+  onClick
+}: {
+  isWatched: boolean;
+  onClick: () => void;
+}) {
+  const iconRef = React.useRef<AnimatedIconHandle>(null);
+
+  return (
+    <button
+      className={cn(
+        "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent",
+        isWatched && "text-primary"
+      )}
+      onClick={onClick}
+      onMouseEnter={() => iconRef.current?.play()}
+    >
+      <AnimatedIcon
+        ref={iconRef}
+        icon={eyeIcon}
+        size={16}
+        className={cn("opacity-60", isWatched && "opacity-100 text-primary")}
+      />
+      <span className="whitespace-nowrap">
+        {isWatched ? "Mark as Unwatched" : "Mark as Watched"}
+      </span>
+    </button>
+  );
+}
+
 function ShareMenuItem({ onClick }: { onClick: () => void }) {
   const iconRef = React.useRef<AnimatedIconHandle>(null);
 
@@ -428,7 +467,7 @@ function ShareMenuItem({ onClick }: { onClick: () => void }) {
         ref={iconRef}
         icon={shareIcon}
         size={16}
-        className="opacity-60"
+        className={cn("opacity-60")}
       />
       <span className="whitespace-nowrap">Share</span>
     </button>
