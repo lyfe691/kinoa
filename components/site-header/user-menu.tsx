@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { LogOut, ChevronDown, Settings as SettingsIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,6 +14,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
+import settingsIcon from "@/public/icons/settings.json";
+import signOutIcon from "@/public/icons/sign-out.json";
 import { springTransition } from "./animations";
 import type { AccountProfile } from "@/lib/profile-utils";
 
@@ -31,6 +38,9 @@ export function UserMenu({
   isOpen,
   setIsOpen,
 }: UserMenuProps) {
+  const settingsIconRef = React.useRef<AnimatedIconHandle>(null);
+  const signOutIconRef = React.useRef<AnimatedIconHandle>(null);
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -71,9 +81,20 @@ export function UserMenu({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" asChild>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          asChild
+          onMouseEnter={() => settingsIconRef.current?.play()}
+        >
           <Link href="/settings" onClick={() => setIsOpen(false)}>
-            <SettingsIcon className="mr-2 h-4 w-4" />
+            <div className="mr-2 size-4 flex items-center justify-center">
+              <AnimatedIcon
+                ref={settingsIconRef}
+                icon={settingsIcon}
+                size={16}
+                className="text-muted-foreground"
+              />
+            </div>
             <span>Settings</span>
           </Link>
         </DropdownMenuItem>
@@ -82,8 +103,16 @@ export function UserMenu({
           className="cursor-pointer text-destructive focus:text-destructive"
           onClick={onSignOut}
           disabled={signingOut}
+          onMouseEnter={() => signOutIconRef.current?.play()}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <div className="mr-2 size-4 flex items-center justify-center">
+            <AnimatedIcon
+              ref={signOutIconRef}
+              icon={signOutIcon}
+              size={16}
+              className="text-destructive"
+            />
+          </div>
           <span>{signingOut ? "Signing out..." : "Sign out"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

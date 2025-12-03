@@ -188,7 +188,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
             </EmptyTitle>
           </EmptyHeader>
           {searchQuery && (
-            <EmptyContent className="flex-row gap-2">
+            <EmptyContent className="flex-row gap-2 justify-center">
               <Button variant="outline" onClick={() => setSearchQuery("")}>
                 Clear search
               </Button>
@@ -197,7 +197,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
                   <Link href={`/search?q=${encodeURIComponent(searchQuery)}`} />
                 }
               >
-                Search Kinoa library
+                Search Kinoa
               </Button>
             </EmptyContent>
           )}

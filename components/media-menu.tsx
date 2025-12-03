@@ -2,13 +2,8 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { MoreVertical, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogPopup,
@@ -17,12 +12,31 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+
+const ShareDialog = dynamic(
+  () => import("@/components/share-dialog").then((mod) => mod.ShareDialog),
+  {
+    ssr: false,
+  },
+);
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
+import shareIcon from "@/public/icons/share.json";
+import bookmarkIcon from "@/public/icons/bookmark.json";
+import bookmarkFilledIcon from "@/public/icons/bookmark-filled.json";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & Constants
+// ─────────────────────────────────────────────────────────────────────────────
 
 type MediaMenuProps = {
   mediaId: number;
@@ -30,309 +44,332 @@ type MediaMenuProps = {
   isInWatchlist?: boolean;
   className?: string;
   size?: "sm" | "default";
-  layout?: "icon" | "button";
+  variant?: "menu" | "button";
 };
 
-const PARTICLE_COUNT = 5;
+const TRIGGER_SIZE = { sm: 32, default: 36 } as const;
+const MENU_WIDTH = 180;
 
-function getParticleAnimation(index: number) {
-  const angle = (index / PARTICLE_COUNT) * (2 * Math.PI);
-  const radius = 18 + Math.random() * 8;
-  const scale = 0.8 + Math.random() * 0.4;
-  const duration = 0.6 + Math.random() * 0.1;
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Component
+// ─────────────────────────────────────────────────────────────────────────────
 
-  return {
-    initial: { scale: 0, opacity: 0.3, x: 0, y: 0 },
-    animate: {
-      scale: [0, scale, 0],
-      opacity: [0.3, 0.8, 0],
-      x: [0, Math.cos(angle) * radius],
-      y: [0, Math.sin(angle) * radius * 0.75],
-    },
-    transition: { duration, delay: index * 0.04, ease: "easeOut" as const },
-  };
-}
-
-export function MediaMenu({
+export const MediaMenu = React.memo(function MediaMenu({
   mediaId,
   mediaType,
-  isInWatchlist: propIsInWatchlist,
+  isInWatchlist: initialIsInWatchlist,
   className,
   size = "default",
-  layout = "icon",
+  variant = "menu",
 }: MediaMenuProps) {
   const router = useRouter();
   const { user } = useSession();
-  const { isInWatchlist: hookIsInWatchlist, loading: checkingWatchlist } =
-    useWatchlistStatus(mediaId, mediaType, propIsInWatchlist);
+  const { isInWatchlist: fetchedStatus, loading: isChecking } =
+    useWatchlistStatus(mediaId, mediaType, initialIsInWatchlist);
+
+  const [isOpen, setIsOpen] = React.useState(false);
   const [isInWatchlist, setIsInWatchlist] = React.useState(
-    propIsInWatchlist ?? false,
+    initialIsInWatchlist ?? false,
   );
-  // We don't use a local 'loading' state for the UI to avoid replacing the icon with a spinner
-  // during the optimistic update. This prevents the "animation playing while loading" glitch.
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
-  const [animationKey, setAnimationKey] = React.useState(0);
+  const [showShareDialog, setShowShareDialog] = React.useState(false);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const bookmarkIconRef = React.useRef<AnimatedIconHandle>(null);
 
+  const isBusy = isProcessing || isChecking;
+  const triggerSize = TRIGGER_SIZE[size];
+  const watchlistLabel = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
+
+  // Sync with fetched status
   React.useEffect(() => {
-    if (!checkingWatchlist) {
-      setIsInWatchlist(hookIsInWatchlist);
-    }
-  }, [hookIsInWatchlist, checkingWatchlist]);
+    if (!isChecking) setIsInWatchlist(fetchedStatus);
+  }, [fetchedStatus, isChecking]);
 
-  const handleToggleWatchlist = React.useCallback(async () => {
-    if (!user) {
-      setShowAuthDialog(true);
-      return;
-    }
+  // Close menu on escape or outside click
+  React.useEffect(() => {
+    if (!isOpen) return;
 
-    if (checkingWatchlist) {
-      return;
-    }
+    const close = () => setIsOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+        close();
+    };
 
-    // Optimistic update: toggle immediately
-    const previousState = isInWatchlist;
-    setIsInWatchlist(!previousState);
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [isOpen]);
 
-    // Trigger animation immediately if adding
-    if (!previousState) {
-      setAnimationKey((k) => k + 1);
-    }
+  const toggleWatchlist = React.useCallback(async () => {
+    if (!user) return setShowAuthDialog(true);
+    if (isBusy) return;
+
+    setIsProcessing(true);
+    const wasInWatchlist = isInWatchlist;
+    setIsInWatchlist(!wasInWatchlist);
 
     try {
-      if (previousState) {
-        const result = await removeFromWatchlist(mediaId, mediaType);
-        if (result.success) {
-          toastManager.add({
+      const action = wasInWatchlist ? removeFromWatchlist : addToWatchlist;
+      const result = await action(mediaId, mediaType);
+
+      if (result.success) {
+        if (wasInWatchlist) {
+          const toastId = toastManager.add({
             title: "Removed from watchlist",
             type: "success",
+            actionProps: {
+              children: "Undo",
+              onClick: async () => {
+                setIsProcessing(true);
+                const result = await addToWatchlist(mediaId, mediaType);
+
+                if (result.success) {
+                  setIsInWatchlist(true);
+                  toastManager.close(toastId);
+                  router.refresh();
+                } else {
+                  const isDuplicate =
+                    result.error?.includes("duplicate") ||
+                    result.error?.includes("unique");
+                  if (isDuplicate) {
+                    setIsInWatchlist(true);
+                    toastManager.close(toastId);
+                  } else {
+                    toastManager.add({
+                      title: "Failed to undo",
+                      type: "error",
+                    });
+                  }
+                }
+                setIsProcessing(false);
+              },
+            },
           });
-          router.refresh();
         } else {
-          setIsInWatchlist(true); // Revert
-          toastManager.add({
-            title: result.error ?? "Failed to remove from watchlist",
-            type: "error",
-          });
-        }
-      } else {
-        const result = await addToWatchlist(mediaId, mediaType);
-        if (result.success) {
-          const id = toastManager.add({
+          const toastId = toastManager.add({
             title: "Added to watchlist",
             type: "success",
             actionProps: {
               children: "View",
               onClick: () => {
                 router.push("/watchlist");
-                toastManager.close(id);
+                toastManager.close(toastId);
               },
             },
           });
+        }
+        router.refresh();
+      } else {
+        const isDuplicate =
+          result.error?.includes("duplicate") ||
+          result.error?.includes("unique");
+        if (isDuplicate) {
           router.refresh();
         } else {
-          if (
-            result.error?.includes("duplicate") ||
-            result.error?.includes("unique")
-          ) {
-            router.refresh();
-          } else {
-            setIsInWatchlist(false); // Revert
-            toastManager.add({
-              title: result.error ?? "Failed to add to watchlist",
-              type: "error",
-            });
-          }
+          setIsInWatchlist(wasInWatchlist);
+          toastManager.add({
+            title: result.error ?? "Something went wrong",
+            type: "error",
+          });
         }
       }
-    } catch (error) {
-      console.error("Watchlist error:", error);
+    } catch {
+      setIsInWatchlist(wasInWatchlist);
       toastManager.add({ title: "Something went wrong", type: "error" });
-      setIsInWatchlist(!isInWatchlist); // Revert
+    } finally {
+      setIsProcessing(false);
     }
-  }, [user, isInWatchlist, mediaId, mediaType, router, checkingWatchlist]);
+  }, [user, isBusy, isInWatchlist, mediaId, mediaType, router]);
 
-  // Only show loader if we are initially checking status, not during user interaction
-  const isBusy = checkingWatchlist;
-  const label = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
+  const openShare = () => {
+    setIsOpen(false);
+    setShowShareDialog(true);
+  };
 
-  if (layout === "icon") {
-    const containerSize = size === "sm" ? "h-9 w-9" : "h-11 w-11";
-    const iconSize = size === "sm" ? 16 : 20;
+  const goToLogin = () => {
+    setShowAuthDialog(false);
+    router.push("/login");
+  };
 
+  // Button variant for detail pages
+  if (variant === "button") {
     return (
       <>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="relative flex items-center justify-center z-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "rounded-full cursor-pointer relative z-10",
-                  containerSize,
-                  "hover:bg-primary/5 active:scale-95",
-                  className,
-                )}
-                aria-label={label}
-                aria-pressed={isInWatchlist}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleToggleWatchlist();
-                }}
-                disabled={isBusy}
-              >
-                {isBusy ? (
-                  <Loader2
-                    className={cn(
-                      "animate-spin",
-                      size === "sm" ? "h-4 w-4" : "h-5 w-5",
-                    )}
-                  />
-                ) : (
-                  <BookmarkIcon
-                    size={iconSize}
-                    isSaved={isInWatchlist}
-                    animationKey={animationKey}
-                  />
-                )}
-              </Button>
-
-              {/* Particles live outside the button to prevent clipping */}
-              <SavedParticles animationKey={animationKey} />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            <p>{label}</p>
-          </TooltipContent>
-        </Tooltip>
-
+        <button
+          className={cn(
+            "inline-flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer",
+            isInWatchlist
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground",
+            isBusy && "pointer-events-none opacity-50",
+            className,
+          )}
+          onClick={toggleWatchlist}
+          disabled={isBusy}
+          aria-label={watchlistLabel}
+          onMouseEnter={() => bookmarkIconRef.current?.play()}
+        >
+          {isBusy ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <AnimatedIcon
+              ref={bookmarkIconRef}
+              icon={isInWatchlist ? bookmarkFilledIcon : bookmarkIcon}
+              size={16}
+              className={cn(isInWatchlist && "text-primary")}
+            />
+          )}
+          {watchlistLabel}
+        </button>
         <AuthDialog
           open={showAuthDialog}
           onOpenChange={setShowAuthDialog}
-          onSignIn={() => {
-            setShowAuthDialog(false);
-            router.push("/login");
-          }}
+          onSignIn={goToLogin}
         />
       </>
     );
   }
 
+  // Expandable menu variant for cards
   return (
     <>
-      <button
-        className={cn(
-          "group inline-flex items-center gap-2 transition-colors cursor-pointer",
-          isInWatchlist
-            ? "text-primary"
-            : "text-muted-foreground hover:text-foreground",
-          isBusy && "pointer-events-none opacity-50",
-          className,
-        )}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleToggleWatchlist();
-        }}
-        disabled={isBusy}
-        aria-label={label}
-        aria-pressed={isInWatchlist}
+      <div
+        ref={menuRef}
+        className={cn("relative", isOpen ? "z-50" : "z-10", className)}
+        style={{ width: triggerSize, height: triggerSize }}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
-        <span className="relative flex items-center justify-center">
-          {isBusy ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <BookmarkIcon
-              size={16}
-              isSaved={isInWatchlist}
-              animationKey={animationKey}
-            />
+        {/* Trigger */}
+        <motion.button
+          className={cn(
+            "absolute right-0 top-0 flex items-center justify-center rounded-full cursor-pointer",
+            "bg-background/70 hover:bg-background/90 backdrop-blur-sm",
+            isOpen && "opacity-0 pointer-events-none",
           )}
-        </span>
-        <span className="text-sm font-medium">{label}</span>
-      </button>
+          style={{ width: triggerSize, height: triggerSize }}
+          onClick={() => setIsOpen(true)}
+          whileTap={{ scale: 0.92 }}
+          transition={{ duration: 0.1 }}
+          aria-label="Open menu"
+        >
+          <MoreVertical
+            size={size === "sm" ? 16 : 18}
+            className="text-foreground/70"
+          />
+        </motion.button>
+
+        {/* Expandable menu */}
+        <AnimatePresence mode="wait">
+          {isOpen && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              style={{ width: MENU_WIDTH }}
+              className="absolute right-0 top-0 origin-top-right overflow-hidden bg-popover border border-border rounded-xl shadow-lg"
+            >
+              <div className="flex flex-col p-1.5">
+                <WatchlistMenuItem
+                  label={watchlistLabel}
+                  onClick={toggleWatchlist}
+                  isActive={isInWatchlist}
+                  isLoading={isBusy}
+                />
+                <ShareMenuItem onClick={openShare} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <AuthDialog
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
-        onSignIn={() => {
-          setShowAuthDialog(false);
-          router.push("/login");
-        }}
+        onSignIn={goToLogin}
+      />
+
+      <ShareDialog
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+        mediaId={mediaId}
+        mediaType={mediaType}
       />
     </>
   );
-}
+});
 
-function BookmarkIcon({
-  size,
-  isSaved,
-  animationKey,
+// ─────────────────────────────────────────────────────────────────────────────
+// Menu Items
+// ─────────────────────────────────────────────────────────────────────────────
+
+function WatchlistMenuItem({
+  label,
+  onClick,
+  isActive,
+  isLoading,
 }: {
-  size: number;
-  isSaved: boolean;
-  animationKey: number;
+  label: string;
+  onClick: () => void;
+  isActive?: boolean;
+  isLoading?: boolean;
 }) {
+  const iconRef = React.useRef<AnimatedIconHandle>(null);
+
   return (
-    <div className="relative flex items-center justify-center">
-      <Bookmark className="opacity-60" size={size} aria-hidden="true" />
-      <Bookmark
-        className="absolute text-primary fill-primary transition-opacity duration-300"
-        size={size}
-        aria-hidden="true"
-        style={{ opacity: isSaved ? 1 : 0 }}
-      />
-      <AnimatePresence mode="wait">
-        {isSaved && (
-          <motion.div
-            key={animationKey}
-            className="absolute inset-0 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, color-mix(in srgb, var(--primary), transparent 60%) 0%, transparent 80%)",
-            }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 1.4, 1], opacity: [0, 0.4, 0] }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    <button
+      className={cn(
+        "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent",
+        isActive && "text-primary",
+      )}
+      onClick={onClick}
+      disabled={isLoading}
+      onMouseEnter={() => iconRef.current?.play()}
+    >
+      {isLoading ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <AnimatedIcon
+          ref={iconRef}
+          icon={isActive ? bookmarkFilledIcon : bookmarkIcon}
+          size={16}
+          className={cn("opacity-60", isActive && "opacity-100 text-primary")}
+        />
+      )}
+      <span className="whitespace-nowrap">{label}</span>
+    </button>
   );
 }
 
-function SavedParticles({ animationKey }: { animationKey: number }) {
+function ShareMenuItem({ onClick }: { onClick: () => void }) {
+  const iconRef = React.useRef<AnimatedIconHandle>(null);
+
   return (
-    <AnimatePresence mode="wait">
-      {animationKey > 0 && (
-        <motion.div
-          key={animationKey}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
-        >
-          {[...Array(PARTICLE_COUNT)].map((_, i) => {
-            const anim = getParticleAnimation(i);
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-primary"
-                style={{
-                  width: `${4 + Math.random() * 2}px`,
-                  height: `${4 + Math.random() * 2}px`,
-                  filter: "blur(1px)",
-                  transform: "translate(-50%, -50%)",
-                }}
-                initial={anim.initial}
-                animate={anim.animate}
-                transition={anim.transition}
-              />
-            );
-          })}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <button
+      className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent"
+      onClick={onClick}
+      onMouseEnter={() => iconRef.current?.play()}
+    >
+      <AnimatedIcon
+        ref={iconRef}
+        icon={shareIcon}
+        size={16}
+        className="opacity-60"
+      />
+      <span className="whitespace-nowrap">Share</span>
+    </button>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth Dialog
+// ─────────────────────────────────────────────────────────────────────────────
 
 function AuthDialog({
   open,

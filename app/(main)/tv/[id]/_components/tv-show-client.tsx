@@ -98,7 +98,7 @@ export function TvShowClient({
         genres={show.genres}
         episodeLabel={episodeLabel}
       >
-        <MediaMenu mediaId={show.id} mediaType="tv" layout="button" />
+        <MediaMenu mediaId={show.id} mediaType="tv" variant="button" />
       </MediaHero>
 
       <MediaContent>
