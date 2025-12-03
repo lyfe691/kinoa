@@ -157,7 +157,15 @@ function useWatchlistAction({
     } finally {
       setIsProcessing(false);
     }
-  }, [user, isProcessing, isChecking, isInWatchlist, mediaId, mediaType, router]);
+  }, [
+    user,
+    isProcessing,
+    isChecking,
+    isInWatchlist,
+    mediaId,
+    mediaType,
+    router,
+  ]);
 
   return {
     isInWatchlist,
@@ -307,7 +315,7 @@ function MediaMenuPopup({
             "flex items-center justify-center rounded-full cursor-pointer relative z-20",
             "bg-background/70 hover:bg-background/90 backdrop-blur-sm",
             // Removed opacity-0 when open to keep it visible
-            isOpen && "bg-background/90"
+            isOpen && "bg-background/90",
           )}
           style={{ width: triggerSize, height: triggerSize }}
           onClick={() => setIsOpen(!isOpen)}
