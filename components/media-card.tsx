@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Play } from "lucide-react";
+import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRuntime } from "@/lib/format-runtime";
 import { MediaMenu } from "@/components/media-menu";
+import { useImageColor } from "@/hooks/use-image-color";
 
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -37,6 +38,8 @@ export function MediaCard({
     rating,
   } = media;
 
+  const color = useImageColor(posterUrl);
+
   const metadata = [];
 
   if (releaseYear) metadata.push(releaseYear);
@@ -47,10 +50,23 @@ export function MediaCard({
   const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
-    <div className={cn("flex flex-col gap-2 sm:gap-3", className)}>
+    <div
+      className={cn("flex flex-col gap-2 sm:gap-3 relative group", className)}
+    >
+      {/* Dynamic Background Layer */}
+      <div
+        className={cn(
+          "absolute -inset-2 rounded-xl pointer-events-none -z-10",
+          "transition-all duration-500 ease-out opacity-0 scale-95",
+          "group-hover:opacity-100 group-hover:scale-100",
+          !color && "bg-muted/50",
+        )}
+        style={color ? { backgroundColor: `rgba(${color}, 0.15)` } : undefined}
+      />
+
       <Link
         href={href}
-        className="group relative block aspect-2/3 overflow-hidden rounded-lg bg-muted"
+        className="relative block aspect-2/3 overflow-hidden rounded-lg bg-muted"
         aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
       >
         {posterUrl ? (
@@ -61,17 +77,11 @@ export function MediaCard({
               fill
               unoptimized
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               priority={priority}
             />
 
-            <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
-
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/90 backdrop-blur-sm shadow-lg">
-                <Play className="ml-0.5 h-5 w-5 fill-foreground text-foreground" />
-              </div>
-            </div>
+            <div className="absolute inset-0 bg-black/0 transition-colors duration-500 ease-out group-hover:bg-black/10" />
 
             {formattedRating && (
               <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/40 px-2 py-1 backdrop-blur-sm">
@@ -102,7 +112,7 @@ export function MediaCard({
       </Link>
 
       <div className="flex items-start justify-between gap-3">
-        <Link href={href} className="min-w-0 flex-1 space-y-1 group">
+        <Link href={href} className="min-w-0 flex-1 space-y-1">
           <h3 className="line-clamp-1 text-sm font-medium leading-tight group-hover:text-primary transition-colors">
             {name}
           </h3>
@@ -114,7 +124,7 @@ export function MediaCard({
           )}
         </Link>
 
-        <div className="shrink-0 relative z-10">
+        <div className="shrink-0 relative">
           <MediaMenu
             mediaId={media.id}
             mediaType={type}
