@@ -12,11 +12,19 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/supabase/auth";
 import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
 import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import {
@@ -72,7 +80,6 @@ function useWatchlistAction({
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
 
-  // Sync with fetched status
   React.useEffect(() => {
     if (!isChecking) setIsInWatchlist(fetchedStatus);
   }, [fetchedStatus, isChecking]);
@@ -83,7 +90,6 @@ function useWatchlistAction({
 
     setIsProcessing(true);
     const wasInWatchlist = isInWatchlist;
-    // Optimistic update
     setIsInWatchlist(!wasInWatchlist);
 
     try {
@@ -91,51 +97,41 @@ function useWatchlistAction({
       const result = await action(mediaId, mediaType);
 
       if (result.success) {
-        if (wasInWatchlist) {
-          const toastId = toastManager.add({
-            title: "Removed from watchlist",
-            type: "success",
-            actionProps: {
-              children: "Undo",
-              onClick: async () => {
-                setIsProcessing(true);
-                const result = await addToWatchlist(mediaId, mediaType);
-
-                if (result.success) {
-                  setIsInWatchlist(true);
-                  toastManager.close(toastId);
-                  router.refresh();
-                } else {
-                  const isDuplicate =
-                    result.error?.includes("duplicate") ||
-                    result.error?.includes("unique");
-                  if (isDuplicate) {
+        const toastId = toastManager.add({
+          title: wasInWatchlist
+            ? "Removed from watchlist"
+            : "Added to watchlist",
+          type: "success",
+          actionProps: wasInWatchlist
+            ? {
+                children: "Undo",
+                onClick: async () => {
+                  setIsProcessing(true);
+                  const undoResult = await addToWatchlist(mediaId, mediaType);
+                  if (
+                    undoResult.success ||
+                    undoResult.error?.includes("duplicate")
+                  ) {
                     setIsInWatchlist(true);
                     toastManager.close(toastId);
+                    router.refresh();
                   } else {
                     toastManager.add({
                       title: "Failed to undo",
                       type: "error",
                     });
                   }
-                }
-                setIsProcessing(false);
+                  setIsProcessing(false);
+                },
+              }
+            : {
+                children: "View",
+                onClick: () => {
+                  router.push("/watchlist");
+                  toastManager.close(toastId);
+                },
               },
-            },
-          });
-        } else {
-          const toastId = toastManager.add({
-            title: "Added to watchlist",
-            type: "success",
-            actionProps: {
-              children: "View",
-              onClick: () => {
-                router.push("/watchlist");
-                toastManager.close(toastId);
-              },
-            },
-          });
-        }
+        });
         router.refresh();
       } else {
         const isDuplicate =
@@ -144,7 +140,7 @@ function useWatchlistAction({
         if (isDuplicate) {
           router.refresh();
         } else {
-          setIsInWatchlist(wasInWatchlist); // Revert
+          setIsInWatchlist(wasInWatchlist);
           toastManager.add({
             title: result.error ?? "Something went wrong",
             type: "error",
@@ -152,7 +148,7 @@ function useWatchlistAction({
         }
       }
     } catch {
-      setIsInWatchlist(wasInWatchlist); // Revert
+      setIsInWatchlist(wasInWatchlist);
       toastManager.add({ title: "Something went wrong", type: "error" });
     } finally {
       setIsProcessing(false);
@@ -191,7 +187,7 @@ export const MediaMenu = React.memo(function MediaMenu(props: MediaMenuProps) {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sub-Components
+// Button Variant (for detail pages)
 // ─────────────────────────────────────────────────────────────────────────────
 
 function MediaMenuButton({
@@ -253,6 +249,10 @@ function MediaMenuButton({
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Popup/Drawer Variant (for cards)
+// ─────────────────────────────────────────────────────────────────────────────
+
 function MediaMenuPopup({
   mediaId,
   mediaType,
@@ -261,6 +261,7 @@ function MediaMenuPopup({
   size = "default",
 }: MediaMenuProps) {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = React.useState(false);
   const [showShareDialog, setShowShareDialog] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -276,9 +277,9 @@ function MediaMenuPopup({
   const triggerSize = TRIGGER_SIZE[size];
   const watchlistLabel = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
 
-  // Close menu on escape or outside click
+  // Close menu on escape or outside click (desktop only)
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isMobile) return;
 
     const close = () => setIsOpen(false);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
@@ -293,12 +294,28 @@ function MediaMenuPopup({
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onClick);
     };
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
-  const openShare = () => {
+  const handleWatchlist = () => {
+    toggleWatchlist();
+    setIsOpen(false);
+  };
+
+  const handleShare = () => {
     setIsOpen(false);
     setShowShareDialog(true);
   };
+
+  const menuContent = (
+    <MenuItems
+      watchlistLabel={watchlistLabel}
+      isInWatchlist={isInWatchlist}
+      isBusy={isBusy}
+      onWatchlist={handleWatchlist}
+      onShare={handleShare}
+      isMobile={isMobile}
+    />
+  );
 
   return (
     <>
@@ -309,13 +326,9 @@ function MediaMenuPopup({
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {/* Trigger */}
         <motion.button
           className={cn(
             "flex items-center justify-center rounded-full cursor-pointer relative z-20",
-            "bg-background/70 hover:bg-background/90 backdrop-blur-sm",
-            // Removed opacity-0 when open to keep it visible
-            isOpen && "bg-background/90",
           )}
           style={{ width: triggerSize, height: triggerSize }}
           onClick={() => setIsOpen(!isOpen)}
@@ -329,30 +342,38 @@ function MediaMenuPopup({
           />
         </motion.button>
 
-        {/* Expandable menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              style={{ width: MENU_WIDTH }}
-              className="absolute right-0 top-full mt-2 origin-top-right overflow-hidden bg-popover border border-border rounded-xl shadow-lg z-10"
-            >
-              <div className="flex flex-col p-1.5">
-                <WatchlistMenuItem
-                  label={watchlistLabel}
-                  onClick={toggleWatchlist}
-                  isActive={isInWatchlist}
-                  isLoading={isBusy}
-                />
-                <ShareMenuItem onClick={openShare} />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Desktop: Dropdown */}
+        {!isMobile && (
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                style={{ width: MENU_WIDTH }}
+                className="absolute right-0 top-full mt-2 origin-top-right overflow-hidden bg-popover border border-border rounded-xl shadow-lg z-10"
+              >
+                <div className="flex flex-col p-1.5">{menuContent}</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
+
+      {/* Mobile: Drawer */}
+      {isMobile && (
+        <Drawer open={isOpen} onOpenChange={setIsOpen}>
+          <DrawerContent>
+            <DrawerHeader>
+              <VisuallyHidden>
+                <DrawerTitle>Media Options</DrawerTitle>
+              </VisuallyHidden>
+            </DrawerHeader>
+            <div className="flex flex-col gap-1 p-4 pt-0">{menuContent}</div>
+          </DrawerContent>
+        </Drawer>
+      )}
 
       <AuthDialog
         open={showAuthDialog}
@@ -374,64 +395,70 @@ function MediaMenuPopup({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Menu Items
+// Shared Menu Items
 // ─────────────────────────────────────────────────────────────────────────────
 
-function WatchlistMenuItem({
-  label,
-  onClick,
-  isActive,
-  isLoading,
+function MenuItems({
+  watchlistLabel,
+  isInWatchlist,
+  isBusy,
+  onWatchlist,
+  onShare,
+  isMobile,
 }: {
-  label: string;
-  onClick: () => void;
-  isActive?: boolean;
-  isLoading?: boolean;
+  watchlistLabel: string;
+  isInWatchlist: boolean;
+  isBusy: boolean;
+  onWatchlist: () => void;
+  onShare: () => void;
+  isMobile: boolean;
 }) {
-  const iconRef = React.useRef<AnimatedIconHandle>(null);
+  const watchlistIconRef = React.useRef<AnimatedIconHandle>(null);
+  const shareIconRef = React.useRef<AnimatedIconHandle>(null);
 
-  return (
-    <button
-      className={cn(
-        "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent",
-        isActive && "text-primary",
-      )}
-      onClick={onClick}
-      disabled={isLoading}
-      onMouseEnter={() => iconRef.current?.play()}
-    >
-      {isLoading ? (
-        <Loader2 className="size-4 animate-spin" />
-      ) : (
-        <AnimatedIcon
-          ref={iconRef}
-          icon={isActive ? bookmarkFilledIcon : bookmarkIcon}
-          size={16}
-          className={cn("opacity-60", isActive && "opacity-100 text-primary")}
-        />
-      )}
-      <span className="whitespace-nowrap">{label}</span>
-    </button>
+  const itemClass = cn(
+    "flex w-full items-center gap-3 rounded-lg text-sm font-medium transition-colors cursor-pointer",
+    isMobile ? "px-3 py-3.5 active:bg-accent" : "px-2.5 py-2 hover:bg-accent",
   );
-}
-
-function ShareMenuItem({ onClick }: { onClick: () => void }) {
-  const iconRef = React.useRef<AnimatedIconHandle>(null);
 
   return (
-    <button
-      className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer hover:bg-accent"
-      onClick={onClick}
-      onMouseEnter={() => iconRef.current?.play()}
-    >
-      <AnimatedIcon
-        ref={iconRef}
-        icon={shareIcon}
-        size={16}
-        className={cn("opacity-60")}
-      />
-      <span className="whitespace-nowrap">Share</span>
-    </button>
+    <>
+      <button
+        className={cn(itemClass, isInWatchlist && "text-primary")}
+        onClick={onWatchlist}
+        disabled={isBusy}
+        onMouseEnter={() => !isMobile && watchlistIconRef.current?.play()}
+      >
+        {isBusy ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <AnimatedIcon
+            ref={watchlistIconRef}
+            icon={isInWatchlist ? bookmarkFilledIcon : bookmarkIcon}
+            size={18}
+            className={cn(
+              "opacity-60",
+              isInWatchlist && "opacity-100 text-primary",
+            )}
+          />
+        )}
+        <span>{watchlistLabel}</span>
+      </button>
+
+      <button
+        className={itemClass}
+        onClick={onShare}
+        onMouseEnter={() => !isMobile && shareIconRef.current?.play()}
+      >
+        <AnimatedIcon
+          ref={shareIconRef}
+          icon={shareIcon}
+          size={18}
+          className="opacity-60"
+        />
+        <span>Share</span>
+      </button>
+    </>
   );
 }
 

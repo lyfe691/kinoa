@@ -50,14 +50,16 @@ export function MediaCard({
   const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
-    <div className={cn("flex flex-col gap-2 sm:gap-3 relative group", className)}>
+    <div
+      className={cn("flex flex-col gap-2 sm:gap-3 relative group", className)}
+    >
       {/* Dynamic Background Layer */}
       <div
         className={cn(
           "absolute -inset-2 rounded-xl pointer-events-none -z-10",
           "transition-all duration-500 ease-out opacity-0 scale-95",
           "group-hover:opacity-100 group-hover:scale-100",
-          !color && "bg-muted/50"
+          !color && "bg-muted/50",
         )}
         style={color ? { backgroundColor: `rgba(${color}, 0.15)` } : undefined}
       />

@@ -16,7 +16,9 @@ export function useImageColor(url: string | null | undefined) {
 
     async function fetchColor() {
       try {
-        const response = await fetch(`/api/color?url=${encodeURIComponent(imageUrl)}`);
+        const response = await fetch(
+          `/api/color?url=${encodeURIComponent(imageUrl)}`,
+        );
         if (!response.ok) return;
 
         const data = await response.json();

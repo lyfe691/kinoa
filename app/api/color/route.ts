@@ -31,7 +31,11 @@ function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
   return [h * 360, s * 100, l * 100];
 }
 
-function getVibrantColor(pixels: Buffer, width: number, height: number): RGB | null {
+function getVibrantColor(
+  pixels: Buffer,
+  width: number,
+  height: number,
+): RGB | null {
   let best: RGB | null = null;
   let bestScore = -1;
 
@@ -67,7 +71,10 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl.searchParams.get("url");
 
   if (!url) {
-    return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing url parameter" },
+      { status: 400 },
+    );
   }
 
   // Check cache
@@ -80,7 +87,10 @@ export async function GET(request: NextRequest) {
     // Fetch image server-side (no CORS issues)
     const response = await fetch(url);
     if (!response.ok) {
-      return NextResponse.json({ error: "Failed to fetch image" }, { status: 502 });
+      return NextResponse.json(
+        { error: "Failed to fetch image" },
+        { status: 502 },
+      );
     }
 
     const buffer = Buffer.from(await response.arrayBuffer());
@@ -103,6 +113,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ color: null });
   } catch (error) {
     console.error("Color extraction error:", error);
-    return NextResponse.json({ error: "Failed to process image" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to process image" },
+      { status: 500 },
+    );
   }
 }
