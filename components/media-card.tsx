@@ -50,7 +50,7 @@ export function MediaCard({
   const formattedRating = rating ? rating.toFixed(1) : null;
 
   return (
-    <div className={cn("flex flex-col gap-2 sm:gap-3 relative isolate", className)}>
+    <div className={cn("flex flex-col gap-2 sm:gap-3 relative", className)}>
       {/* Watched Background Layer */}
       <div
         className={cn(
