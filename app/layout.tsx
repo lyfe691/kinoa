@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -115,6 +116,11 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <StructuredData data={siteJsonLd} />
+        <Script
+          id="adsterra-smartlink"
+          src="https://www.effectivegatecpm.com/kb8q1mkpgu?key=984f171d1b935d8e7adeb90e6093effc"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen overflow-x-hidden bg-background font-sans antialiased`}
@@ -122,8 +128,8 @@ export default async function RootLayout({
         <a
           href="https://www.effectivegatecpm.com/kb8q1mkpgu?key=984f171d1b935d8e7adeb90e6093effc"
           className="sr-only"
-          aria-hidden="true"
-          tabIndex={-1}
+          rel="sponsored noopener noreferrer"
+          target="_blank"
         >
           kinoa.lol smartlink
         </a>
