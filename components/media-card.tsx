@@ -75,11 +75,11 @@ export function MediaCard({
               fill
               unoptimized
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               priority={priority}
             />
 
-            <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/10" />
+            <div className="absolute inset-0 bg-black/0 transition-colors duration-500 ease-out group-hover:bg-black/10" />
 
             {formattedRating && (
               <div className="absolute right-2 top-2 flex items-center gap-1 rounded-md bg-black/40 px-2 py-1 backdrop-blur-sm">
