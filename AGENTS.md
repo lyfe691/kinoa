@@ -4,16 +4,16 @@
 
 ## Project Overview
 
-Kinoa is a frontend-only streaming platform built with **Next.js** and **shadcn/ui**.  
-It fetches metadata from **TMDB** and uses **VidFast** for seamless video embedding.  
-The project does **not** host or serve any media files — all playback occurs via third-party VidFast iframes.
+Kinoa is a streaming platform built with **Next.js**, **Supabase**, and **shadcn/ui**.  
+It fetches metadata from **TMDB** and uses **VidFast** (or other third-party hosters) for seamless video embedding.  
+The project does **not** host or serve any media files — all playback occurs via third-party hosters iframes.
 
 ### Core Technologies
 
 - Framework: Next.js
 - Styling: TailwindCSS + shadcn/ui
 - Data: TMDB API (The Movie Database)
-- Player: VidFast Embeds
+- Player: VidFast (or other third-party hosters) Embeds
 - Deployment: Vercel
 
 ---
@@ -52,8 +52,13 @@ The project does **not** host or serve any media files — all playback occurs v
 Environment variables:
 
 ```
-NEXT_PUBLIC_TMDB_API_KEY=<your_tmdb_api_key>
-OMDB_API_KEY=<your_omdb_api_key>
+NEXT_PUBLIC_TMDB_API_KEY=<your_tmdb_api_key_here>
+OMDB_API_KEY=<your_omdb_api_key_here>
+MAINTENANCE_MODE=false
+NEXT_PUBLIC_SUPABASE_URL=<your_supabase_url_here>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your_supabase_anon_key_here>
+SUPABASE_SERVICE_ROLE_KEY=<your_supabase_service_role_key_here>
+NEXT_PUBLIC_SITE_URL=<your_site_url_here>
 ```
 
 more might to come as we add more hosters or features.
@@ -68,6 +73,8 @@ more might to come as we add more hosters or features.
 - TailwindCSS for layout and spacing.
 - Keep React hooks minimal and pure.
 - Use shadcn/ui components for all UI primitives (e.g. Button, Card, Input). If youre unsure, check components/ui for the available components.
+- Clean code is key.
+- Code splitting if needed.
 
 ---
 
@@ -78,10 +85,8 @@ more might to come as we add more hosters or features.
   ```bash
   pnpm lint
   pnpm tsc --noEmit
+  pnpm build
   ```
-
-- Visual check: open `http://localhost:3000/movie/tt1375666` (Inception) to verify that the VidFast player loads correctly and TMDB metadata renders.
-- Confirm responsive player behavior using Chrome dev tools (mobile/desktop breakpoints).
 
 ---
 
@@ -90,7 +95,7 @@ more might to come as we add more hosters or features.
 - Branch name: `feature/<short-description>` or `fix/<short-description>`
 - PR title format: `[kinoa] <short summary>`
 - Run all checks (`pnpm lint`, `pnpm build`) before committing.
-- Write concise commits; reference issue numbers if relevant.
+- Write concise commits; reference issue numbers if relevant. Don't exaggerate.
 
 ---
 
@@ -187,45 +192,6 @@ window.addEventListener("message", ({ origin, data }) => {
 
 ---
 
-## Deployment
-
-- Deploy via [Vercel](https://vercel.com/).
-- Environment variable required: `NEXT_PUBLIC_TMDB_API_KEY`.
-- Domain: kinoa.lol
-- CI/CD: use Vercel auto-build on push to `main`.
-
----
-
-## Future Tasks
-
-- [x] Add search with TMDB `/search/movie` and `/search/tv`.
-- [x] Local storage watch progress (using VidFast `MEDIA_DATA` events).
-- [x] Dark/light theme toggle.
-- [ ] Optional watch-party.
-- [ ] Optional backend for user sessions (Supabase).
-- [ ] Optional account system.
-
-Important:
-More hosers
-If asked, you can do so.
-If the owner, aka. the developer, wants to add a new hoster, you comply.
-As of this moment, we're only using VidFast. But in the future its likely that the owner will want to add more hosters. So if asked, you can do so.
-If the owner, aka. the developer, wants to add a new hoster, you comply.
-
----
-
-## Quick Reference
-
-| Function                   | Purpose                                    |
-| -------------------------- | ------------------------------------------ |
-| `/app/page.tsx`            | Homepage with featured movies              |
-| `/app/movie/[id]/page.tsx` | Movie page with TMDB data + VidFast iframe |
-| `/lib/tmdb.ts`             | TMDB fetch utilities                       |
-| `/components/ui`           | shadcn components                          |
-| `/components/Player.tsx`   | iframe player logic                        |
-
----
-
 ## Notes for Agents
 
 - Always prefer TMDB IDs or IMDb IDs for video links.
@@ -233,6 +199,7 @@ If the owner, aka. the developer, wants to add a new hoster, you comply.
 - Do **not** alter the origin list unless asked by the owner, aka. the developer.
 - When adding new player features, reference the hosters documentation for supported parameters.
 - When committing generated files, ensure no API keys or user data are included.
+- Important: If youre unsure about something, gather more context. If youre still unsure, ask the owner, aka. the developer.
 
 ---
 
