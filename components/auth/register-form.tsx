@@ -13,8 +13,9 @@ import {
   getAuthErrorMessage,
   parseRateLimitSeconds,
 } from "@/lib/supabase/errors";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { toastManager } from "@/components/ui/toast";
+import { Spinner } from "@/components/ui/spinner";
 
 function AuthDivider() {
   return (
@@ -226,7 +227,7 @@ export function RegisterForm() {
           disabled={isDisabled}
           size="lg"
         >
-          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading && <Spinner className="h-4 w-4" />}
           {loading
             ? "Creating account..."
             : cooldown > 0

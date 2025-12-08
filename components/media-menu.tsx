@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { MoreVertical, Loader2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -31,6 +31,7 @@ import {
   AnimatedIcon,
   type AnimatedIconHandle,
 } from "@/components/animated-icon";
+import { Spinner } from "@/components/ui/spinner";
 import shareIcon from "@/public/icons/share.json";
 import bookmarkIcon from "@/public/icons/bookmark.json";
 import bookmarkFilledIcon from "@/public/icons/bookmark-filled.json";
@@ -226,7 +227,7 @@ function MediaMenuButton({
         onMouseEnter={() => bookmarkIconRef.current?.play()}
       >
         {isBusy ? (
-          <Loader2 className="size-4 animate-spin" />
+          <Spinner className="size-4" />
         ) : (
           <AnimatedIcon
             ref={bookmarkIconRef}
@@ -430,7 +431,7 @@ function MenuItems({
         onMouseEnter={() => !isMobile && watchlistIconRef.current?.play()}
       >
         {isBusy ? (
-          <Loader2 className="size-4 animate-spin" />
+          <Spinner className="size-4" />
         ) : (
           <AnimatedIcon
             ref={watchlistIconRef}

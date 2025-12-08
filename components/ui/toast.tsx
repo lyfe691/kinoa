@@ -5,19 +5,19 @@ import {
   CircleAlertIcon,
   CircleCheckIcon,
   InfoIcon,
-  LoaderCircleIcon,
   TriangleAlertIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const toastManager = Toast.createToastManager();
 
 const TOAST_ICONS = {
   error: CircleAlertIcon,
   info: InfoIcon,
-  loading: LoaderCircleIcon,
+  loading: Spinner,
   success: CircleCheckIcon,
   warning: TriangleAlertIcon,
 } as const;

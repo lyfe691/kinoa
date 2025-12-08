@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { useSession } from "@/lib/supabase/auth";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 type GoogleAuthButtonProps = {
   disabled?: boolean;
@@ -67,7 +67,7 @@ export function GoogleAuthButton({
       size="lg"
     >
       {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Spinner className="h-4 w-4" />
       ) : (
         <GoogleIcon className="h-4 w-4" />
       )}
