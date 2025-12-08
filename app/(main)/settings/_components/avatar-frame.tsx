@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toastManager } from "@/components/ui/toast";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useSession } from "@/lib/supabase/auth";
@@ -246,7 +246,7 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
           size="sm"
           className="bg-foreground text-background hover:bg-foreground/90"
         >
-          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {saving && <Spinner className="mr-2 h-4 w-4" />}
           Save
         </Button>
       </div>

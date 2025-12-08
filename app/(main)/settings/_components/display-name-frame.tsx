@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toastManager } from "@/components/ui/toast";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 import { useSession } from "@/lib/supabase/auth";
 import type { AccountProfile } from "@/lib/profile-utils";
@@ -115,7 +115,7 @@ export function DisplayNameFrame({
               size="sm"
               className="bg-foreground text-background hover:bg-foreground/90"
             >
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {saving && <Spinner className="mr-2 h-4 w-4" />}
               Save
             </Button>
           </div>
