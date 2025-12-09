@@ -143,11 +143,7 @@ export function ImageCropperDialog({
             disabled={isLoading}
             className="min-w-[100px]"
           >
-            {isLoading ? (
-              <Spinner className="mr-2 h-4 w-4" />
-            ) : (
-              "Done"
-            )}
+            {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : "Done"}
           </Button>
         </DialogFooter>
       </DialogContent>

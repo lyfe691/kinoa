@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractImageColor } from "@/lib/image-color";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 // Simple in-memory cache (persists across warm lambda invocations)
 const colorCache = new Map<string, { color: string; timestamp: number }>();
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
         headers: {
           "Cache-Control": "public, max-age=86400, s-maxage=86400",
         },
-      }
+      },
     );
   }
 
@@ -52,14 +52,14 @@ export async function GET(request: NextRequest) {
 
     if (color) {
       colorCache.set(url, { color, timestamp: Date.now() });
-      
+
       return NextResponse.json(
         { color },
         {
           headers: {
             "Cache-Control": "public, max-age=86400, s-maxage=86400",
           },
-        }
+        },
       );
     }
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         headers: {
           "Cache-Control": "public, max-age=3600, s-maxage=3600",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("Color extraction error:", error);

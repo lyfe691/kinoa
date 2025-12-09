@@ -62,7 +62,9 @@ export function getVibrantColor(
   return best;
 }
 
-export async function extractImageColor(buffer: Buffer): Promise<string | null> {
+export async function extractImageColor(
+  buffer: Buffer,
+): Promise<string | null> {
   try {
     const { data, info } = await sharp(buffer)
       .resize(50, 50, { fit: "cover" })
@@ -81,4 +83,3 @@ export async function extractImageColor(buffer: Buffer): Promise<string | null> 
     return null;
   }
 }
-

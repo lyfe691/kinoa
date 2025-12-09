@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { useSession } from "@/lib/supabase/auth";
 import { Spinner } from "@/components/ui/spinner";
-import { AnimatedIcon, type AnimatedIconHandle } from "@/components/animated-icon";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
 import googleIcon from "@/public/icons/google-colored-2.json";
 
 type GoogleAuthButtonProps = {

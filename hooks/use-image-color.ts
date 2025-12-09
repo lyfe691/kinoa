@@ -44,7 +44,7 @@ export function useImageColor(url: string | null | undefined) {
     async function getColor() {
       // 3. Check for existing in-flight request, create if missing
       let promise = promiseCache.get(url!);
-      
+
       if (!promise) {
         promise = fetch(`/api/color?url=${encodeURIComponent(url!)}`)
           .then(async (res) => {
@@ -57,17 +57,17 @@ export function useImageColor(url: string | null | undefined) {
             // Remove from promise cache after completion
             promiseCache.delete(url!);
           });
-          
+
         promiseCache.set(url!, promise);
       }
 
       try {
         const fetchedColor = await promise;
-        
+
         if (mounted) {
           // Cache the result (even if null) to prevent future unnecessary requests
           const cacheValue = fetchedColor || NO_COLOR;
-          
+
           memoryCache.set(url!, cacheValue);
           try {
             sessionStorage.setItem(`color-cache-${url!}`, cacheValue);

@@ -63,7 +63,11 @@ export const AnimatedIcon = forwardRef<AnimatedIconHandle, AnimatedIconProps>(
     // If colors prop is provided, use it.
     // If disableThemeColor is true, pass undefined to let the JSON's native colors show.
     // Otherwise, use the computed themeColor.
-    const finalColor = colors ? colors : disableThemeColor ? undefined : themeColor;
+    const finalColor = colors
+      ? colors
+      : disableThemeColor
+        ? undefined
+        : themeColor;
 
     return (
       <span
@@ -71,12 +75,7 @@ export const AnimatedIcon = forwardRef<AnimatedIconHandle, AnimatedIconProps>(
         className={className}
         style={{ display: "inline-flex", width: size, height: size }}
       >
-        <Player
-          ref={playerRef}
-          icon={icon}
-          size={size}
-          colorize={finalColor}
-        />
+        <Player ref={playerRef} icon={icon} size={size} colorize={finalColor} />
       </span>
     );
   },

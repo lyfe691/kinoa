@@ -22,6 +22,11 @@ import {
 import type { MediaSummary } from "@/lib/tmdb";
 import { MediaCard } from "@/components/media-card";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  AnimatedIcon,
+  type AnimatedIconHandle,
+} from "@/components/animated-icon";
+import optionsIcon from "@/public/icons/options.json";
 
 type WatchlistControlsProps = {
   media: MediaSummary[];
@@ -34,6 +39,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
   const [filter, setFilter] = React.useState<FilterType>("all");
   const [sort, setSort] = React.useState<SortType>("recent");
   const [searchQuery, setSearchQuery] = React.useState("");
+  const optionsIconRef = React.useRef<AnimatedIconHandle>(null);
 
   const filteredMedia = React.useMemo(() => {
     let result = [...media];
@@ -63,7 +69,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
         }
         case "recent":
         default:
-          return 0;
+          return 0; // Assuming initial order is recent
       }
     });
 
@@ -127,14 +133,27 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
               </Button>
             )}
           </div>
+
           <Select
             value={sort}
             onValueChange={(value) => setSort(value as SortType)}
           >
-            <SelectTrigger className="h-9 w-auto min-w-[140px] bg-transparent">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent align="end">
+            <div
+              className="relative"
+              onMouseEnter={() => optionsIconRef.current?.play()}
+            >
+              <SelectTrigger className="h-9 w-[180px] bg-transparent">
+                <div className="flex items-center gap-2">
+                  <AnimatedIcon
+                    ref={optionsIconRef}
+                    icon={optionsIcon}
+                    size={18}
+                  />
+                  <SelectValue placeholder="Sort by" />
+                </div>
+              </SelectTrigger>
+            </div>
+            <SelectContent align="end" className="min-w-[180px]">
               <SelectItem value="recent">Recently Added</SelectItem>
               <SelectItem value="title">Title (A-Z)</SelectItem>
               <SelectItem value="rating">Highest Rated</SelectItem>
