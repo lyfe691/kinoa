@@ -51,8 +51,19 @@ export function MediaCard({
 
   return (
     <div
-      className={cn("flex flex-col gap-2 sm:gap-3 relative group", className)}
+      className={cn(
+        "flex flex-col gap-2 sm:gap-3 relative group cursor-pointer",
+        className,
+      )}
     >
+      {/* Stretched link - makes entire card clickable */}
+      <Link href={href} className="absolute inset-0 z-0" tabIndex={-1}>
+        <span className="sr-only">
+          View {name}
+          {releaseYear ? ` (${releaseYear})` : ""}
+        </span>
+      </Link>
+
       {/* Dynamic Background Layer */}
       <div
         className={cn(
@@ -64,11 +75,8 @@ export function MediaCard({
         style={color ? { backgroundColor: `rgba(${color}, 0.15)` } : undefined}
       />
 
-      <Link
-        href={href}
-        className="relative block aspect-2/3 overflow-hidden rounded-lg bg-muted"
-        aria-label={`${name}${releaseYear ? ` (${releaseYear})` : ""}`}
-      >
+      {/* Poster */}
+      <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-muted">
         {posterUrl ? (
           <>
             <Image
@@ -109,10 +117,11 @@ export function MediaCard({
             </svg>
           </div>
         )}
-      </Link>
+      </div>
 
+      {/* Info */}
       <div className="flex items-start justify-between gap-3">
-        <Link href={href} className="min-w-0 flex-1 space-y-1">
+        <div className="min-w-0 flex-1 space-y-1">
           <h3 className="line-clamp-1 text-sm font-medium leading-tight group-hover:text-primary transition-colors">
             {name}
           </h3>
@@ -122,9 +131,10 @@ export function MediaCard({
               {metadata.join(" · ")}
             </p>
           )}
-        </Link>
+        </div>
 
-        <div className="shrink-0 relative">
+        {/* Menu - elevated above the stretched link */}
+        <div className="shrink-0 relative z-10">
           <MediaMenu
             mediaId={media.id}
             mediaType={type}
