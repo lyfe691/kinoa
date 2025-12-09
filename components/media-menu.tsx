@@ -115,7 +115,7 @@ function useWatchlistAction({
                   ) {
                     setIsInWatchlist(true);
                     toastManager.close(toastId);
-                    router.refresh();
+                    // No router.refresh() here to avoid flicker
                   } else {
                     toastManager.add({
                       title: "Failed to undo",
@@ -133,14 +133,16 @@ function useWatchlistAction({
                 },
               },
         });
-        router.refresh();
+        // Removed router.refresh() to avoid full page re-render flicker
       } else {
         const isDuplicate =
           result.error?.includes("duplicate") ||
           result.error?.includes("unique");
         if (isDuplicate) {
-          router.refresh();
+          // It's already in the state we want, so just ensure UI matches
+          setIsInWatchlist(true);
         } else {
+          // Revert UI on error
           setIsInWatchlist(wasInWatchlist);
           toastManager.add({
             title: result.error ?? "Something went wrong",

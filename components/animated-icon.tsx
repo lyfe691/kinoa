@@ -2,6 +2,7 @@
 
 import {
   useRef,
+  useLayoutEffect,
   useEffect,
   useState,
   useImperativeHandle,
@@ -32,7 +33,9 @@ export const AnimatedIcon = forwardRef<AnimatedIconHandle, AnimatedIconProps>(
     const [themeColor, setThemeColor] = useState<string | undefined>(undefined);
 
     // Get computed color from CSS to match theme
-    useEffect(() => {
+    // We use useLayoutEffect here to prevent a flash of unstyled/default color
+    // This runs synchronously after DOM mutations but before paint
+    useLayoutEffect(() => {
       // If we provided explicit colors OR we want to disable theme coloring (for multi-color icons), skip this
       if (colors || disableThemeColor || !containerRef.current) return;
 
