@@ -57,7 +57,7 @@ export function MediaCard({
       )}
     >
       {/* Stretched link - makes entire card clickable */}
-      <Link href={href} className="absolute inset-0 z-0" tabIndex={-1}>
+      <Link href={href} className="absolute inset-0 z-10" tabIndex={-1}>
         <span className="sr-only">
           View {name}
           {releaseYear ? ` (${releaseYear})` : ""}
@@ -134,7 +134,7 @@ export function MediaCard({
         </div>
 
         {/* Menu - elevated above the stretched link */}
-        <div className="shrink-0 relative z-10">
+        <div className="shrink-0 relative z-20">
           <MediaMenu
             mediaId={media.id}
             mediaType={type}

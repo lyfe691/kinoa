@@ -105,33 +105,33 @@ function useWatchlistAction({
           type: "success",
           actionProps: wasInWatchlist
             ? {
-                children: "Undo",
-                onClick: async () => {
-                  setIsProcessing(true);
-                  const undoResult = await addToWatchlist(mediaId, mediaType);
-                  if (
-                    undoResult.success ||
-                    undoResult.error?.includes("duplicate")
-                  ) {
-                    setIsInWatchlist(true);
-                    toastManager.close(toastId);
-                    // No router.refresh() here to avoid flicker
-                  } else {
-                    toastManager.add({
-                      title: "Failed to undo",
-                      type: "error",
-                    });
-                  }
-                  setIsProcessing(false);
-                },
-              }
-            : {
-                children: "View",
-                onClick: () => {
-                  router.push("/watchlist");
+              children: "Undo",
+              onClick: async () => {
+                setIsProcessing(true);
+                const undoResult = await addToWatchlist(mediaId, mediaType);
+                if (
+                  undoResult.success ||
+                  undoResult.error?.includes("duplicate")
+                ) {
+                  setIsInWatchlist(true);
                   toastManager.close(toastId);
-                },
+                  // No router.refresh() here to avoid flicker
+                } else {
+                  toastManager.add({
+                    title: "Failed to undo",
+                    type: "error",
+                  });
+                }
+                setIsProcessing(false);
               },
+            }
+            : {
+              children: "View",
+              onClick: () => {
+                router.push("/watchlist");
+                toastManager.close(toastId);
+              },
+            },
         });
         // Removed router.refresh() to avoid full page re-render flicker
       } else {
@@ -324,7 +324,7 @@ function MediaMenuPopup({
     <>
       <div
         ref={menuRef}
-        className={cn("relative", isOpen ? "z-50" : "z-10", className)}
+        className={cn("relative", isOpen ? "z-50" : "z-20", className)}
         style={{ width: triggerSize, height: triggerSize }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
