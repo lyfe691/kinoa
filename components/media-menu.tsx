@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { MoreVertical } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -71,6 +71,7 @@ function useWatchlistAction({
   initialIsInWatchlist?: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname(); // Capture current path
   const { user } = useSession();
   const { isInWatchlist: fetchedStatus, loading: isChecking } =
     useWatchlistStatus(mediaId, mediaType, initialIsInWatchlist);
@@ -172,6 +173,7 @@ function useWatchlistAction({
     toggleWatchlist,
     showAuthDialog,
     setShowAuthDialog,
+    pathname, // Return pathname
   };
 }
 
@@ -208,6 +210,7 @@ function MediaMenuButton({
     toggleWatchlist,
     showAuthDialog,
     setShowAuthDialog,
+    pathname, // Destructure pathname
   } = useWatchlistAction({ mediaId, mediaType, initialIsInWatchlist });
 
   const watchlistLabel = isInWatchlist ? "In Watchlist" : "Add to Watchlist";
@@ -245,7 +248,7 @@ function MediaMenuButton({
         onOpenChange={setShowAuthDialog}
         onSignIn={() => {
           setShowAuthDialog(false);
-          router.push("/login");
+          router.push(`/login?next=${encodeURIComponent(pathname)}`);
         }}
       />
     </>
@@ -275,6 +278,7 @@ function MediaMenuPopup({
     toggleWatchlist,
     showAuthDialog,
     setShowAuthDialog,
+    pathname, // Destructure pathname
   } = useWatchlistAction({ mediaId, mediaType, initialIsInWatchlist });
 
   const triggerSize = TRIGGER_SIZE[size];
@@ -383,7 +387,7 @@ function MediaMenuPopup({
         onOpenChange={setShowAuthDialog}
         onSignIn={() => {
           setShowAuthDialog(false);
-          router.push("/login");
+          router.push(`/login?next=${encodeURIComponent(pathname)}`);
         }}
       />
 

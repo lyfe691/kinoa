@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getAuthErrorMessage } from "@/lib/supabase/errors";
 import { useSession } from "@/lib/supabase/auth";
@@ -23,6 +24,8 @@ export function GoogleAuthButton({
   onLoadingChange,
 }: GoogleAuthButtonProps) {
   const { supabase } = useSession();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
   const [loading, setLoading] = React.useState(false);
   const iconRef = React.useRef<AnimatedIconHandle>(null);
 
@@ -48,7 +51,7 @@ export function GoogleAuthButton({
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${next || "/"}`,
         },
       });
 
@@ -61,7 +64,7 @@ export function GoogleAuthButton({
       onError?.(message);
       setLoading(false);
     }
-  }, [disabled, loading, onError, supabase]);
+  }, [disabled, loading, onError, supabase, next]);
 
   return (
     <Button

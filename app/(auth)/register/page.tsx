@@ -9,11 +9,19 @@ export const metadata: Metadata = {
   description: "Create a new Kinoa account",
 };
 
-export default async function RegisterPage() {
+type RegisterPageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function RegisterPage({
+  searchParams,
+}: RegisterPageProps) {
   const session = await getSession();
+  const params = await searchParams;
+  const next = typeof params.next === "string" ? params.next : "/";
 
   if (session) {
-    redirect("/");
+    redirect(next);
   }
   return (
     <div className="w-full max-w-md space-y-8">

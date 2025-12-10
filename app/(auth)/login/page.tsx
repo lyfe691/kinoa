@@ -9,11 +9,17 @@ export const metadata: Metadata = {
   description: "Sign in to your Kinoa account",
 };
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await getSession();
+  const params = await searchParams;
+  const next = typeof params.next === "string" ? params.next : "/";
 
   if (session) {
-    redirect("/");
+    redirect(next);
   }
   return (
     <div className="w-full max-w-md space-y-8">

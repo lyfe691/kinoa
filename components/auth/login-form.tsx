@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,9 @@ function AuthDivider() {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
+
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -64,7 +67,7 @@ export function LoginForm() {
         if (signInError) throw signInError;
 
         toastManager.add({ title: "Signed in successfully.", type: "success" });
-        router.push("/");
+        router.push(next || "/"); // Redirect to next or home
         router.refresh();
       } catch (err) {
         const message = getAuthErrorMessage(
@@ -77,7 +80,7 @@ export function LoginForm() {
         isSubmitting.current = false;
       }
     },
-    [email, password, supabase, router],
+    [email, password, supabase, router, next],
   );
 
   return (
