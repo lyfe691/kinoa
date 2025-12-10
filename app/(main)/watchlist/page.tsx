@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import { Bookmark } from "lucide-react";
 import { getSession } from "@/lib/supabase/session";
 import { getWatchlist, type WatchlistItem } from "@/lib/supabase/watchlist";
@@ -74,25 +74,26 @@ async function fetchMediaItem(
 export default async function WatchlistPage() {
   const session = await getSession();
 
-  if (!session) {
-    redirect("/login");
+  // Only fetch watchlist items if user is authenticated
+  let validMedia: MediaSummary[] = [];
+
+  if (session) {
+    const watchlistItems = await getWatchlist();
+
+    // Process items in batches to avoid hitting TMDB rate limits
+    const BATCH_SIZE = 5;
+    const mediaDetails: (MediaSummary | null)[] = [];
+
+    for (let i = 0; i < watchlistItems.length; i += BATCH_SIZE) {
+      const batch = watchlistItems.slice(i, i + BATCH_SIZE);
+      const results = await Promise.all(batch.map(fetchMediaItem));
+      mediaDetails.push(...results);
+    }
+
+    validMedia = mediaDetails.filter(
+      (item): item is NonNullable<typeof item> => item !== null,
+    );
   }
-
-  const watchlistItems = await getWatchlist();
-
-  // Process items in batches to avoid hitting TMDB rate limits
-  const BATCH_SIZE = 5;
-  const mediaDetails: (MediaSummary | null)[] = [];
-
-  for (let i = 0; i < watchlistItems.length; i += BATCH_SIZE) {
-    const batch = watchlistItems.slice(i, i + BATCH_SIZE);
-    const results = await Promise.all(batch.map(fetchMediaItem));
-    mediaDetails.push(...results);
-  }
-
-  const validMedia = mediaDetails.filter(
-    (item): item is NonNullable<typeof item> => item !== null,
-  );
 
   return (
     <section className="flex flex-col gap-12">
@@ -101,13 +102,33 @@ export default async function WatchlistPage() {
           My Watchlist
         </h1>
         <p className="text-muted-foreground">
-          {validMedia.length > 0
+          {session && validMedia.length > 0
             ? `You've saved ${validMedia.length} ${validMedia.length === 1 ? "title" : "titles"}`
             : "Keep track of movies and shows you want to watch"}
         </p>
       </header>
 
-      {validMedia.length === 0 ? (
+      {!session ? (
+        <Empty className="min-h-[50vh]">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Bookmark />
+            </EmptyMedia>
+            <EmptyTitle className="font-semibold">
+              Sign in to view your watchlist
+            </EmptyTitle>
+            <EmptyDescription className="pt-3">
+              Save movies and shows to keep track of what you want to watch
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent className="flex-row justify-center gap-3">
+            <Button render={<Link href="/login?next=/watchlist" />}>Sign In</Button>
+            <Button variant="outline" render={<Link href="/register?next=/watchlist" />}>
+              Create Account
+            </Button>
+          </EmptyContent>
+        </Empty>
+      ) : validMedia.length === 0 ? (
         <Empty className="min-h-[50vh]">
           <EmptyHeader>
             <EmptyMedia variant="icon">
