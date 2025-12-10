@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Suspense } from "react";
 import { motion, type Variants } from "framer-motion";
 import { SearchBar } from "@/components/search-bar";
@@ -39,6 +40,12 @@ const STAGGER: Variants = {
 // --- Component ---
 
 export function HomeHeader() {
+  const searchBarRef = React.useRef<React.ElementRef<typeof SearchBar>>(null);
+
+  const handleHintClick = (term: string) => {
+    searchBarRef.current?.setValue(term);
+  };
+
   return (
     <motion.section
       initial="hidden"
@@ -67,7 +74,7 @@ export function HomeHeader() {
               className="absolute -inset-4 -z-10 rounded-full bg-primary/10 blur-2xl"
               aria-hidden="true"
             />
-            <SearchBar enableSuggestions />
+            <SearchBar ref={searchBarRef} enableSuggestions />
           </div>
         </Suspense>
       </motion.div>
@@ -78,13 +85,21 @@ export function HomeHeader() {
         className="mt-6 text-xs text-muted-foreground sm:text-sm"
       >
         Try something like{" "}
-        <span className="text-foreground font-medium transition-all">
+        <button
+          onClick={() => handleHintClick("Chernobyl")}
+          className="text-foreground font-medium transition-all hover:text-primary hover:underline decoration-dotted underline-offset-4 cursor-pointer"
+          type="button"
+        >
           &ldquo;Chernobyl&rdquo;
-        </span>{" "}
+        </button>{" "}
         or{" "}
-        <span className="text-foreground font-medium transition-all">
+        <button
+          onClick={() => handleHintClick("Spirited Away")}
+          className="text-foreground font-medium transition-all hover:text-primary hover:underline decoration-dotted underline-offset-4 cursor-pointer"
+          type="button"
+        >
           &ldquo;Spirited Away&rdquo;
-        </span>
+        </button>
         .
       </motion.p>
     </motion.section>
