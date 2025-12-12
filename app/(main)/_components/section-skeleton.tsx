@@ -18,7 +18,7 @@ export function SectionSkeleton({
         <Skeleton className="h-6 w-32" aria-hidden="true" />
         {description && <Skeleton className="h-4 w-48" aria-hidden="true" />}
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: columns }).map((_, index) => (
           <MediaCardSkeleton key={index} />
         ))}

@@ -115,7 +115,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <Suspense
         key={`${query}-${typeParam}-${selectedGenre}-${sortParam}`}
         fallback={
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
             {Array.from({ length: 10 }).map((_, i) => (
               <MediaCardSkeleton key={i} />
             ))}
