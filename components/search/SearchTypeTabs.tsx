@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { MediaCard } from "@/components/media-card";
+import { AnimatedMediaGrid } from "@/components/animated-media-grid";
 
 import type { MediaSummary } from "@/lib/tmdb";
 
@@ -46,20 +46,11 @@ export function SearchTypeTabs({
     }
   }, []);
 
-  const renderResultGrid = React.useCallback(
-    (items: MediaSummary[]) => (
-      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-        {items.map((item, index) => (
-          <MediaCard
-            key={`${item.type}-${item.id}`}
-            media={item}
-            priority={index < 2}
-          />
-        ))}
-      </div>
-    ),
-    [],
-  );
+  const activeItems = React.useMemo(() => {
+    if (value === "movie") return results.movie;
+    if (value === "tv") return results.tv;
+    return results.all;
+  }, [results.all, results.movie, results.tv, value]);
 
   const renderEmptyState = (type: Exclude<SearchType, "all">) => {
     const otherType: Exclude<SearchType, "all"> =
@@ -112,50 +103,26 @@ export function SearchTypeTabs({
         </Button>
       </div>
 
-      <TabsContent value="all" className="space-y-4">
+      <div className="space-y-4">
         <p className="text-sm text-muted-foreground">
           <span className="font-medium text-foreground">
-            {results.all.length}
+            {activeItems.length}
           </span>{" "}
-          {results.all.length === 1 ? "result" : "results"} for &ldquo;{query}
+          {activeItems.length === 1 ? "result" : "results"} for &ldquo;{query}
           &rdquo;
         </p>
-        {renderResultGrid(results.all)}
-      </TabsContent>
 
-      <TabsContent value="movie" className="space-y-4">
-        {results.movie.length > 0 ? (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">
-                {results.movie.length}
-              </span>{" "}
-              {results.movie.length === 1 ? "movie" : "movies"} for &ldquo;
-              {query}&rdquo;
-            </p>
-            {renderResultGrid(results.movie)}
-          </>
+        {value !== "all" && activeItems.length === 0 ? (
+          renderEmptyState(value)
         ) : (
-          renderEmptyState("movie")
+          <AnimatedMediaGrid
+            items={activeItems}
+            layoutId="search-results"
+            priorityCount={2}
+            className="lg:grid-cols-4"
+          />
         )}
-      </TabsContent>
-
-      <TabsContent value="tv" className="space-y-4">
-        {results.tv.length > 0 ? (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">
-                {results.tv.length}
-              </span>{" "}
-              {results.tv.length === 1 ? "show" : "shows"} for &ldquo;{query}
-              &rdquo;
-            </p>
-            {renderResultGrid(results.tv)}
-          </>
-        ) : (
-          renderEmptyState("tv")
-        )}
-      </TabsContent>
+      </div>
     </Tabs>
   );
 }

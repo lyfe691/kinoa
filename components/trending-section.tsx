@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { MediaCard } from "@/components/media-card";
+import { AnimatedMediaGrid } from "@/components/animated-media-grid";
 import type { MediaSummary } from "@/lib/tmdb";
 
 type TrendingSectionProps = {
@@ -21,14 +21,10 @@ export function TrendingSection({
   }, [items, filter]);
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-      {filtered.map((item, index) => (
-        <MediaCard
-          key={`${item.type}-${item.id}`}
-          media={item}
-          priority={index < 4}
-        />
-      ))}
-    </div>
+    <AnimatedMediaGrid
+      items={filtered}
+      layoutId="trending"
+      className="lg:grid-cols-4"
+    />
   );
 }
