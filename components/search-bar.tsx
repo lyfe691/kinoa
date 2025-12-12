@@ -21,11 +21,7 @@ export type SearchBarHandle = {
 
 export const SearchBar = React.forwardRef<SearchBarHandle, SearchBarProps>(
   (
-    {
-      placeholder = "Enter keywords...",
-      className,
-      enableSuggestions = true,
-    },
+    { placeholder = "Enter keywords...", className, enableSuggestions = true },
     ref,
   ) => {
     const router = useRouter();

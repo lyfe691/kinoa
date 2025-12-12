@@ -122,8 +122,13 @@ export default async function WatchlistPage() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center gap-3">
-            <Button render={<Link href="/login?next=/watchlist" />}>Sign In</Button>
-            <Button variant="outline" render={<Link href="/register?next=/watchlist" />}>
+            <Button render={<Link href="/login?next=/watchlist" />}>
+              Sign In
+            </Button>
+            <Button
+              variant="outline"
+              render={<Link href="/register?next=/watchlist" />}
+            >
               Create Account
             </Button>
           </EmptyContent>
