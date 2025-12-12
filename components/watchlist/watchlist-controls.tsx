@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/empty";
 import type { MediaSummary } from "@/lib/tmdb";
 import { MediaCard } from "@/components/media-card";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "framer-motion";
 import {
   AnimatedIcon,
   type AnimatedIconHandle,
@@ -40,6 +40,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
   const [sort, setSort] = React.useState<SortType>("recent");
   const [searchQuery, setSearchQuery] = React.useState("");
   const optionsIconRef = React.useRef<AnimatedIconHandle>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const filteredMedia = React.useMemo(() => {
     let result = [...media];
@@ -180,25 +181,37 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
       )}
 
       {filteredMedia.length > 0 ? (
-        <motion.div
-          layout
-          className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredMedia.map((item) => (
-              <motion.div
-                key={`${item.type}-${item.id}`}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-              >
-                <MediaCard media={item} isInWatchlist className="h-full" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <LayoutGroup>
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <AnimatePresence initial={false} mode="popLayout">
+              {filteredMedia.map((item) => (
+                <motion.div
+                  key={`${item.type}-${item.id}`}
+                  layout={!prefersReducedMotion}
+                  layoutId={`${item.type}-${item.id}`}
+                  initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.8 }}
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0.15 }
+                      : {
+                          layout: {
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 30,
+                          },
+                          opacity: { duration: 0.2 },
+                          scale: { duration: 0.2 },
+                        }
+                  }
+                >
+                  <MediaCard media={item} isInWatchlist className="h-full" />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </LayoutGroup>
       ) : (
         <Empty className="min-h-[200px] border-dashed">
           <EmptyHeader>
