@@ -17,6 +17,7 @@ import {
 } from "@/lib/tmdb";
 import { MediaCard } from "@/components/media-card";
 import { SearchTypeTabs } from "@/components/search/SearchTypeTabs";
+import { NativeBanner } from "@/components/ads/native-banner";
 
 type Props = {
   query: string;
@@ -76,6 +77,7 @@ export default async function SearchResults({
               </Link>
               .
             </p>
+            <NativeBanner />
           </div>
 
           {trending.length > 0 && (
@@ -101,6 +103,7 @@ export default async function SearchResults({
                   />
                 ))}
               </div>
+              <NativeBanner />
             </section>
           )}
         </div>
@@ -182,6 +185,7 @@ export default async function SearchResults({
             />
           ))}
         </div>
+        <NativeBanner />
       </div>
     );
   }
@@ -290,6 +294,7 @@ export default async function SearchResults({
               />
             ))}
           </div>
+          <NativeBanner />
         </section>
       )}
 
@@ -305,6 +310,7 @@ export default async function SearchResults({
               />
             ))}
           </div>
+          <NativeBanner />
         </section>
       )}
     </div>

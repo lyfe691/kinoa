@@ -106,33 +106,33 @@ function useWatchlistAction({
           type: "success",
           actionProps: wasInWatchlist
             ? {
-              children: "Undo",
-              onClick: async () => {
-                setIsProcessing(true);
-                const undoResult = await addToWatchlist(mediaId, mediaType);
-                if (
-                  undoResult.success ||
-                  undoResult.error?.includes("duplicate")
-                ) {
-                  setIsInWatchlist(true);
-                  toastManager.close(toastId);
-                  // No router.refresh() here to avoid flicker
-                } else {
-                  toastManager.add({
-                    title: "Failed to undo",
-                    type: "error",
-                  });
-                }
-                setIsProcessing(false);
-              },
-            }
+                children: "Undo",
+                onClick: async () => {
+                  setIsProcessing(true);
+                  const undoResult = await addToWatchlist(mediaId, mediaType);
+                  if (
+                    undoResult.success ||
+                    undoResult.error?.includes("duplicate")
+                  ) {
+                    setIsInWatchlist(true);
+                    toastManager.close(toastId);
+                    // No router.refresh() here to avoid flicker
+                  } else {
+                    toastManager.add({
+                      title: "Failed to undo",
+                      type: "error",
+                    });
+                  }
+                  setIsProcessing(false);
+                },
+              }
             : {
-              children: "View",
-              onClick: () => {
-                router.push("/watchlist");
-                toastManager.close(toastId);
+                children: "View",
+                onClick: () => {
+                  router.push("/watchlist");
+                  toastManager.close(toastId);
+                },
               },
-            },
         });
         // Removed router.refresh() to avoid full page re-render flicker
       } else {

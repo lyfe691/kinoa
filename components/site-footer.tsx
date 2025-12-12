@@ -51,19 +51,7 @@ export function SiteFooter() {
           <div className="border-t border-border/40 pt-5">
             {/* Mobile: stacked layout */}
             <div className="flex flex-col items-center gap-4 sm:hidden">
-              <a
-                href="https://www.buymeacoffee.com/lyfe691"
-                target="_blank"
-                rel="noreferrer"
-                className="block transition-opacity hover:opacity-90"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                  alt="Buy Me A Coffee"
-                  className="h-10 w-auto"
-                />
-              </a>
+              {/* Removed Buy Me A Coffee button due to privacy concerns*/}
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <p>&copy; {new Date().getFullYear()} Kinoa</p>
                 <span className="text-border">•</span>
@@ -104,19 +92,7 @@ export function SiteFooter() {
                 <p>
                   &copy; {new Date().getFullYear()} Kinoa. All rights reserved.
                 </p>
-                <a
-                  href="https://www.buymeacoffee.com/lyfe691"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block transition-opacity hover:opacity-90"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                    alt="Buy Me A Coffee"
-                    className="h-9 w-auto"
-                  />
-                </a>
+                {/* Removed Buy Me A Coffee button due to privacy concerns*/}
               </div>
               <nav className="flex items-center" aria-label="Footer">
                 <DropdownMenu>
