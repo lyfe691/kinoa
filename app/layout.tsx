@@ -10,6 +10,7 @@ import { StructuredData } from "@/components/structured-data";
 import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
 import { getSession } from "@/lib/supabase/session";
 import { AdPopunder } from "@/components/ads/ad-popunder";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -122,6 +123,7 @@ export default async function RootLayout({
       >
         <AdPopunder />
         <Analytics />
+        <SpeedInsights />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

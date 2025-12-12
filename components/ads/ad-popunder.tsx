@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const AD_URL = process.env.NEXT_PUBLIC_AD_POPUNDER_URL || "";
-const COOLDOWN_MS = 10 * 1000; // 10s
+const COOLDOWN_MS = 30 * 1000; // 30s
 const STORAGE_KEY = "kinoa_ad_last_shown";
 
 export function AdPopunder() {
