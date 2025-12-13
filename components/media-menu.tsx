@@ -217,12 +217,13 @@ function MediaMenuButton({
 
   return (
     <>
-      <button
+      <Button
+        variant="ghost"
         className={cn(
-          "inline-flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer",
-          isInWatchlist
-            ? "text-primary"
-            : "text-muted-foreground hover:text-foreground",
+          "h-9 px-3 rounded-full",
+          "gap-2 text-sm font-medium cursor-pointer",
+          "hover:bg-accent/70",
+          isInWatchlist ? "text-primary" : "text-muted-foreground",
           isBusy && "pointer-events-none opacity-50",
           className,
         )}
@@ -242,7 +243,7 @@ function MediaMenuButton({
           />
         )}
         {watchlistLabel}
-      </button>
+      </Button>
       <AuthDialog
         open={showAuthDialog}
         onOpenChange={setShowAuthDialog}
