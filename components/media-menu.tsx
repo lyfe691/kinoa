@@ -22,8 +22,7 @@ import { Button } from "@/components/ui/button";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/supabase/auth";
-import { addToWatchlist, removeFromWatchlist } from "@/lib/supabase/watchlist";
-import { useWatchlistStatus } from "@/hooks/use-watchlist-status";
+import { useWatchlist } from "@/components/watchlist-provider";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toastManager } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
@@ -73,107 +72,80 @@ function useWatchlistAction({
   const router = useRouter();
   const pathname = usePathname(); // Capture current path
   const { user } = useSession();
-  const { isInWatchlist: fetchedStatus, loading: isChecking } =
-    useWatchlistStatus(mediaId, mediaType, initialIsInWatchlist);
+  const {
+    isInWatchlist: checkIsInWatchlist,
+    addToWatchlist,
+    removeFromWatchlist,
+    isLoading: isContextLoading,
+  } = useWatchlist();
 
-  const [isInWatchlist, setIsInWatchlist] = React.useState(
-    initialIsInWatchlist ?? false,
-  );
-  const [isProcessing, setIsProcessing] = React.useState(false);
   const [showAuthDialog, setShowAuthDialog] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!isChecking) setIsInWatchlist(fetchedStatus);
-  }, [fetchedStatus, isChecking]);
+  // Use context status, fallback to initial state while loading
+  const isInWatchlist =
+    isContextLoading && initialIsInWatchlist !== undefined
+      ? initialIsInWatchlist
+      : checkIsInWatchlist(mediaId, mediaType);
 
   const toggleWatchlist = React.useCallback(async () => {
     if (!user) return setShowAuthDialog(true);
-    if (isProcessing || isChecking) return;
+    if (isProcessing) return;
 
     setIsProcessing(true);
     const wasInWatchlist = isInWatchlist;
-    setIsInWatchlist(!wasInWatchlist);
 
     try {
-      const action = wasInWatchlist ? removeFromWatchlist : addToWatchlist;
-      const result = await action(mediaId, mediaType);
-
-      if (result.success) {
+      if (wasInWatchlist) {
+        await removeFromWatchlist(mediaId, mediaType);
         const toastId = toastManager.add({
-          title: wasInWatchlist
-            ? "Removed from watchlist"
-            : "Added to watchlist",
+          title: "Removed from watchlist",
           type: "success",
-          actionProps: wasInWatchlist
-            ? {
-                children: "Undo",
-                onClick: async () => {
-                  setIsProcessing(true);
-                  const undoResult = await addToWatchlist(mediaId, mediaType);
-                  if (
-                    undoResult.success ||
-                    undoResult.error?.includes("duplicate")
-                  ) {
-                    setIsInWatchlist(true);
-                    toastManager.close(toastId);
-                    // No router.refresh() here to avoid flicker
-                  } else {
-                    toastManager.add({
-                      title: "Failed to undo",
-                      type: "error",
-                    });
-                  }
-                  setIsProcessing(false);
-                },
-              }
-            : {
-                children: "View",
-                onClick: () => {
-                  router.push("/watchlist");
-                  toastManager.close(toastId);
-                },
-              },
+          actionProps: {
+            children: "Undo",
+            onClick: async () => {
+              await addToWatchlist(mediaId, mediaType);
+              toastManager.close(toastId);
+            },
+          },
         });
-        // Removed router.refresh() to avoid full page re-render flicker
       } else {
-        const isDuplicate =
-          result.error?.includes("duplicate") ||
-          result.error?.includes("unique");
-        if (isDuplicate) {
-          // It's already in the state we want, so just ensure UI matches
-          setIsInWatchlist(true);
-        } else {
-          // Revert UI on error
-          setIsInWatchlist(wasInWatchlist);
-          toastManager.add({
-            title: result.error ?? "Something went wrong",
-            type: "error",
-          });
-        }
+        await addToWatchlist(mediaId, mediaType);
+        const toastId = toastManager.add({
+          title: "Added to watchlist",
+          type: "success",
+          actionProps: {
+            children: "View",
+            onClick: () => {
+              router.push("/watchlist");
+              toastManager.close(toastId);
+            },
+          },
+        });
       }
     } catch {
-      setIsInWatchlist(wasInWatchlist);
-      toastManager.add({ title: "Something went wrong", type: "error" });
+      // Error is handled in the provider (toast & revert)
     } finally {
       setIsProcessing(false);
     }
   }, [
     user,
     isProcessing,
-    isChecking,
     isInWatchlist,
     mediaId,
     mediaType,
     router,
+    addToWatchlist,
+    removeFromWatchlist,
   ]);
 
   return {
     isInWatchlist,
-    isBusy: isProcessing || isChecking,
+    isBusy: isProcessing,
     toggleWatchlist,
     showAuthDialog,
     setShowAuthDialog,
-    pathname, // Return pathname
+    pathname,
   };
 }
 
@@ -181,7 +153,7 @@ function useWatchlistAction({
 // Main Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const MediaMenu = React.memo(function MediaMenu(props: MediaMenuProps) {
+export function MediaMenu(props: MediaMenuProps) {
   const { variant = "menu" } = props;
 
   if (variant === "button") {
@@ -189,7 +161,7 @@ export const MediaMenu = React.memo(function MediaMenu(props: MediaMenuProps) {
   }
 
   return <MediaMenuPopup {...props} />;
-});
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Button Variant (for detail pages)

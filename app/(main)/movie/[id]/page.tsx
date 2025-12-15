@@ -11,6 +11,7 @@ import {
 } from "@/components/media-detail";
 import { absoluteUrl, buildMovieJsonLd } from "@/lib/seo";
 import { MediaMenu } from "@/components/media-menu";
+import { isInWatchlist } from "@/lib/supabase/watchlist";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -88,6 +89,8 @@ export default async function MoviePage({ params }: MoviePageProps) {
     notFound();
   }
 
+  const isWatchlisted = await isInWatchlist(movie.id, "movie");
+
   const releaseYear = movie.releaseDate
     ? new Date(movie.releaseDate).getFullYear().toString()
     : undefined;
@@ -107,7 +110,12 @@ export default async function MoviePage({ params }: MoviePageProps) {
         runtime={runtime}
         genres={movie.genres}
       >
-        <MediaMenu mediaId={movie.id} mediaType="movie" variant="button" />
+        <MediaMenu
+          mediaId={movie.id}
+          mediaType="movie"
+          variant="button"
+          isInWatchlist={isWatchlisted}
+        />
       </MediaHero>
 
       <MediaContent>

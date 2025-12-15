@@ -17,12 +17,14 @@ type TvShowClientProps = {
   show: TvShowPageData;
   initialSeason: number;
   initialEpisode: number;
+  isWatchlisted?: boolean;
 };
 
 export function TvShowClient({
   show,
   initialSeason,
   initialEpisode,
+  isWatchlisted,
 }: TvShowClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -98,7 +100,12 @@ export function TvShowClient({
         genres={show.genres}
         episodeLabel={episodeLabel}
       >
-        <MediaMenu mediaId={show.id} mediaType="tv" variant="button" />
+        <MediaMenu
+          mediaId={show.id}
+          mediaType="tv"
+          variant="button"
+          isInWatchlist={isWatchlisted}
+        />
       </MediaHero>
 
       <MediaContent>

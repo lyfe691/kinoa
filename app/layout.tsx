@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/supabase/auth";
 import { ToastProvider } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { WatchlistProvider } from "@/components/watchlist-provider";
 import { StructuredData } from "@/components/structured-data";
 import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
 import { getSession } from "@/lib/supabase/session";
@@ -133,14 +134,16 @@ export default async function RootLayout({
         >
           <AuthProvider initialSession={session}>
             <TooltipProvider>
-              <ToastProvider>
-                <div
-                  data-vaul-drawer-wrapper
-                  className="flex min-h-screen flex-col"
-                >
-                  {children}
-                </div>
-              </ToastProvider>
+              <WatchlistProvider>
+                <ToastProvider>
+                  <div
+                    data-vaul-drawer-wrapper
+                    className="flex min-h-screen flex-col"
+                  >
+                    {children}
+                  </div>
+                </ToastProvider>
+              </WatchlistProvider>
             </TooltipProvider>
           </AuthProvider>
         </ThemeProvider>

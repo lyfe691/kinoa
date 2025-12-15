@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTvShowWithSeasons } from "@/lib/tmdb";
 import { absoluteUrl, siteConfig } from "@/lib/seo";
 import { TvShowClient } from "./_components/tv-show-client";
+import { isInWatchlist } from "@/lib/supabase/watchlist";
 
 const truncate = (value: string, max = 160) =>
   value.length > max ? `${value.slice(0, max - 1)}…` : value;
@@ -84,11 +85,14 @@ export default async function TvPage({ params, searchParams }: TvPageProps) {
   const initialSeason = s ? parseInt(s, 10) : 1;
   const initialEpisode = e ? parseInt(e, 10) : 1;
 
+  const isWatchlisted = await isInWatchlist(show.id, "tv");
+
   return (
     <TvShowClient
       show={show}
       initialSeason={initialSeason}
       initialEpisode={initialEpisode}
+      isWatchlisted={isWatchlisted}
     />
   );
 }

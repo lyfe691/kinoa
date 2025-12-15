@@ -25,6 +25,7 @@ import {
   AnimatedIcon,
   type AnimatedIconHandle,
 } from "@/components/animated-icon";
+import { useWatchlist } from "@/components/watchlist-provider";
 import optionsIcon from "@/public/icons/options.json";
 
 type WatchlistControlsProps = {
@@ -35,26 +36,31 @@ type FilterType = "all" | "movie" | "tv";
 type SortType = "recent" | "title" | "rating" | "year";
 
 export function WatchlistControls({ media }: WatchlistControlsProps) {
+  const { isInWatchlist, isLoading: isWatchlistLoading } = useWatchlist();
   const [filter, setFilter] = React.useState<FilterType>("all");
   const [sort, setSort] = React.useState<SortType>("recent");
   const [searchQuery, setSearchQuery] = React.useState("");
   const optionsIconRef = React.useRef<AnimatedIconHandle>(null);
 
   const filteredMedia = React.useMemo(() => {
-    let result = [...media];
+    // 1. Sync with client-side watchlist state (handle removals)
+    // If loading, assume server state is correct to avoid flashing empty
+    let result = isWatchlistLoading
+      ? [...media]
+      : media.filter((item) => isInWatchlist(item.id, item.type));
 
-    // Apply search
+    // 2. Apply search
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter((item) => item.name.toLowerCase().includes(query));
     }
 
-    // Apply filter
+    // 3. Apply filter
     if (filter !== "all") {
       result = result.filter((item) => item.type === filter);
     }
 
-    // Apply sort
+    // 4. Apply sort
     result.sort((a, b) => {
       switch (sort) {
         case "title":
@@ -73,7 +79,7 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
     });
 
     return result;
-  }, [media, filter, sort, searchQuery]);
+  }, [media, filter, sort, searchQuery, isInWatchlist, isWatchlistLoading]);
 
   const movieCount = media.filter((m) => m.type === "movie").length;
   const tvCount = media.filter((m) => m.type === "tv").length;

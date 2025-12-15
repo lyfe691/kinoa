@@ -35,6 +35,35 @@ export async function getWatchlist(): Promise<WatchlistItem[]> {
   return data ?? [];
 }
 
+/**
+ * Optimized fetch for just IDs and types (for context provider)
+ */
+export async function getWatchlistIds(): Promise<
+  { media_id: number; media_type: "movie" | "tv" }[]
+> {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("watchlist")
+    .select("media_id, media_type")
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Failed to fetch watchlist IDs:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 export async function isInWatchlist(
   mediaId: number,
   mediaType: "movie" | "tv",
@@ -86,6 +115,10 @@ export async function addToWatchlist(
   });
 
   if (error) {
+    // Return the error code so the client can handle duplicates gracefully
+    if (error.code === "23505") {
+      return { success: false, error: "duplicate" };
+    }
     console.error("Failed to add to watchlist:", error);
     return { success: false, error: error.message };
   }
