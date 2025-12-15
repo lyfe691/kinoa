@@ -120,12 +120,14 @@ async function requestOmdb(params: OmdbLookupParams) {
       return normalizedId;
     }
 
+    if (data.Response === "False" && data.Error) {
+      console.warn(`[imdb] OMDb lookup failed for ${request.url}: ${data.Error}`);
+    }
+
     lookupCache.set(request.cacheKey, null);
     return null;
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("OMDb lookup failed", error);
-    }
+    console.warn("[imdb] OMDb lookup request error", error);
     lookupCache.set(request.cacheKey, null);
     return null;
   }

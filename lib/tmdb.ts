@@ -596,6 +596,7 @@ export type TvShowDetails = {
   rating?: number;
   voteCount?: number;
   imdbId: string | null;
+  firstAirDate?: string;
 };
 
 export type TvEpisode = {
@@ -654,6 +655,7 @@ export async function getTvShow(id: string): Promise<TvShowDetails> {
     rating: show.vote_average,
     voteCount: show.vote_count,
     imdbId,
+    firstAirDate: show.first_air_date ?? undefined,
   };
 }
 
@@ -781,7 +783,7 @@ async function enrichMediaSummaries(
   items: MediaSummary[],
 ): Promise<MediaSummary[]> {
   // Limit expensive detail lookups to the first few items so we stay under TMDB rate limits.
-  const ENRICH_LIMIT = 4;
+  const ENRICH_LIMIT = 20;
 
   const enriched = await Promise.all(
     items.map(async (item, index) => {

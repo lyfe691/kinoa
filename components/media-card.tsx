@@ -44,8 +44,9 @@ export function MediaCard({
 
   if (releaseYear) metadata.push(releaseYear);
   if (type === "movie" && runtime) metadata.push(formatRuntime(runtime));
-  if (type === "tv" && seasonCount)
+  if (type === "tv" && seasonCount) {
     metadata.push(`${seasonCount} Season${seasonCount > 1 ? "s" : ""}`);
+  }
 
   const formattedRating = rating ? rating.toFixed(1) : null;
 

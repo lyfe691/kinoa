@@ -53,7 +53,9 @@ async function fetchMediaItem(
         overview: show.overview,
         posterUrl: show.posterUrl,
         backdropUrl: show.backdropUrl,
-        releaseYear: undefined,
+        releaseYear: show.firstAirDate
+          ? new Date(show.firstAirDate).getFullYear().toString()
+          : undefined,
         href: `/tv/${show.id}`,
         imdbId: show.imdbId ?? null,
         seasonCount: show.seasonCount,

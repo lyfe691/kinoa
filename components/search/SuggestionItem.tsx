@@ -62,6 +62,11 @@ export const SuggestionItem = React.memo(function SuggestionItem({
                 {item.releaseYear}
               </span>
             )}
+            {item.type === "tv" && (
+               <span className="text-xs font-medium text-muted-foreground/70">
+                 • TV Series
+               </span>
+            )}
             {item.rating && item.rating > 0 && (
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <Star className="h-3 w-3 fill-current text-yellow-500" />
