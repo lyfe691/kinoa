@@ -122,7 +122,6 @@ export function EmailFrame({ profile }: { profile: AccountProfile | null }) {
               type="submit"
               disabled={!form.formState.isDirty || saving}
               size="sm"
-              className="bg-foreground text-background hover:bg-foreground/90"
             >
               {saving && <Spinner className="mr-2 h-4 w-4" />}
               Save

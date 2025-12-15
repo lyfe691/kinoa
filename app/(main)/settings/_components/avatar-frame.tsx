@@ -244,7 +244,6 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
           onClick={handleSave}
           disabled={!hasChanged || saving}
           size="sm"
-          className="bg-foreground text-background hover:bg-foreground/90"
         >
           {saving && <Spinner className="mr-2 h-4 w-4" />}
           Save
