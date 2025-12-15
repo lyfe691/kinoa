@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Sans } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
@@ -13,8 +13,8 @@ import { getSession } from "@/lib/supabase/session";
 import { AdPopunder } from "@/components/ads/ad-popunder";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSans = Noto_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -102,8 +102,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor },
+    { media: "(prefers-color-scheme: light)", color: "#fdf8f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#35312f" },
   ],
 };
 
@@ -115,12 +115,12 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={notoSans.variable} suppressHydrationWarning>
       <head>
         <StructuredData data={siteJsonLd} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen overflow-x-hidden bg-background font-sans antialiased`}
+        className={`${geistMono.variable} min-h-screen overflow-x-hidden bg-background font-sans antialiased`}
       >
         <AdPopunder />
         <Analytics />

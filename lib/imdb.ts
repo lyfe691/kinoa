@@ -121,7 +121,9 @@ async function requestOmdb(params: OmdbLookupParams) {
     }
 
     if (data.Response === "False" && data.Error) {
-      console.warn(`[imdb] OMDb lookup failed for ${request.url}: ${data.Error}`);
+      console.warn(
+        `[imdb] OMDb lookup failed for ${request.url}: ${data.Error}`,
+      );
     }
 
     lookupCache.set(request.cacheKey, null);
