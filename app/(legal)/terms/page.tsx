@@ -197,44 +197,62 @@ export default function TermsPage() {
 
       <section className="space-y-3 text-sm leading-relaxed text-muted-foreground">
         <h2 className="text-base font-semibold text-foreground">
-          8. Notice Procedure for Alleged Unlawful Content
+          8. DMCA / Copyright Takedown Policy
         </h2>
         <p>
-          If you believe that material surfaced through the Service infringes
-          is otherwise unlawful, please submit a request using our{" "}
+          Kinoa respects the intellectual property rights of others and complies
+          with the Digital Millennium Copyright Act (DMCA). It is our policy to
+          respond expeditiously to clear notices of alleged copyright
+          infringement.
+        </p>
+        <p>
+          <strong>Notice Procedure:</strong> If you believe that material on the
+          Service infringes your copyright, please submit a DMCA Takedown Notice
+          using our{" "}
           <Link
             href="/contact"
             className="text-foreground underline underline-offset-4"
           >
             contact form
           </Link>{" "}
-          with:
+          that includes:
         </p>
         <ul className="list-disc space-y-2 pl-5">
-          <li>Your full name, address, and preferred contact information.</li>
           <li>
-            A description of the protected work or legal interest you believe is
-            being infringed or violated.
+            Identification of the copyrighted work claimed to have been
+            infringed.
           </li>
           <li>
-            The exact URL(s) within the Service where the content is referenced.
+            Identification of the material that is claimed to be infringing and
+            where it is located (provide the exact URL).
+          </li>
+          <li>Your contact information (address, telephone number, email).</li>
+          <li>
+            A statement that you have a good faith belief that the use of the
+            material is not authorised by the copyright owner, its agent, or the
+            law.
           </li>
           <li>
-            A statement, made in good faith, that the use is not authorised by
-            the rightsholder, its agent, or applicable law.
+            A statement, made under penalty of perjury, that the above
+            information is accurate and that you are the copyright owner or
+            authorised to act on their behalf.
           </li>
-          <li>
-            Evidence of your authority to act on behalf of the rights holder, if
-            applicable.
-          </li>
+          <li>Your physical or electronic signature.</li>
         </ul>
         <p>
-          Upon receiving a sufficiently detailed notice, we will investigate
-          within a commercially reasonable timeframe. We may forward the notice
-          to the relevant third-party hoster, request additional information, or
-          disable access to the referenced embed while the matter is assessed.
-          Kinoa is not responsible for the third-party hoster’s response or any
-          continued availability of the stream outside our Service.
+          Upon receipt of a valid notice, we will remove or disable access to
+          the infringing material. Repeated infringers will have their access to
+          the Service terminated.
+        </p>
+        <p>
+          <strong>Counter-Notice:</strong> If you believe your material was
+          wrongly removed, you may submit a counter-notice containing your
+          contact details, identification of the removed material, a statement
+          under penalty of perjury that you have a good faith belief the
+          removal was a mistake, and your consent to the jurisdiction of the
+          Federal District Court for the judicial district in which you reside
+          (or if outside the US, for any judicial district in which the service
+          provider may be found).
         </p>
       </section>
 
