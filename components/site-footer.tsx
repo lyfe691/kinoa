@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 const legalLinks = [
   { href: "/terms", label: "Terms of Service" },
   { href: "/privacy", label: "Privacy Policy" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function SiteFooter() {

@@ -45,9 +45,6 @@ export const siteConfig = {
   themeColor: "#04060A",
   accentColor: "#16A085",
   publisher: "Kinoa",
-  contactEmail: "hello@kinoa.lol",
-  supportEmail: "support@kinoa.lol",
-  privacyEmail: "privacy@kinoa.lol",
 };
 
 const baseUrl = `${siteConfig.url}/`;
@@ -80,20 +77,6 @@ export const siteJsonLd = {
       "@type": "ImageObject",
       url: absoluteUrl("/favicon.ico"),
     },
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        contactType: "customer support",
-        email: siteConfig.supportEmail,
-        availableLanguage: ["en"],
-      },
-      {
-        "@type": "ContactPoint",
-        contactType: "privacy",
-        email: siteConfig.privacyEmail,
-        availableLanguage: ["en"],
-      },
-    ],
   },
 };
 

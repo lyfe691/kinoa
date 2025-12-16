@@ -21,9 +21,9 @@ export default function PrivacyPage() {
         </h1>
         <p className="text-sm text-muted-foreground">
           Your privacy matters to us. This policy explains how Kinoa (“Kinoa”,
-          “we”, “us”, or “our”), a service operated from Switzerland, collects
-          and processes information when you use the Kinoa website,
-          applications, and related services (collectively, the “Service”).
+          “we”, “us”, or “our”), collects and processes information when you use
+          the Kinoa website, applications, and related services (collectively,
+          the “Service”).
         </p>
       </header>
 
@@ -32,16 +32,14 @@ export default function PrivacyPage() {
           1. Data Controller and Contact
         </h2>
         <p>
-          Kinoa provides and controls the Service as a digital platform governed
-          by Swiss law. For the purposes of the Swiss Federal Act on Data
-          Protection (FADP) and, where applicable, the EU General Data
-          Protection Regulation (GDPR), Kinoa acts as the data controller for
-          processing described in this policy. You can contact us at{" "}
+          Kinoa provides and controls the Service. For the purposes of
+          applicable data protection laws, Kinoa acts as the data controller for
+          processing described in this policy. You can get in touch via our{" "}
           <Link
-            href="mailto:privacy@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            privacy@kinoa.lol
+            contact form
           </Link>
           .
         </p>
@@ -66,14 +64,17 @@ export default function PrivacyPage() {
             and detect abuse.
           </li>
           <li>
-            <strong>Communications:</strong> If you contact us via email or
-            submit a rights request, we process the contents of your message and
-            any contact details you provide in order to respond.
+            <strong>Communications:</strong> If you get in touch using our
+            contact form or submit a rights request, we process the contents of
+            your message and any contact details you provide in order to
+            respond.
           </li>
         </ul>
         <p>
-          We do not require user accounts and we do not intentionally collect
-          sensitive categories of personal data.
+          We offer optional user accounts to enable features like the watchlist.
+          Registering for an account is not required to access the content on
+          the Service. If you choose to create an account, we collect your email
+          address and a password (hashed) to secure your profile.
         </p>
       </section>
 
@@ -111,23 +112,20 @@ export default function PrivacyPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong>Legitimate interests</strong> (FADP Art. 31, GDPR Art.
-            6(1)(f)): to operate, secure, and improve the Service, prevent
-            abuse, and maintain accurate records.
+            <strong>Legitimate interests:</strong> to operate, secure, and
+            improve the Service, prevent abuse, and maintain accurate records.
           </li>
           <li>
-            <strong>Consent</strong> (GDPR Art. 6(1)(a)): for optional features
-            such as theme preferences stored in local storage or non-essential
-            cookies.
+            <strong>Consent:</strong> for optional features such as theme
+            preferences stored in local storage or non-essential cookies.
           </li>
           <li>
-            <strong>Legal obligations</strong> (FADP, GDPR Art. 6(1)(c)): to
-            respond to lawful requests, comply with retention duties, or defend
-            legal claims.
+            <strong>Legal obligations:</strong> to respond to lawful requests,
+            comply with retention duties, or defend legal claims.
           </li>
           <li>
-            <strong>Contractual necessity</strong> (GDPR Art. 6(1)(b)): when we
-            communicate with you about the Service you have requested.
+            <strong>Contractual necessity:</strong> when we communicate with you
+            about the Service you have requested.
           </li>
         </ul>
       </section>
@@ -140,9 +138,13 @@ export default function PrivacyPage() {
           We rely primarily on essential first-party cookies and browser storage
           to remember interface choices (such as theme selection) and to protect
           the Service against abuse. We use privacy-focused analytics that
-          either do not rely on cookies or use pseudonymised identifiers. You
-          can adjust your browser settings to block or delete cookies; doing so
-          may affect functionality.
+          either do not rely on cookies or use pseudonymised identifiers.
+        </p>
+        <p>
+          The Service may also include advertisements (such as pop-unders or
+          banners) delivered by us or third-party networks. These providers may
+          use cookies, pixels, or similar technologies to measure ad performance
+          or prevent fraud. We do not control these third-party technologies.
         </p>
       </section>
 
@@ -185,7 +187,9 @@ export default function PrivacyPage() {
           operate under their own privacy policies and act as separate data
           controllers. We do not monitor or control their processing, and your
           interactions with them are solely between you and the hoster. Please
-          review their privacy notices before using their services.
+          review their privacy notices before using their services. We cannot
+          view, access, or block cookies or data collection initiated by these
+          third-party players.
         </p>
       </section>
 
@@ -209,11 +213,10 @@ export default function PrivacyPage() {
           9. International Data Transfers
         </h2>
         <p>
-          We may process and store information in Switzerland, the European
-          Economic Area (EEA), or other countries where our trusted providers
-          operate. When transferring personal data outside Switzerland or the
-          EEA, we rely on adequacy decisions, standard contractual clauses, or
-          other safeguards recognised by applicable data protection laws.
+          We may process and store information in the European Economic Area
+          (EEA) or other countries where our trusted providers operate. When
+          transferring personal data across borders, we rely on appropriate
+          safeguards recognised by applicable data protection laws.
         </p>
       </section>
 
@@ -226,12 +229,12 @@ export default function PrivacyPage() {
           information against unauthorised access, loss, or misuse, including
           HTTPS encryption, strict access controls, and continuous monitoring.
           No online service can guarantee absolute security, so we encourage you
-          to notify us promptly at{" "}
+          to notify us promptly using our{" "}
           <Link
-            href="mailto:security@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            security@kinoa.lol
+            contact form
           </Link>{" "}
           if you discover a vulnerability.
         </p>
@@ -242,17 +245,17 @@ export default function PrivacyPage() {
           11. Your Rights
         </h2>
         <p>
-          Depending on where you reside, you may have rights under the FADP, the
-          GDPR, or other local laws. These can include the right to request
-          access, rectification, deletion, restriction of processing, data
-          portability, and to object to certain processing activities. You may
-          also withdraw consent where processing is based on consent. To
-          exercise these rights, contact{" "}
+          Depending on where you reside, you may have rights under local data
+          protection laws (such as the GDPR or CCPA). These can include the
+          right to request access, rectification, deletion, restriction of
+          processing, data portability, and to object to certain processing
+          activities. You may also withdraw consent where processing is based on
+          consent. To exercise these rights, please submit a request via our{" "}
           <Link
-            href="mailto:privacy@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            privacy@kinoa.lol
+            contact form
           </Link>
           . We may request verification of your identity before fulfilling a
           request. You have the right to lodge a complaint with your local data
@@ -289,12 +292,12 @@ export default function PrivacyPage() {
         <h2 className="text-base font-semibold text-foreground">14. Contact</h2>
         <p>
           For questions about this Privacy Policy or to exercise your data
-          protection rights, email{" "}
+          protection rights, please reach out via our{" "}
           <Link
-            href="mailto:privacy@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            privacy@kinoa.lol
+            contact form
           </Link>
           .
         </p>

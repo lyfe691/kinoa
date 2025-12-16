@@ -34,15 +34,14 @@ export default function TermsPage() {
           1. Operator and Scope
         </h2>
         <p>
-          The Service is owned and operated by Kinoa, a digital service
-          established under Swiss law. All references to “you” or “your” refer
-          to any person who accesses or uses the Service in any manner, whether
-          or not registered. You may contact us at{" "}
+          The Service is owned and operated by Kinoa. All references to “you” or
+          “your” refer to any person who accesses or uses the Service in any
+          manner, whether or not registered. You may reach us using our{" "}
           <Link
-            href="mailto:legal@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            legal@kinoa.lol
+            contact form
           </Link>
           .
         </p>
@@ -130,12 +129,12 @@ export default function TermsPage() {
           5. Accounts and Communications
         </h2>
         <p>
-          The Service currently operates without user accounts. Should optional
-          registration or authentication be introduced, you agree to provide
-          accurate information, keep your credentials secure, and promptly
-          update any changes. We may provide transactional or legal notices to
-          the contact email you supply; such notices are deemed received upon
-          dispatch.
+          The Service offers optional user accounts to provide features such as
+          a personal watchlist. Accounts are not required to access content.
+          Should you choose to register, you agree to provide accurate
+          information, keep your credentials secure, and promptly update any
+          changes. We may provide transactional or legal notices to the contact
+          email you supply; such notices are deemed received upon dispatch.
         </p>
       </section>
 
@@ -152,6 +151,16 @@ export default function TermsPage() {
           policies, or technical reliability. You are solely responsible for
           reviewing and complying with any terms, privacy notices, or community
           guidelines published by those third parties before engaging with them.
+        </p>
+        <p>
+          <strong>Advertisements:</strong> The Service may display
+          advertisements, including pop-ups, pop-unders, or banners, which may
+          be delivered by us or by third-party hosters. We do not vet, endorse,
+          or control the content of third-party advertisements or the websites
+          they link to. Your interactions with advertisers are solely between
+          you and them. Kinoa has no technical ability to access, control,
+          modify, or censor the content, advertisements, or cookies delivered
+          within third-party embedded players.
         </p>
         <p>
           Kinoa does not intermediate payments, customer support, advertising,
@@ -192,14 +201,12 @@ export default function TermsPage() {
         </h2>
         <p>
           If you believe that material surfaced through the Service infringes
-          your intellectual property rights under the Swiss Federal Act on
-          Copyright and Related Rights (CopA), violates personality rights, or
-          is otherwise unlawful, please email{" "}
+          is otherwise unlawful, please submit a request using our{" "}
           <Link
-            href="mailto:legal@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            legal@kinoa.lol
+            contact form
           </Link>{" "}
           with:
         </p>
@@ -237,7 +244,7 @@ export default function TermsPage() {
         </h2>
         <p>
           THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE”. TO THE FULLEST
-          EXTENT PERMITTED UNDER SWISS LAW, KINOA DISCLAIMS ALL EXPRESS,
+          EXTENT PERMITTED UNDER APPLICABLE LAW, KINOA DISCLAIMS ALL EXPRESS,
           IMPLIED, AND STATUTORY WARRANTIES, INCLUDING WITHOUT LIMITATION
           WARRANTIES OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, FITNESS FOR A
           PARTICULAR PURPOSE, QUIET ENJOYMENT, ACCURACY, OR AVAILABILITY. We do
@@ -251,14 +258,14 @@ export default function TermsPage() {
           10. Limitation of Liability
         </h2>
         <p>
-          TO THE MAXIMUM EXTENT PERMITTED BY SWISS LAW, KINOA, ITS OWNERS,
+          TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, KINOA, ITS OWNERS,
           OFFICERS, CONTRACTORS, AND PARTNERS SHALL NOT BE LIABLE FOR ANY
           INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE
           DAMAGES, NOR FOR LOSS OF PROFITS, GOODWILL, DATA, OR OTHER INTANGIBLE
           LOSSES ARISING OUT OF OR RELATING TO YOUR ACCESS TO OR USE OF THE
           SERVICE OR ANY THIRD-PARTY STREAMS. OUR TOTAL LIABILITY FOR ALL CLAIMS
-          IN ANY TWELVE-MONTH PERIOD IS LIMITED TO THE GREATER OF FIFTY SWISS
-          FRANCS (CHF 50) OR THE AMOUNT YOU PAID TO US FOR THE SERVICE DURING
+          IN ANY TWELVE-MONTH PERIOD IS LIMITED TO THE GREATER OF FIFTY US
+          DOLLARS ($50) OR THE AMOUNT YOU PAID TO US FOR THE SERVICE DURING
           THAT PERIOD (IF ANY).
         </p>
       </section>
@@ -297,19 +304,21 @@ export default function TermsPage() {
           13. Governing Law and Dispute Resolution
         </h2>
         <p>
-          These Terms, and any dispute or claim (including non-contractual
-          disputes or claims) arising out of or in connection with them or their
-          subject matter, are governed by and construed in accordance with the
-          substantive laws of Switzerland, excluding its conflict-of-law rules
-          and the United Nations Convention on Contracts for the International
-          Sale of Goods.
+          These Terms are governed by the laws of the jurisdiction in which
+          Kinoa is established, without regard to its conflict of law
+          provisions.
         </p>
         <p>
-          The courts of Zürich, Switzerland have exclusive jurisdiction to
-          resolve any dispute or claim arising from or related to the Service or
-          these Terms. If you are considered a consumer under the laws of your
-          habitual residence, you may also benefit from any mandatory
-          protections afforded to you in that jurisdiction.
+          Any dispute arising from these Terms shall be resolved in the
+          competent courts of said jurisdiction. If you are a consumer, you may
+          also benefit from mandatory protections under the laws of your country
+          of residence.
+        </p>
+        <p>
+          <strong>Class Action Waiver:</strong> To the fullest extent permitted
+          by applicable law, you agree that any dispute resolution proceedings
+          will be conducted only on an individual basis and not in a class,
+          consolidated, or representative action.
         </p>
       </section>
 
@@ -347,12 +356,13 @@ export default function TermsPage() {
       <section className="space-y-3 text-sm leading-relaxed text-muted-foreground">
         <h2 className="text-base font-semibold text-foreground">16. Contact</h2>
         <p>
-          For questions about these Terms or for legal notices, contact us at{" "}
+          For questions about these Terms or for legal notices, please get in
+          touch using our{" "}
           <Link
-            href="mailto:legal@kinoa.lol"
+            href="/contact"
             className="text-foreground underline underline-offset-4"
           >
-            legal@kinoa.lol
+            contact form
           </Link>
           .
         </p>
