@@ -197,62 +197,36 @@ export default function TermsPage() {
 
       <section className="space-y-3 text-sm leading-relaxed text-muted-foreground">
         <h2 className="text-base font-semibold text-foreground">
-          8. DMCA / Copyright Takedown Policy
+          8. DMCA / Copyright Disclaimer
         </h2>
         <p>
-          Kinoa respects the intellectual property rights of others and complies
-          with the Digital Millennium Copyright Act (DMCA). It is our policy to
-          respond expeditiously to clear notices of alleged copyright
-          infringement.
+          Kinoa is a metadata discovery platform that utilizes public APIs (such
+          as The Movie Database) to provide information about movies and TV shows.
+          We do not host, store, or upload any media files. All playback is
+          embedded from independent third-party services which we do not
+          control.
         </p>
         <p>
-          <strong>Notice Procedure:</strong> If you believe that material on the
-          Service infringes your copyright, please submit a DMCA Takedown Notice
-          using our{" "}
+          <strong>No Content Hosting:</strong> Since Kinoa does not host any
+          content, we cannot remove the actual media files. Copyright
+          infringement claims and DMCA takedown notices should be directed to
+          the third-party website hosting the content. If you are a copyright
+          owner, please contact the original content provider to ensure the
+          material is removed from the internet.
+        </p>
+        <p>
+          <strong>Link Removal:</strong> If you believe a link on Kinoa points
+          to infringing content and you wish for the <em>link</em> to be removed
+          from our index, you may contact us using our{" "}
           <Link
             href="/contact?topic=dmca"
             className="text-foreground underline underline-offset-4"
           >
             contact form
-          </Link>{" "}
-          that includes:
-        </p>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Identification of the copyrighted work claimed to have been
-            infringed.
-          </li>
-          <li>
-            Identification of the material that is claimed to be infringing and
-            where it is located (provide the exact URL).
-          </li>
-          <li>Your contact information (address, telephone number, email).</li>
-          <li>
-            A statement that you have a good faith belief that the use of the
-            material is not authorised by the copyright owner, its agent, or the
-            law.
-          </li>
-          <li>
-            A statement, made under penalty of perjury, that the above
-            information is accurate and that you are the copyright owner or
-            authorised to act on their behalf.
-          </li>
-          <li>Your physical or electronic signature.</li>
-        </ul>
-        <p>
-          Upon receipt of a valid notice, we will remove or disable access to
-          the infringing material. Repeated infringers will have their access to
-          the Service terminated.
-        </p>
-        <p>
-          <strong>Counter-Notice:</strong> If you believe your material was
-          wrongly removed, you may submit a counter-notice containing your
-          contact details, identification of the removed material, a statement
-          under penalty of perjury that you have a good faith belief the removal
-          was a mistake, and your consent to the jurisdiction of the Federal
-          District Court for the judicial district in which you reside (or if
-          outside the US, for any judicial district in which the service
-          provider may be found).
+          </Link>
+          . Please provide the exact URL of the page on Kinoa. Note that
+          removing a link from Kinoa does not remove the content from the source
+          hoster.
         </p>
       </section>
 
