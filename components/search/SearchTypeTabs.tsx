@@ -66,7 +66,7 @@ export function SearchTypeTabs({
             No {currentLabel.toLowerCase()} for &ldquo;{query}&rdquo;.{" "}
             <button
               type="button"
-              className="underline underline-offset-4 text-foreground"
+              className="cursor-pointer underline underline-offset-4 text-foreground hover:text-primary transition-colors"
               onClick={() => setValue(otherType)}
             >
               {otherCount} {otherLabel.toLowerCase()}

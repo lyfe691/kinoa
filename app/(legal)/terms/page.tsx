@@ -201,9 +201,9 @@ export default function TermsPage() {
         </h2>
         <p>
           Kinoa is a metadata discovery platform that utilizes public APIs (such
-          as The Movie Database) to provide information about movies and TV shows.
-          We do not host, store, or upload any media files. All playback is
-          embedded from independent third-party services which we do not
+          as The Movie Database) to provide information about movies and TV
+          shows. We do not host, store, or upload any media files. All playback
+          is embedded from independent third-party services which we do not
           control.
         </p>
         <p>

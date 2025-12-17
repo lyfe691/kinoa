@@ -54,7 +54,7 @@ export function SearchInput({
         aria-autocomplete="list"
         autoComplete="off"
         spellCheck={false}
-        className="h-14 w-full bg-transparent pl-11 pr-28 text-base outline-none placeholder:text-muted-foreground text-left"
+        className="h-14 w-full bg-transparent pl-11 pr-28 text-base outline-none placeholder:text-muted-foreground text-left focus-visible:outline-none"
       />
       <motion.button
         type="submit"
@@ -63,9 +63,10 @@ export function SearchInput({
         whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className={cn(
-          "absolute right-2 h-10 rounded-xl px-6 text-sm font-medium",
+          "absolute right-2 h-10 cursor-pointer rounded-xl px-6 text-sm font-medium",
           "bg-primary text-primary-foreground shadow-lg transition-colors duration-200",
-          "hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none",
+          "hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none",
         )}
       >
         Search
