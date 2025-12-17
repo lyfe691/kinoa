@@ -1,13 +1,23 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
-import { ContactForm } from './_components/contact-form'
+import { ContactForm } from "./_components/contact-form";
+import { isValidTopic, type ContactTopic } from "./config";
 
 export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with the Kinoa team.',
+  title: "Contact Us",
+  description: "Get in touch with the Kinoa team.",
+};
+
+interface ContactPageProps {
+  searchParams: Promise<{ topic?: string }>;
 }
 
-export default function ContactPage() {
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const { topic } = await searchParams;
+  const defaultTopic: ContactTopic | undefined = isValidTopic(topic)
+    ? topic
+    : undefined;
+
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-10 py-10">
       <header className="space-y-3">
@@ -21,8 +31,7 @@ export default function ContactPage() {
         </p>
       </header>
 
-      <ContactForm />
+      <ContactForm defaultTopic={defaultTopic} />
     </div>
-  )
+  );
 }
-

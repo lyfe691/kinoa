@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           applicable data protection laws, Kinoa acts as the data controller for
           processing described in this policy. You can get in touch via our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=privacy"
             className="text-foreground underline underline-offset-4"
           >
             contact form
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
           No online service can guarantee absolute security, so we encourage you
           to notify us promptly using our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=security"
             className="text-foreground underline underline-offset-4"
           >
             contact form
@@ -252,7 +252,7 @@ export default function PrivacyPage() {
           activities. You may also withdraw consent where processing is based on
           consent. To exercise these rights, please submit a request via our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=privacy"
             className="text-foreground underline underline-offset-4"
           >
             contact form
@@ -294,7 +294,7 @@ export default function PrivacyPage() {
           For questions about this Privacy Policy or to exercise your data
           protection rights, please reach out via our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=privacy"
             className="text-foreground underline underline-offset-4"
           >
             contact form

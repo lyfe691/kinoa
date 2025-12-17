@@ -240,11 +240,7 @@ export function AvatarFrame({ profile }: { profile: AccountProfile | null }) {
         <p className="text-[13px] text-muted-foreground">
           This image appears across Kinoa anywhere your profile shows up.
         </p>
-        <Button
-          onClick={handleSave}
-          disabled={!hasChanged || saving}
-          size="sm"
-        >
+        <Button onClick={handleSave} disabled={!hasChanged || saving} size="sm">
           {saving && <Spinner className="mr-2 h-4 w-4" />}
           Save
         </Button>

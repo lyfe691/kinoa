@@ -38,7 +38,7 @@ export default function TermsPage() {
           “your” refer to any person who accesses or uses the Service in any
           manner, whether or not registered. You may reach us using our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=general"
             className="text-foreground underline underline-offset-4"
           >
             contact form
@@ -210,7 +210,7 @@ export default function TermsPage() {
           Service infringes your copyright, please submit a DMCA Takedown Notice
           using our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=dmca"
             className="text-foreground underline underline-offset-4"
           >
             contact form
@@ -248,10 +248,10 @@ export default function TermsPage() {
           <strong>Counter-Notice:</strong> If you believe your material was
           wrongly removed, you may submit a counter-notice containing your
           contact details, identification of the removed material, a statement
-          under penalty of perjury that you have a good faith belief the
-          removal was a mistake, and your consent to the jurisdiction of the
-          Federal District Court for the judicial district in which you reside
-          (or if outside the US, for any judicial district in which the service
+          under penalty of perjury that you have a good faith belief the removal
+          was a mistake, and your consent to the jurisdiction of the Federal
+          District Court for the judicial district in which you reside (or if
+          outside the US, for any judicial district in which the service
           provider may be found).
         </p>
       </section>
@@ -283,8 +283,8 @@ export default function TermsPage() {
           LOSSES ARISING OUT OF OR RELATING TO YOUR ACCESS TO OR USE OF THE
           SERVICE OR ANY THIRD-PARTY STREAMS. OUR TOTAL LIABILITY FOR ALL CLAIMS
           IN ANY TWELVE-MONTH PERIOD IS LIMITED TO THE GREATER OF FIFTY US
-          DOLLARS ($50) OR THE AMOUNT YOU PAID TO US FOR THE SERVICE DURING
-          THAT PERIOD (IF ANY).
+          DOLLARS ($50) OR THE AMOUNT YOU PAID TO US FOR THE SERVICE DURING THAT
+          PERIOD (IF ANY).
         </p>
       </section>
 
@@ -377,7 +377,7 @@ export default function TermsPage() {
           For questions about these Terms or for legal notices, please get in
           touch using our{" "}
           <Link
-            href="/contact"
+            href="/contact?topic=general"
             className="text-foreground underline underline-offset-4"
           >
             contact form
