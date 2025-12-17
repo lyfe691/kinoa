@@ -18,6 +18,7 @@ type WatchlistContextType = {
     mediaType: "movie" | "tv",
   ) => Promise<void>;
   isInWatchlist: (mediaId: number, mediaType: "movie" | "tv") => boolean;
+  refreshWatchlist: () => Promise<void>;
 };
 
 const WatchlistContext = React.createContext<WatchlistContextType | undefined>(
@@ -29,27 +30,27 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   const [watchlist, setWatchlist] = React.useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Fetch watchlist on mount or user change
-  React.useEffect(() => {
+  const refreshWatchlist = React.useCallback(async () => {
     if (!user) {
       setWatchlist(new Set());
       setIsLoading(false);
       return;
     }
 
-    const fetchWatchlist = async () => {
-      setIsLoading(true);
-      const data = await getWatchlistIds();
-      const newSet = new Set<string>();
-      data.forEach((item) => {
-        newSet.add(`${item.media_type}-${item.media_id}`);
-      });
-      setWatchlist(newSet);
-      setIsLoading(false);
-    };
-
-    fetchWatchlist();
+    setIsLoading(true);
+    const data = await getWatchlistIds();
+    const newSet = new Set<string>();
+    data.forEach((item) => {
+      newSet.add(`${item.media_type}-${item.media_id}`);
+    });
+    setWatchlist(newSet);
+    setIsLoading(false);
   }, [user?.id]);
+
+  // Fetch watchlist on mount or user change
+  React.useEffect(() => {
+    refreshWatchlist();
+  }, [refreshWatchlist]);
 
   const addToWatchlist = React.useCallback(
     async (mediaId: number, mediaType: "movie" | "tv") => {
@@ -136,8 +137,16 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
       addToWatchlist,
       removeFromWatchlist,
       isInWatchlist,
+      refreshWatchlist,
     }),
-    [watchlist, isLoading, addToWatchlist, removeFromWatchlist, isInWatchlist],
+    [
+      watchlist,
+      isLoading,
+      addToWatchlist,
+      removeFromWatchlist,
+      isInWatchlist,
+      refreshWatchlist,
+    ],
   );
 
   return (
