@@ -58,7 +58,7 @@ export function HomeHeader() {
         className="mb-10 text-5xl font-medium tracking-tighter sm:text-7xl"
         style={{ textWrap: "balance" }}
       >
-        <span className="bg-linear-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+        <span className="bg-linear-to-b from-foreground to-foreground/70 bg-clip-text text-transparent pr-1">
           What do you want to watch?
         </span>
       </motion.h1>
