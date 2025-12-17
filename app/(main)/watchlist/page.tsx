@@ -6,6 +6,7 @@ import { getSession } from "@/lib/supabase/session";
 import { getWatchlist, type WatchlistItem } from "@/lib/supabase/watchlist";
 import { getMovieDetails, getTvShow } from "@/lib/tmdb";
 import { WatchlistControls } from "@/components/watchlist/watchlist-controls";
+import { WatchlistTransfer } from "@/components/watchlist/watchlist-transfer";
 import {
   Empty,
   EmptyContent,
@@ -135,28 +136,33 @@ export default async function WatchlistPage() {
             </Button>
           </EmptyContent>
         </Empty>
-      ) : validMedia.length === 0 ? (
-        <Empty className="min-h-[50vh]">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Bookmark />
-            </EmptyMedia>
-            <EmptyTitle className="font-semibold">
-              Your watchlist is empty
-            </EmptyTitle>
-            <EmptyDescription className="pt-3">
-              Start adding movies and shows by clicking the bookmark icon
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent className="flex-row justify-center gap-3">
-            <Button render={<Link href="/" />}>Browse Trending</Button>
-            <Button variant="outline" render={<Link href="/search" />}>
-              Search
-            </Button>
-          </EmptyContent>
-        </Empty>
       ) : (
-        <WatchlistControls media={validMedia} />
+        <>
+          <WatchlistTransfer media={validMedia} />
+          {validMedia.length === 0 ? (
+            <Empty className="min-h-[50vh]">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Bookmark />
+                </EmptyMedia>
+                <EmptyTitle className="font-semibold">
+                  Your watchlist is empty
+                </EmptyTitle>
+                <EmptyDescription className="pt-3">
+                  Start adding movies and shows by clicking the bookmark icon
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent className="flex-row justify-center gap-3">
+                <Button render={<Link href="/" />}>Browse Trending</Button>
+                <Button variant="outline" render={<Link href="/search" />}>
+                  Search
+                </Button>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <WatchlistControls media={validMedia} />
+          )}
+        </>
       )}
     </section>
   );
