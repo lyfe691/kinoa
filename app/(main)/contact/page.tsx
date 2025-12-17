@@ -19,15 +19,15 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     : undefined;
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-10 py-10">
-      <header className="space-y-3">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+    <div className="mx-auto flex w-full max-w-lg flex-col gap-10 py-2">
+      <header className="space-y-2">
+        <p className="text-sm uppercase tracking-wide text-muted-foreground">
           Support
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight">Contact Us</h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Have a question or need assistance? Fill out the form below and
-          we&apos;ll get back to you as soon as possible.
+        <h1 className="text-3xl font-semibold tracking-tight">Contact Us</h1>
+        <p className="text-sm text-muted-foreground">
+          Questions, requests, or reports? Send us a message and we&apos;ll
+          reply soon.
         </p>
       </header>
 
