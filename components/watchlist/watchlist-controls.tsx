@@ -3,6 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { Film, Tv, Search, X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -11,8 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { WatchlistTransferDialog } from "@/components/watchlist/watchlist-transfer-dialog";
 import {
   Empty,
   EmptyContent,
@@ -165,6 +167,8 @@ export function WatchlistControls({ media }: WatchlistControlsProps) {
               <SelectItem value="year">Release Year</SelectItem>
             </SelectContent>
           </Select>
+
+          <WatchlistTransferDialog media={media} />
         </div>
       </div>
 

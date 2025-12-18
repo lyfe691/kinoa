@@ -6,6 +6,7 @@ import { getSession } from "@/lib/supabase/session";
 import { getWatchlist, type WatchlistItem } from "@/lib/supabase/watchlist";
 import { getMovieDetails, getTvShow } from "@/lib/tmdb";
 import { WatchlistControls } from "@/components/watchlist/watchlist-controls";
+import { WatchlistTransferDialog } from "@/components/watchlist/watchlist-transfer-dialog";
 import {
   Empty,
   EmptyContent,
@@ -148,11 +149,15 @@ export default async function WatchlistPage() {
               Start adding movies and shows by clicking the bookmark icon
             </EmptyDescription>
           </EmptyHeader>
-          <EmptyContent className="flex-row justify-center gap-3">
+          <EmptyContent className="flex-row flex-wrap justify-center gap-3">
             <Button render={<Link href="/" />}>Browse Trending</Button>
             <Button variant="outline" render={<Link href="/search" />}>
               Search
             </Button>
+            <WatchlistTransferDialog
+              media={[]}
+              trigger={<Button variant="outline">Import Backup</Button>}
+            />
           </EmptyContent>
         </Empty>
       ) : (
