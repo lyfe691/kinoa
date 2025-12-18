@@ -140,4 +140,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  ::-moz-selection {
+    @apply bg-primary text-primary-foreground;
+  }
 }
