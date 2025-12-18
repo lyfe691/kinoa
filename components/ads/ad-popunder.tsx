@@ -1,35 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
-const AD_URL = process.env.NEXT_PUBLIC_AD_POPUNDER_URL || "";
-const COOLDOWN_MS = 60 * 1000; // 1 minute
-const STORAGE_KEY = "kinoa_ad_last_shown";
+import Script from "next/script";
 
 export function AdPopunder() {
-  const isHandlingClick = useRef(false);
-
-  useEffect(() => {
-    const handleInteraction = () => {
-      if (isHandlingClick.current || !AD_URL) return;
-      const lastShown = window.localStorage.getItem(STORAGE_KEY);
-      const now = Date.now();
-      if (lastShown && now - parseInt(lastShown) < COOLDOWN_MS) {
-        return;
-      }
-      isHandlingClick.current = true;
-      window.localStorage.setItem(STORAGE_KEY, now.toString());
-      window.open(AD_URL, "_blank");
-      setTimeout(() => {
-        isHandlingClick.current = false;
-      }, 1000);
-    };
-    window.addEventListener("click", handleInteraction, { capture: true });
-
-    return () => {
-      window.removeEventListener("click", handleInteraction, { capture: true });
-    };
-  }, []);
-
-  return null;
+  return (
+    <Script
+      id="adsterra-popunder"
+      src="//pl28286577.effectivegatecpm.com/8c/1c/d8/8c1cd88d0370b233b014889326f24bce.js"
+      strategy="afterInteractive"
+    />
+  );
 }
