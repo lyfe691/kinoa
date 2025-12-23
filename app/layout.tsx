@@ -10,8 +10,8 @@ import { WatchlistProvider } from "@/components/watchlist-provider";
 import { StructuredData } from "@/components/structured-data";
 import { absoluteUrl, siteConfig, siteJsonLd } from "@/lib/seo";
 import { getSession } from "@/lib/supabase/session";
-import { AdPopunder } from "@/components/ads/ad-popunder";
-import { SocialBar } from "@/components/ads/social-bar";
+// import { AdPopunder } from "@/components/ads/ad-popunder";
+// import { SocialBar } from "@/components/ads/social-bar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const notoSans = Noto_Sans({
@@ -123,8 +123,8 @@ export default async function RootLayout({
       <body
         className={`${geistMono.variable} min-h-screen overflow-x-hidden bg-background font-sans antialiased`}
       >
-        <AdPopunder />
-        <SocialBar />
+        {/* <AdPopunder /> */}
+        {/* <SocialBar /> */}
         <Analytics />
         <SpeedInsights />
         <ThemeProvider

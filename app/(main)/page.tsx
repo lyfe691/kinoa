@@ -6,7 +6,7 @@ import { LatestTvShelf } from "./_components/latest-tv-shelf";
 import { TopRatedShelf } from "./_components/top-rated-shelf";
 import { getTrending } from "@/lib/tmdb";
 import { HomeHeader } from "./_components/home-header";
-import { NativeBanner } from "@/components/ads/native-banner";
+// import { NativeBanner } from "@/components/ads/native-banner";
 
 export default async function Home() {
   const trending = await getTrending();
@@ -18,7 +18,7 @@ export default async function Home() {
       <div className="space-y-12">
         <TrendingFilter items={trending} />
 
-        <NativeBanner />
+        {/* <NativeBanner /> */}
 
         <Suspense
           fallback={
@@ -31,7 +31,7 @@ export default async function Home() {
           <LatestMoviesShelf />
         </Suspense>
 
-        <NativeBanner />
+        {/* <NativeBanner /> */}
 
         <Suspense
           fallback={
@@ -44,7 +44,7 @@ export default async function Home() {
           <LatestTvShelf />
         </Suspense>
 
-        <NativeBanner />
+        {/* <NativeBanner /> */}
 
         <Suspense
           fallback={
@@ -57,7 +57,7 @@ export default async function Home() {
           <TopRatedShelf />
         </Suspense>
 
-        <NativeBanner />
+        {/* <NativeBanner /> */}
       </div>
     </div>
   );
